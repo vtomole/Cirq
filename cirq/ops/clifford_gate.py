@@ -264,7 +264,7 @@ class SingleQubitCliffordGate(raw_types.Gate):
             mat = protocols.unitary(op).dot(mat)
         return mat
 
-    def _decompose_(self, qubits: Sequence[raw_types.QubitId]
+    def _decompose_(self, qubits: Sequence[raw_types.QuditId]
                           ) -> op_tree.OP_TREE:
         qubit, = qubits
         if self == SingleQubitCliffordGate.H:

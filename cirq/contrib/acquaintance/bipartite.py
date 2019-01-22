@@ -71,7 +71,7 @@ class BipartiteSwapNetworkGate(PermutationGate):
 
 
     def decompose_complete(self,
-                           qubits: Sequence[ops.QubitId]
+                           qubits: Sequence[ops.QuditId]
                            ) -> ops.OP_TREE:
         swap_gate = SwapPermutationGate(self.swap_gate)
         if self.part_size == 1:
@@ -89,7 +89,7 @@ class BipartiteSwapNetworkGate(PermutationGate):
 
 
     def decompose_matching(self,
-                           qubits: Sequence[ops.QubitId]
+                           qubits: Sequence[ops.QuditId]
                            ) -> ops.OP_TREE:
         swap_gate = SwapPermutationGate(self.swap_gate)
         for k in range(-self.part_size + 1, self.part_size):
@@ -100,7 +100,7 @@ class BipartiteSwapNetworkGate(PermutationGate):
                     yield ACQUAINT(*qubits[x: x + 2])
 
 
-    def _decompose_(self, qubits: Sequence[ops.QubitId]) -> ops.OP_TREE:
+    def _decompose_(self, qubits: Sequence[ops.QuditId]) -> ops.OP_TREE:
         if len(qubits) != 2 * self.part_size:
             raise ValueError('len(qubits) != 2 * self.part_size')
         if self.subgraph == BipartiteGraphType.COMPLETE:

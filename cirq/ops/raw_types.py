@@ -23,14 +23,14 @@ if TYPE_CHECKING:
     from cirq.ops import gate_operation
 
 
-class QubitId(metaclass=abc.ABCMeta):
+class QuditId(metaclass=abc.ABCMeta):
     """Identifies a qubit. Child classes implement specific types of qubits.
 
     The main criteria that a "qubit id" must satisfy is *comparability*. Child
     classes meet this criteria by implementing the `_comparison_key` method. For
     example, `cirq.LineQubit`'s `_comparison_key` method returns `self.x`. This
     ensures that line qubits with the same `x` are equal, and that line qubits
-    will be sorted ascending by `x`. `QubitId` implements all equality,
+    will be sorted ascending by `x`. `QuditId` implements all equality,
     comparison, and hashing methods via `_comparison_key`.
     """
 
@@ -48,35 +48,35 @@ class QubitId(metaclass=abc.ABCMeta):
         return type(self).__name__, repr(type(self)), self._comparison_key()
 
     def __hash__(self):
-        return hash((QubitId, self._comparison_key()))
+        return hash((QuditId, self._comparison_key()))
 
     def __eq__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() == other._cmp_tuple()
 
     def __ne__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() != other._cmp_tuple()
 
     def __lt__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() < other._cmp_tuple()
 
     def __gt__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() > other._cmp_tuple()
 
     def __le__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() <= other._cmp_tuple()
 
     def __ge__(self, other):
-        if not isinstance(other, QubitId):
+        if not isinstance(other, QuditId):
             return NotImplemented
         return self._cmp_tuple() >= other._cmp_tuple()
 
@@ -91,7 +91,7 @@ class Gate:
     """
 
     # noinspection PyMethodMayBeStatic
-    def validate_args(self, qubits: Sequence[QubitId]) -> None:
+    def validate_args(self, qubits: Sequence[QuditId]) -> None:
         """Checks if this gate can be applied to the given qubits.
 
         Does no checks by default. Child classes can override.
@@ -104,7 +104,7 @@ class Gate:
         """
         pass
 
-    def on(self, *qubits: QubitId) -> 'gate_operation.GateOperation':
+    def on(self, *qubits: QuditId) -> 'gate_operation.GateOperation':
         """Returns an application of this gate to the given qubits.
 
         Args:
@@ -135,16 +135,16 @@ class Operation(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractproperty
-    def qubits(self) -> Tuple[QubitId, ...]:
+    def qubits(self) -> Tuple[QuditId, ...]:
         raise NotImplementedError()
 
     @abc.abstractmethod
     def with_qubits(self: TSelf_Operation,
-                    *new_qubits: QubitId) -> TSelf_Operation:
+                    *new_qubits: QuditId) -> TSelf_Operation:
         pass
 
     def transform_qubits(self: TSelf_Operation,
-                         func: Callable[[QubitId], QubitId]) -> TSelf_Operation:
+                         func: Callable[[QuditId], QuditId]) -> TSelf_Operation:
         """Returns the same operation, but with different qubits.
 
         Args:

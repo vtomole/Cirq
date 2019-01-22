@@ -18,10 +18,10 @@ import abc
 
 from cirq import protocols, ops
 
-LogicalIndex = TypeVar('LogicalIndex', int, ops.QubitId)
-LogicalIndexSequence = Union[Sequence[int], Sequence[ops.QubitId]]
+LogicalIndex = TypeVar('LogicalIndex', int, ops.QuditId)
+LogicalIndexSequence = Union[Sequence[int], Sequence[ops.QuditId]]
 LogicalGates = Dict[Tuple[LogicalIndex, ...], ops.Gate]
-LogicalMappingKey = TypeVar('LogicalMappingKey', bound=ops.QubitId)
+LogicalMappingKey = TypeVar('LogicalMappingKey', bound=ops.QuditId)
 LogicalMapping = Dict[LogicalMappingKey, LogicalIndex]
 
 
@@ -43,8 +43,8 @@ class PermutationGate(ops.Gate, metaclass=abc.ABCMeta):
         the s[i]-th element."""
         pass
 
-    def update_mapping(self, mapping: Dict[ops.QubitId, LogicalIndex],
-                       keys: Sequence[ops.QubitId]
+    def update_mapping(self, mapping: Dict[ops.QuditId, LogicalIndex],
+                       keys: Sequence[ops.QuditId]
                        ) -> None:
         """Updates a mapping (in place) from qubits to logical indices.
 
@@ -90,7 +90,7 @@ class SwapPermutationGate(PermutationGate):
         return {0: 1, 1: 0}
 
     def _decompose_(
-            self, qubits: Sequence[ops.QubitId]) -> ops.OP_TREE:
+            self, qubits: Sequence[ops.QuditId]) -> ops.OP_TREE:
         yield self.swap_gate(*qubits)
 
 
@@ -115,7 +115,7 @@ class LinearPermutationGate(PermutationGate):
     def permutation(self, qubit_count: int) -> Dict[int, int]:
         return self._permutation
 
-    def _decompose_(self, qubits: Sequence[ops.QubitId]) -> ops.OP_TREE:
+    def _decompose_(self, qubits: Sequence[ops.QuditId]) -> ops.OP_TREE:
         swap_gate = SwapPermutationGate(self.swap_gate)
         n_qubits = len(qubits)
         mapping = {i: self._permutation.get(i, i) for i in range(n_qubits)}
@@ -126,7 +126,7 @@ class LinearPermutationGate(PermutationGate):
                     mapping[i], mapping[i+1] = mapping[i+1], mapping[i]
 
 
-def update_mapping(mapping: Dict[ops.QubitId, LogicalIndex],
+def update_mapping(mapping: Dict[ops.QuditId, LogicalIndex],
                    operations: ops.OP_TREE
                    ) -> None:
     """Updates a mapping (in place) from qubits to logical indices according to

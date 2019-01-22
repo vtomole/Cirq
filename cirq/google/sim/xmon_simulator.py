@@ -342,7 +342,7 @@ class XmonStepResult(simulator.StepResult):
         """
         self._stepper.reset_state(state)
 
-    def sample(self, qubits: List[ops.QubitId], repetitions: int=1):
+    def sample(self, qubits: List[ops.QuditId], repetitions: int=1):
         """Samples from the wave function at this point in the computation.
 
         Note that this does not collapse the wave function.

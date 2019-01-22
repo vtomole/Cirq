@@ -54,7 +54,7 @@ class Moment(object):
             raise ValueError(
                 'Overlapping operations: {}'.format(self.operations))
 
-    def operates_on(self, qubits: Iterable[raw_types.QubitId]) -> bool:
+    def operates_on(self, qubits: Iterable[raw_types.QuditId]) -> bool:
         """Determines if the moment has operations touching the given qubits.
 
         Args:
@@ -77,7 +77,7 @@ class Moment(object):
         """
         return Moment(self.operations + (operation,))
 
-    def without_operations_touching(self, qubits: Iterable[raw_types.QubitId]):
+    def without_operations_touching(self, qubits: Iterable[raw_types.QuditId]):
         """Returns an equal moment, but without ops on the given qubits.
 
         Args:
@@ -126,7 +126,7 @@ class Moment(object):
         return ' and '.join(str(op) for op in self.operations)
 
     def transform_qubits(self: TSelf_Moment,
-                         func: Callable[[raw_types.QubitId], raw_types.QubitId]
+                         func: Callable[[raw_types.QuditId], raw_types.QuditId]
                          ) -> TSelf_Moment:
         return self.__class__(op.transform_qubits(func)
                 for op in self.operations)

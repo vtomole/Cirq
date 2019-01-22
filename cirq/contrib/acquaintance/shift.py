@@ -16,7 +16,7 @@ from itertools import chain
 from typing import Sequence, Dict, Tuple
 
 from cirq import protocols
-from cirq.ops import Gate, SWAP, OP_TREE, QubitId
+from cirq.ops import Gate, SWAP, OP_TREE, QuditId
 from cirq.contrib.acquaintance.permutation import (
         SwapPermutationGate, PermutationGate)
 
@@ -49,7 +49,7 @@ class CircularShiftGate(PermutationGate):
         return ((self.shift == other.shift) and
                 (self.swap_gate == other.swap_gate))
 
-    def _decompose_(self, qubits: Sequence[QubitId]) -> OP_TREE:
+    def _decompose_(self, qubits: Sequence[QuditId]) -> OP_TREE:
         n = len(qubits)
         left_shift = self.shift % n
         right_shift = n - left_shift

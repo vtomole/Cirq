@@ -16,7 +16,7 @@ Classes for identifying the qubits and hardware you want to operate on.
     GridQubit
     LineQubit
     NamedQubit
-    QubitId
+    QuditId
     UnconstrainedDevice
 
 

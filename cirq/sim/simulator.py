@@ -545,7 +545,7 @@ def _enter_moment_display_values_into_dictionary(
         moment: ops.Moment,
         state: np.ndarray,
         qubit_order: ops.QubitOrder,
-        qubit_map: Dict[ops.QubitId, int]):
+        qubit_map: Dict[ops.QuditId, int]):
     for op in moment:
         if isinstance(op, ops.WaveFunctionDisplay):
             display_values[op.key] = (
@@ -558,7 +558,7 @@ def _enter_moment_display_values_into_dictionary(
 def _compute_samples_display_value(display: ops.SamplesDisplay,
                                    state: np.ndarray,
                                    qubit_order: ops.QubitOrder,
-                                   qubit_map: Dict[ops.QubitId, int]):
+                                   qubit_map: Dict[ops.QuditId, int]):
     basis_change_circuit = circuits.Circuit.from_ops(
         display.measurement_basis_change())
     modified_state = basis_change_circuit.apply_unitary_effect_to_state(
@@ -583,7 +583,7 @@ class StepResult:
     """
 
     def __init__(self,
-                 qubit_map: Optional[Dict[ops.QubitId, int]],
+                 qubit_map: Optional[Dict[ops.QuditId, int]],
                  measurements: Optional[Dict[str, List[bool]]]) -> None:
         self.qubit_map = qubit_map or {}
         self.measurements = measurements or collections.defaultdict(list)
@@ -637,7 +637,7 @@ class StepResult:
 
     @abc.abstractmethod
     def sample(self,
-               qubits: List[ops.QubitId],
+               qubits: List[ops.QuditId],
                repetitions: int = 1) -> np.ndarray:
         """Samples from the wave function at this point in the computation.
 
@@ -687,7 +687,7 @@ class StepResult:
                 operations from `measurement_ops`.
         """
         bounds = {}  # type: Dict[str, Tuple]
-        all_qubits = []  # type: List[ops.QubitId]
+        all_qubits = []  # type: List[ops.QuditId]
         current_index = 0
         for op in measurement_ops:
             gate = op.gate

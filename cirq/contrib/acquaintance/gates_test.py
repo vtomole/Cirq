@@ -227,14 +227,14 @@ def test_swap_network_permutation_error():
         gate.permutation(1)
 
 class OtherOperation(cirq.Operation):
-    def __init__(self, qubits: Sequence[cirq.QubitId]) -> None:
+    def __init__(self, qubits: Sequence[cirq.QuditId]) -> None:
         self._qubits = tuple(qubits)
 
     @property
-    def qubits(self) -> Tuple[cirq.QubitId, ...]:
+    def qubits(self) -> Tuple[cirq.QuditId, ...]:
         return self._qubits
 
-    def with_qubits(self, *new_qubits: cirq.QubitId) -> 'OtherOperation':
+    def with_qubits(self, *new_qubits: cirq.QuditId) -> 'OtherOperation':
         return type(self)(self._qubits)
 
     def __eq__(self, other):

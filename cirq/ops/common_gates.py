@@ -104,7 +104,7 @@ class XPowGate(eigen_gate.EigenGate,
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         args.validate_version('2.0')
         if self._exponent == 1:
             return args.format('x {0};\n', qubits[0])
@@ -185,7 +185,7 @@ class YPowGate(eigen_gate.EigenGate,
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         args.validate_version('2.0')
         if self._exponent == 1:
             return args.format('y {0};\n', qubits[0])
@@ -291,7 +291,7 @@ class ZPowGate(eigen_gate.EigenGate,
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         args.validate_version('2.0')
         if self._exponent == 1:
             return args.format('z {0};\n', qubits[0])
@@ -400,7 +400,7 @@ class MeasurementGate(raw_types.Gate):
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         args.validate_version('2.0')
         invert_mask = self.invert_mask
         if len(invert_mask) < len(qubits):
@@ -423,11 +423,11 @@ class MeasurementGate(raw_types.Gate):
         return self.key, self.invert_mask
 
 
-def _default_measurement_key(qubits: Iterable[raw_types.QubitId]) -> str:
+def _default_measurement_key(qubits: Iterable[raw_types.QuditId]) -> str:
     return ','.join(str(q) for q in qubits)
 
 
-def measure(*qubits: raw_types.QubitId,
+def measure(*qubits: raw_types.QuditId,
             key: Optional[str] = None,
             invert_mask: Tuple[bool, ...] = ()
             ) -> gate_operation.GateOperation:
@@ -447,7 +447,7 @@ def measure(*qubits: raw_types.QubitId,
         An operation targeting the given qubits with a measurement.
 
     Raises:
-        ValueError if the qubits are not instances of QubitId.
+        ValueError if the qubits are not instances of QuditId.
     """
     for qubit in qubits:
         if isinstance(qubit, np.ndarray):
@@ -455,17 +455,17 @@ def measure(*qubits: raw_types.QubitId,
                     'measure() was called a numpy ndarray. Perhaps you meant '
                     'to call measure_state_vector on numpy array?'
             )
-        elif not isinstance(qubit, raw_types.QubitId):
+        elif not isinstance(qubit, raw_types.QuditId):
             raise ValueError(
-                    'measure() was called with type different than QubitId.')
+                    'measure() was called with type different than QuditId.')
 
     if key is None:
         key = _default_measurement_key(qubits)
     return MeasurementGate(key, invert_mask).on(*qubits)
 
 
-def measure_each(*qubits: raw_types.QubitId,
-                 key_func: Callable[[raw_types.QubitId], str] = str
+def measure_each(*qubits: raw_types.QuditId,
+                 key_func: Callable[[raw_types.QuditId], str] = str
                  ) -> List[gate_operation.GateOperation]:
     """Returns a list of operations individually measuring the given qubits.
 
@@ -549,7 +549,7 @@ class HPowGate(eigen_gate.EigenGate, gate_features.SingleQubitGate):
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         args.validate_version('2.0')
         if self._exponent == 1:
             return args.format('h {0};\n', qubits[0])
@@ -625,7 +625,7 @@ class CZPowGate(eigen_gate.EigenGate,
 
     def _qasm_(self,
             args: protocols.QasmArgs,
-            qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+            qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         if self._exponent != 1:
             return None  # Don't have an equivalent gate in QASM
         args.validate_version('2.0')
@@ -724,7 +724,7 @@ class CNotPowGate(eigen_gate.EigenGate, gate_features.TwoQubitGate):
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         if self._exponent != 1:
             return None  # Don't have an equivalent gate in QASM
         args.validate_version('2.0')
@@ -745,8 +745,8 @@ class CNotPowGate(eigen_gate.EigenGate, gate_features.TwoQubitGate):
             'global_shift={!r})'
         ).format(self._exponent, self._global_shift)
 
-    def on(self, *args: raw_types.QubitId,
-           **kwargs: raw_types.QubitId) -> gate_operation.GateOperation:
+    def on(self, *args: raw_types.QuditId,
+           **kwargs: raw_types.QuditId) -> gate_operation.GateOperation:
         if not kwargs:
             return super().on(*args)
         if not args and set(kwargs.keys()) == {'control', 'target'}:
@@ -825,7 +825,7 @@ class SwapPowGate(eigen_gate.EigenGate,
 
     def _qasm_(self,
                args: protocols.QasmArgs,
-               qubits: Tuple[raw_types.QubitId, ...]) -> Optional[str]:
+               qubits: Tuple[raw_types.QuditId, ...]) -> Optional[str]:
         if self._exponent != 1:
             return None  # Don't have an equivalent gate in QASM
         args.validate_version('2.0')

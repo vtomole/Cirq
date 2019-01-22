@@ -48,7 +48,7 @@ class QasmUGate(ops.SingleQubitGate):
         return QasmUGate(pre_phase/np.pi, rotation/np.pi, post_phase/np.pi)
 
     def _qasm_(self,
-               qubits: Tuple[ops.QubitId, ...],
+               qubits: Tuple[ops.QuditId, ...],
                args: protocols.QasmArgs) -> str:
         args.validate_version('2.0')
         return args.format(
@@ -94,7 +94,7 @@ class QasmTwoQubitGate(ops.TwoQubitGate):
     def _unitary_(self):
         return protocols.unitary(self.kak)
 
-    def _decompose_(self, qubits: Sequence[ops.QubitId]) -> ops.OP_TREE:
+    def _decompose_(self, qubits: Sequence[ops.QuditId]) -> ops.OP_TREE:
         q0, q1 = qubits
         x, y, z = self.kak.interaction_coefficients
         a = x * -2 / np.pi + 0.5
@@ -128,7 +128,7 @@ class QasmOutput:
 
     def __init__(self,
                  operations: ops.OP_TREE,
-                 qubits: Tuple[ops.QubitId, ...],
+                 qubits: Tuple[ops.QuditId, ...],
                  header: str = '',
                  precision: int = 10,
                  version: str = '2.0') -> None:
@@ -169,7 +169,7 @@ class QasmOutput:
             meas_key_id_map[key] = meas_id
         return meas_key_id_map, meas_comments
 
-    def _generate_qubit_ids(self) -> Dict[ops.QubitId, str]:
+    def _generate_qubit_ids(self) -> Dict[ops.QuditId, str]:
         return {qubit: 'q[{}]'.format(i) for i, qubit in enumerate(self.qubits)}
 
     def is_valid_qasm_id(self, id_str: str) -> bool:

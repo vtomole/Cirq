@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 def gate_to_proto_dict(gate: ops.Gate,
-                       qubits: Tuple[ops.QubitId, ...]) -> Dict:
+                       qubits: Tuple[ops.QuditId, ...]) -> Dict:
     if isinstance(gate, ops.MeasurementGate):
         return _measure_to_proto_dict(gate, qubits)
 
@@ -66,7 +66,7 @@ def gate_to_proto_dict(gate: ops.Gate,
     raise ValueError("Don't know how to serialize this gate: {!r}".format(gate))
 
 
-def _x_to_proto_dict(gate: ops.XPowGate, q: ops.QubitId) -> Dict:
+def _x_to_proto_dict(gate: ops.XPowGate, q: ops.QuditId) -> Dict:
     exp_w = {
         'target': cast(devices.GridQubit, q).to_proto_dict(),
         'axis_half_turns':
@@ -77,7 +77,7 @@ def _x_to_proto_dict(gate: ops.XPowGate, q: ops.QubitId) -> Dict:
     return {'exp_w': exp_w}
 
 
-def _y_to_proto_dict(gate: ops.YPowGate, q: ops.QubitId) -> Dict:
+def _y_to_proto_dict(gate: ops.YPowGate, q: ops.QuditId) -> Dict:
     exp_w = {
         'target': cast(devices.GridQubit, q).to_proto_dict(),
         'axis_half_turns':
@@ -89,7 +89,7 @@ def _y_to_proto_dict(gate: ops.YPowGate, q: ops.QubitId) -> Dict:
 
 
 def _phased_x_to_proto_dict(gate: ops.PhasedXPowGate,
-                            q: ops.QubitId) -> Dict:
+                            q: ops.QuditId) -> Dict:
     exp_w = {
         'target': cast(devices.GridQubit, q).to_proto_dict(),
         'axis_half_turns':
@@ -101,7 +101,7 @@ def _phased_x_to_proto_dict(gate: ops.PhasedXPowGate,
     return {'exp_w': exp_w}
 
 
-def _z_to_proto_dict(gate: ops.ZPowGate, q: ops.QubitId) -> Dict:
+def _z_to_proto_dict(gate: ops.ZPowGate, q: ops.QuditId) -> Dict:
     exp_z = {
         'target': cast(devices.GridQubit, q).to_proto_dict(),
         'half_turns': _parameterized_value_to_proto_dict(
@@ -111,8 +111,8 @@ def _z_to_proto_dict(gate: ops.ZPowGate, q: ops.QubitId) -> Dict:
 
 
 def _cz_to_proto_dict(gate: ops.CZPowGate,
-                      p: ops.QubitId,
-                      q: ops.QubitId) -> Dict:
+                      p: ops.QuditId,
+                      q: ops.QuditId) -> Dict:
     exp_11 = {
         'target1': cast(devices.GridQubit, p).to_proto_dict(),
         'target2': cast(devices.GridQubit, q).to_proto_dict(),
@@ -123,7 +123,7 @@ def _cz_to_proto_dict(gate: ops.CZPowGate,
 
 
 def _measure_to_proto_dict(gate: ops.MeasurementGate,
-                           qubits: Sequence[ops.QubitId]):
+                           qubits: Sequence[ops.QuditId]):
     if len(qubits) == 0:
         raise ValueError('Measurement gate on no qubits.')
     if gate.invert_mask and len(gate.invert_mask) != len(qubits):

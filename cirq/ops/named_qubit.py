@@ -15,7 +15,7 @@
 from cirq.ops import raw_types
 
 
-class NamedQubit(raw_types.QubitId):
+class NamedQubit(raw_types.QuditId):
     """A qubit identified by name.
 
     By default, NamedQubit has a lexicographic order. However, numbers within

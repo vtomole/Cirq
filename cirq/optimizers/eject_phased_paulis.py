@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 class _OptimizerState:
     def __init__(self):
         # The phases of the W gates currently being pushed along each qubit.
-        self.held_w_phases = {}  # type: Dict[ops.QubitId, Optional[float]]
+        self.held_w_phases = {}  # type: Dict[ops.QuditId, Optional[float]]
 
         # Accumulated commands to batch-apply to the circuit later.
         self.deletions = []  # type: List[Tuple[int, ops.Operation]]
@@ -132,7 +132,7 @@ def _absorb_z_into_w(moment_index: int,
     state.deletions.append((moment_index, op))
 
 
-def _dump_held(qubits: Iterable[ops.QubitId],
+def _dump_held(qubits: Iterable[ops.QuditId],
                moment_index: int,
                state: _OptimizerState):
     # Note: sorting is to avoid non-determinism in the insertion order.
@@ -223,7 +223,7 @@ def _potential_cross_partial_w(moment_index: int,
 
 def _single_cross_over_cz(moment_index: int,
                           op: ops.Operation,
-                          qubit_with_w: ops.QubitId,
+                          qubit_with_w: ops.QuditId,
                           state: _OptimizerState) -> None:
     """Crosses exactly one W flip over a partial CZ.
 
