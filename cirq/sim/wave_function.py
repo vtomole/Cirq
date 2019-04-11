@@ -387,6 +387,7 @@ def sample_state_vector(state: np.ndarray,
     # We now have the probability vector, correctly ordered, so sample over
     # it. Note that we us ints here, since numpy's choice does not allow for
     # choosing from a list of tuples or list of lists.
+    print(probs)
     result = np.random.choice(len(probs), size=repetitions, p=probs)
     # Convert to bools and rearrange to match repetition being the outer list.
     return np.transpose([(1 & (result >> i)).astype(np.bool) for i in

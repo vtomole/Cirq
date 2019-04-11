@@ -24,8 +24,9 @@ def test_invalid_dtype():
     with pytest.raises(ValueError, match='complex'):
         cirq.Simulator(dtype=np.int32)
 
-
-@pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
+@pytest.mark.skipif(not hasattr(np, 'complex256'),
+                    reason="system doesn't have np.complex256")
+@pytest.mark.parametrize('dtype', [np.complex64, np.complex128, np.complex256])
 def test_run_no_measurements(dtype):
     q0, q1 = cirq.LineQubit.range(2)
     simulator = cirq.Simulator(dtype=dtype)
@@ -34,8 +35,9 @@ def test_run_no_measurements(dtype):
     result = simulator.run(circuit)
     assert len(result.measurements) == 0
 
-
-@pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
+@pytest.mark.skipif(not hasattr(np, 'complex256'),
+                    reason="system doesn't have np.complex256")
+@pytest.mark.parametrize('dtype', [np.complex64, np.complex128, np.complex256])
 def test_run_no_results(dtype):
     q0, q1 = cirq.LineQubit.range(2)
     simulator = cirq.Simulator(dtype)
@@ -44,15 +46,16 @@ def test_run_no_results(dtype):
     result = simulator.run(circuit)
     assert len(result.measurements) == 0
 
-
-@pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
+@pytest.mark.skipif(not hasattr(np, 'complex256'),
+                    reason="system doesn't have np.complex256")
+@pytest.mark.parametrize('dtype', [np.complex64, np.complex128, np.complex256])
 def test_run_empty_circuit(dtype):
     simulator = cirq.Simulator(dtype=dtype)
     result = simulator.run(cirq.Circuit())
     assert len(result.measurements) == 0
 
 
-@pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
+@pytest.mark.parametrize('dtype', [np.complex64, np.complex128, np.complex256])
 def test_run_bit_flips(dtype):
     q0, q1 = cirq.LineQubit.range(2)
     simulator = cirq.Simulator(dtype=dtype)
@@ -106,7 +109,6 @@ def test_run_repetitions_measurement_not_terminal(dtype):
                 assert result.repetitions == 3
         assert  mock_sim.call_count == 12
 
-
 @pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
 def test_run_param_resolver(dtype):
     q0, q1 = cirq.LineQubit.range(2)
@@ -133,7 +135,6 @@ def test_run_mixture(dtype):
     assert sum(result.measurements['0'])[0] < 80
     assert sum(result.measurements['0'])[0] > 20
 
-
 @pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
 def test_run_mixture_with_gates(dtype):
     q0 = cirq.LineQubit(0)
@@ -144,7 +145,7 @@ def test_run_mixture_with_gates(dtype):
     assert sum(result.measurements['0'])[0] < 80
     assert sum(result.measurements['0'])[0] > 20
 
-
+    
 @pytest.mark.parametrize('dtype', [np.complex64, np.complex128])
 def test_run_correlations(dtype):
     q0, q1 = cirq.LineQubit.range(2)

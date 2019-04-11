@@ -125,11 +125,21 @@ class Simulator(simulator.SimulatesSamples,
 
         Args:
             dtype: The `numpy.dtype` used by the simulation. One of
-            `numpy.complex64` or `numpy.complex128`
+            `numpy.complex64`, `numpy.complex128` or `numpy.complex256`
+        for supporting platforms,
         """
-        if dtype not in {np.complex64, np.complex128}:
+        dtypes = [np.complex64, np.complex128]
+        
+        if hasattr(np, 'complex256'):  # Some systems don't support 128 bit floats.
+            dtypes.append(np.complex256)
+            
+        if dtype not in dtypes and len(dtypes) == 2:
             raise ValueError(
                 'dtype must be complex64 or complex128 but was {}'.format(
+                    dtype))
+        elif dtype not in dtypes and len(dtypes) == 3:
+            raise ValueError(
+                'dtype must be complex64, complex128 or complex256 but was {}'.format(
                     dtype))
         self._dtype = dtype
 
