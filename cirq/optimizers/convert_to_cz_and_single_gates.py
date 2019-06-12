@@ -14,15 +14,11 @@
 
 from typing import Optional
 
-from cirq import ops, decompositions, protocols
-from cirq.circuits.circuit import Circuit
-from cirq.circuits.optimization_pass import (
-    PointOptimizationSummary,
-    PointOptimizer,
-)
+from cirq import circuits, ops, protocols, value
+from cirq.optimizers import two_qubit_decompositions
 
 
-class ConvertToCzAndSingleGates(PointOptimizer):
+class ConvertToCzAndSingleGates(circuits.PointOptimizer):
     """Attempts to convert strange multi-qubit gates into CZ and single qubit
     gates.
 
@@ -53,13 +49,14 @@ class ConvertToCzAndSingleGates(PointOptimizer):
     def _keep(self, op: ops.Operation) -> bool:
         # Check if this is a CZ
         # Only keep partial CZ gates if allow_partial_czs
-        if (isinstance(op, ops.GateOperation)
-            and isinstance(op.gate, ops.CZPowGate)
-            and (self.allow_partial_czs or op.gate.exponent == 1)):
+        cz_gate = ops.op_gate_of_type(op, ops.CZPowGate)
+        if (cz_gate and (
+                self.allow_partial_czs or value.canonicalize_half_turns(
+                cz_gate.exponent) == 1)):
             return True
 
-        # Measurement?
-        if ops.MeasurementGate.is_measurement(op):
+        # Measurement in Z basis?
+        if ops.op_gate_of_type(op, ops.MeasurementGate):
             return True
 
         # SingleQubit known matrix
@@ -72,7 +69,7 @@ class ConvertToCzAndSingleGates(PointOptimizer):
         if len(op.qubits) == 2:
             mat = protocols.unitary(op, None)
             if mat is not None:
-                return decompositions.two_qubit_matrix_to_operations(
+                return two_qubit_decompositions.two_qubit_matrix_to_operations(
                     op.qubits[0],
                     op.qubits[1],
                     mat,
@@ -84,8 +81,11 @@ class ConvertToCzAndSingleGates(PointOptimizer):
                         "It isn't composite or an operation with a "
                         "known unitary effect on 1 or 2 qubits.".format(op))
 
-    def optimization_at(self, circuit: Circuit, index: int, op: ops.Operation
-                        ) -> Optional[PointOptimizationSummary]:
+    def optimization_at(self,
+                        circuit: circuits.Circuit,
+                        index: int,
+                        op: ops.Operation
+                        ) -> Optional[circuits.PointOptimizationSummary]:
         converted = protocols.decompose(
             op,
             intercepting_decomposer=self._decompose_two_qubit_unitaries,
@@ -96,7 +96,7 @@ class ConvertToCzAndSingleGates(PointOptimizer):
         if converted == [op]:
             return None
 
-        return PointOptimizationSummary(
+        return circuits.PointOptimizationSummary(
             clear_span=1,
             new_operations=converted,
             clear_qubits=op.qubits)

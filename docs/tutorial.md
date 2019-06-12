@@ -5,8 +5,7 @@ In this tutorial we will go from knowing nothing about Cirq to creating a
 Note that this tutorial isn't a quantum computing 101 tutorial,
 we assume familiarity of quantum computing at about the level of
 the textbook "Quantum Computation and Quantum Information" by
-Nielsen and Chuang. For a more conceptual overview see the
-[conceptual documentation](table_of_contents.md).
+Nielsen and Chuang.
 
 To begin, please follow the instructions for [installing Cirq](install.md).
 
@@ -104,7 +103,7 @@ lowest possible value of the objective function.
 ### Create a circuit on a Grid
 
 To build the above variational quantum algorithm using Cirq,
-one begins by building the appropriate [circuit](circuits.md).
+one begins by building the appropriate circuit.
 In Cirq circuits are represented either by a `Circuit` object
 or a `Schedule` object.  `Schedule`s offer more control over
 quantum gates and circuits at the timing level, which we do not
@@ -120,10 +119,8 @@ should help illustrate these concepts.
 
 ![Circuits and Moments](CircuitMomentOperation.png)
 
-See the [conceptual documentation](circuits.md) for more 
-details on these classes. Because the problem we have 
-defined has a natural structure on a grid, we will use 
-Cirq's built in `GridQubit`s as our qubits.
+Because the problem we have defined has a natural structure on a grid, we will
+use Cirq's built in `GridQubit`s as our qubits.
 We will demonstrate some of how this works in an 
 interactive Python environment, the following code can
 be run in series in a Python environment where you have
@@ -143,8 +140,10 @@ print(qubits)
 # [cirq.GridQubit(0, 0), cirq.GridQubit(0, 1), cirq.GridQubit(0, 2), cirq.GridQubit(1, 0), cirq.GridQubit(1, 1), cirq.GridQubit(1, 2), cirq.GridQubit(2, 0), cirq.GridQubit(2, 1), cirq.GridQubit(2, 2)]
 ```
 Here we see that we've created a bunch of `GridQubit`s. 
-`GridQubit`s implement the `QubitId` class, which just means
-that they are equatable and hashable. `QubitId` has an abstract `_comparison_key` method that must be implemented by child types in order to ensure there's a reasonable sorting order for diagrams and that this matches what happens when `sorted(qubits)` is called.`GridQubit`s in addition
+
+`GridQubit`s implement the `Qid` class, which just means
+that they are equatable and hashable. `Qid` has an abstract `_comparison_key` method that must be implemented by child types in order to ensure there's a reasonable sorting order for diagrams and that this matches what happens when `sorted(qubits)` is called.`GridQubit`s in addition
+
 have a row and column, indicating their position on a grid.
 
 Now that we have some qubits, let us construct a `Circuit` on these qubits.
@@ -154,8 +153,56 @@ gate to every qubit whose row index plus column index is odd.  To
 do this we write
 ```python
 circuit = cirq.Circuit()
-circuit.append(cirq.H.on(q) for q in qubits if (q.row + q.col) % 2 == 0)
+circuit.append(cirq.H(q) for q in qubits if (q.row + q.col) % 2 == 0)
 circuit.append(cirq.X(q) for q in qubits if (q.row + q.col) % 2 == 1)
+print(circuit)
+# (0, 0): ───H───
+#
+# (0, 1): ───X───
+#
+# (0, 2): ───H───
+#
+# (1, 0): ───X───
+#
+# (1, 1): ───H───
+#
+# (1, 2): ───X───
+#
+# (2, 0): ───H───
+#
+# (2, 1): ───X───
+#
+# (2, 2): ───H───
+```
+One thing to notice here.  First `cirq.X` is a `Gate` object. There
+are many different gates supported by Cirq. A good place to look
+at gates that are defined is in [common_gates.py](https://github.com/quantumlib/Cirq/blob/master/cirq/ops/common_gates.py).
+One common confusion to avoid is the difference between a gate class 
+and a gate object (which is an instantiation of a class).  The second is that gate
+objects are transformed into `Operation`s (technically `GateOperation`s)
+via either the method `on(qubit)` or, as we see for the `X` gates, via simply
+applying the gate to the qubits `(qubit)`. Here we only apply single
+qubit gates, but a similar pattern applies for multiple qubit gates with a 
+sequence of qubits as parameters.
+
+Another thing to notice about the above circuit is that the gates from both the
+append instructions appear on the same vertical line. Gates appearing on the
+same vertical line constitue a `Moment`.
+
+We can modify this by changing the `InsertStrategy` of the `append` method.
+`InsertStrategy`s describe how new insertions into `Circuit`s place their
+gates. Details of these strategies can be found in the
+[circuit documentation](circuits.md). The default `InsertStrategy` used in the
+above circuit is `EARLIEST` which resulted in the `X` gates sliding over to act
+at the earliest `Moment` they can. If we wanted to insert the gates so that
+they form individual `Moment`s, we could instead use the `NEW_THEN_INLINE`
+insertion strategy:
+```python
+circuit = cirq.Circuit()
+circuit.append([cirq.H(q) for q in qubits if (q.row + q.col) % 2 == 0],
+               strategy=cirq.InsertStrategy.EARLIEST)
+circuit.append([cirq.X(q) for q in qubits if (q.row + q.col) % 2 == 1],
+               strategy=cirq.InsertStrategy.NEW_THEN_INLINE)
 print(circuit)
 # prints
 # (0, 0): ───H───────
@@ -176,20 +223,8 @@ print(circuit)
 #
 # (2, 2): ───H───────
 ```
-One thing to notice here.  First `cirq.X` is a `Gate` object. There
-are many different gates supported by Cirq. A good place to look
-at gates that are defined is in [common_gates.py](/cirq/ops/common_gates.py).
-One common confusion to avoid is the difference between a gate class 
-and a gate object (which is an instantiation of a class).  The second is that gate
-objects are transformed into `Operation`s (technically `GateOperation`s)
-via either the method `on(qubit)` or, as we see for the `X` gates, via simply
-applying the gate to the qubits `(qubit)`. Here we only apply single
-qubit gates, but a similar pattern applies for multiple qubit gates with a 
-sequence of qubits as parameters.
 
-Another thing one notices about the above circuit is that the circuit has
-staggered gates. This is because the way in which we have applied the
-gates has created two `Moment`s.
+This circuit has now has staggered gates created by two `Moment`s.
 ```python
 for i, m in enumerate(circuit):
     print('Moment {}: {}'.format(i, m))
@@ -197,47 +232,14 @@ for i, m in enumerate(circuit):
 # Moment 0: H((0, 0)) and H((0, 2)) and H((1, 1)) and H((2, 0)) and H((2, 2))
 # Moment 1: X((0, 1)) and X((1, 0)) and X((1, 2)) and X((2, 1))
 ```
-Here we see that we can iterate over a `Circuit`'s `Moment`s. The reason
-that two `Moment`s were created was that the `append` method uses an
-`InsertStrategy` of `NEW_THEN_INLINE`. `InsertStrategy`s describe
-how new insertions into `Circuit`s place their gates. Details of these
-strategies can be found in the [circuit documentation](circuits.md).  If
-we wanted to insert the gates so that they form one `Moment`, we could 
-instead use the `EARLIEST` insertion strategy:
-```python
-circuit = cirq.Circuit()
-circuit.append([cirq.H.on(q) for q in qubits if (q.row + q.col) % 2 == 0],
-               strategy=cirq.InsertStrategy.EARLIEST)
-circuit.append([cirq.X(q) for q in qubits if (q.row + q.col) % 2 == 1],
-               strategy=cirq.InsertStrategy.EARLIEST)
-print(circuit)
-# (0, 0): ───H───
-#
-# (0, 1): ───X───
-#
-# (0, 2): ───H───
-#
-# (1, 0): ───X───
-#
-# (1, 1): ───H───
-#
-# (1, 2): ───X───
-#
-# (2, 0): ───H───
-#
-# (2, 1): ───X───
-#
-# (2, 2): ───H───
-```
-We now see that we have only one moment, as the `X` gates have been slid
-over to act at the earliest `Moment` they can.
+Here we see that we can iterate over a `Circuit`'s `Moment`s.
 
 ### Creating the Ansatz
 
 If you look closely at the circuit creation code above you will see that
 we applied the `append` method to both a `generator` and a `list` (recall that
 in Python one can use generator comprehensions in method calls).
-Inspecting the [code](/cirq/circuits/circuit.py) for append one sees that
+Inspecting the [code](https://github.com/quantumlib/Cirq/blob/master/cirq/circuits/circuit.py) for append one sees that
 the append method generally takes an `OP_TREE` (or a `Moment`).  What is
 an `OP_TREE`?  It is not a class but a contract.  Roughly an `OP_TREE`
 is anything that can be flattened, perhaps recursively, into a list
@@ -277,7 +279,7 @@ specified in "half turns". For a rotation about X this is the
 gate cos(half_turns * pi) I + i sin(half_turns * pi) X.
 
 There is a lot of freedom defining a variational ansatz.
-Here we will do a variation on a [QOAO strategy](https://arxiv.org/abs/1411.4028)
+Here we will do a variation on a [QAOA strategy](https://arxiv.org/abs/1411.4028)
 and define an ansatz related to the problem we are trying to solve.
 
 First we need to choose how the instances of the
@@ -291,15 +293,15 @@ instances
 ```python
 import random
 def rand2d(rows, cols):
-    return [[random.choice([+1, -1]) for _ in range(rows)] for _ in range(cols)]
+    return [[random.choice([+1, -1]) for _ in range(cols)] for _ in range(rows)]
 
 def random_instance(length):
     # transverse field terms
     h = rand2d(length, length)
     # links within a row
-    jr = rand2d(length, length - 1)
+    jr = rand2d(length - 1, length)
     # links within a column
-    jc = rand2d(length - 1, length)
+    jc = rand2d(length, length - 1)
     return (h, jr, jc)
     
 h, jr, jc = random_instance(3)
@@ -429,7 +431,7 @@ To run a simulation of the full circuit we simply create a
 simulator, and pass the circuit to the simulator.
 
 ```python
-simulator = cirq.google.XmonSimulator()
+simulator = cirq.Simulator()
 circuit = cirq.Circuit()    
 circuit.append(one_step(h, jr, jc, 0.1, 0.2, 0.3))
 circuit.append(cirq.measure(*qubits, key='x'))
@@ -503,10 +505,11 @@ Luckily for us, we have written our code so that using parameterized
 values is as simple as passing `Symbol` objects where we previously
 passed float values.
 ```python
+import sympy
 circuit = cirq.Circuit()
-alpha = cirq.Symbol('alpha')
-beta = cirq.Symbol('beta')
-gamma = cirq.Symbol('gamma')
+alpha = sympy.Symbol('alpha')
+beta = sympy.Symbol('beta')
+gamma = sympy.Symbol('gamma')
 circuit.append(one_step(h, jr, jc, alpha, beta, gamma))
 circuit.append(cirq.measure(*qubits, key='x'))
 print(circuit)
@@ -594,5 +597,16 @@ We've created a simple variational quantum algorithm using Cirq.
 Where to go next?  Perhaps you can play around with the above code
 and work on analyzing the algorithms performance.  Add new parameterized
 circuits and build an end to end program for analyzing these circuits.
-Finally a good place to learn more about features of Cirq is to read
-through the [conceptual documentation](table_of_contents.md).
+
+<!---test_substitution
+repetitions=100
+repetitions=1
+--->
+<!---test_substitution
+length=10
+length=2
+--->
+<!---test_substitution
+length=5
+length=2
+--->

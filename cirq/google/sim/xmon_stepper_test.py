@@ -16,6 +16,7 @@
 
 import itertools
 import multiprocessing.pool as pool
+import sys
 import numpy as np
 import pytest
 
@@ -510,9 +511,10 @@ def test_sample_little_endian(num_prefix_qubits):
             # We ask for ordering of most significant bit first. This is
             # easier to test against the natural order of itertools.product.
             results.append(s.sample_measurements([2, 1, 0]))
-        expected = [[list(x)] for x in
-                    list(itertools.product([False, True], repeat=3))]
-        assert results == expected
+        expecteds = [[list(x)] for x in
+                     list(itertools.product([False, True], repeat=3))]
+        for result, expected in zip(results, expecteds):
+            np.testing.assert_equal(result, expected)
 
 
 @pytest.mark.parametrize('num_prefix_qubits', (0, 2))
@@ -523,8 +525,8 @@ def test_sample_partial_indices(num_prefix_qubits):
         for index in range(3):
             for x in range(8):
                 s.reset_state(x)
-                assert s.sample_measurements([index]) == [[
-                    bool(1 & (x >> index))]]
+                np.testing.assert_equal(s.sample_measurements([index]),
+                                        [[bool(1 & (x >> index))]])
 
 
 @pytest.mark.parametrize('num_prefix_qubits', (0, 2))
@@ -535,7 +537,7 @@ def test_sample_partial_indices_order(num_prefix_qubits):
         for x in range(8):
             s.reset_state(x)
             expected = [[bool(1 & (x >> 2)), bool(1 & (x >> 1))]]
-            assert s.sample_measurements([2, 1]) == expected
+            np.testing.assert_equal(s.sample_measurements([2, 1]), expected)
 
 
 
@@ -548,7 +550,7 @@ def test_sample_partial_indices_all_orders(num_prefix_qubits):
             for x in range(8):
                 s.reset_state(x)
                 expected = [[bool(1 & (x >> p)) for p in perm]]
-                assert s.sample_measurements(perm) == expected
+                np.testing.assert_equal(s.sample_measurements(perm), expected)
 
 
 @pytest.mark.parametrize('num_prefix_qubits', (0, 2))
@@ -562,12 +564,13 @@ def test_sample(num_prefix_qubits):
         s.reset_state(initial_state)
         # Full sample only returns non-zero terms.
         for _ in range(10):
-            assert s.sample_measurements([2, 1, 0]) in [[[False, False, False]],
-                                                        [[False, True, False]]]
+            sample = s.sample_measurements([2, 1, 0])
+            assert (np.array_equal(sample, [[False, False, False]])
+                    or np.array_equal(sample, [[False, True, False]]))
         # Partial sample is correct.
         for _ in range(10):
-            assert s.sample_measurements([2]) == [[False]]
-            assert s.sample_measurements([0]) == [[False]]
+            np.testing.assert_equal(s.sample_measurements([2]), [[False]])
+            np.testing.assert_equal(s.sample_measurements([0]), [[False]])
 
 
 @pytest.mark.parametrize('num_prefix_qubits', (0, 2))
@@ -580,7 +583,7 @@ def test_sample_repetitions(num_prefix_qubits):
                 s.reset_state(x)
                 expected = [[bool(1 & (x >> p)) for p in perm]] * 3
                 result = s.sample_measurements(perm, repetitions=3)
-                assert result == expected
+                np.testing.assert_equal(result, expected)
 
 
 @pytest.mark.parametrize('num_prefix_qubits', (0, 2))
@@ -636,17 +639,20 @@ def test_non_context_manager(num_prefix_qubits):
     stepper.__exit__()
 
 
+@pytest.mark.skipif(sys.platform.startswith('win'),
+                    reason='Skipping test on Windows due '
+                    'to lack of multiprocessor support')
 @pytest.mark.parametrize(('num_prefix_qubits', 'use_processes'),
                          ((0, True), (0, False), (2, True), (2, False)))
 def test_large_circuit_unitary(num_prefix_qubits, use_processes):
-    moments = random_moments(5, 40)
+    moments = random_moments(4, 20)
     columns = []
-    with xmon_stepper.Stepper(num_qubits=5,
+    with xmon_stepper.Stepper(num_qubits=4,
                               num_prefix_qubits=num_prefix_qubits,
                               initial_state=0,
                               min_qubits_before_shard=0,
                               use_processes=use_processes) as s:
-        for initial_state in range(2 ** 5):
+        for initial_state in range(2 ** 4):
             s.reset_state(initial_state)
             for moment in moments:
                 phase_map = {}
@@ -661,7 +667,7 @@ def test_large_circuit_unitary(num_prefix_qubits, use_processes):
             columns.append(s.current_state)
     unitary = np.array(columns).transpose()
     np.testing.assert_almost_equal(
-        np.dot(unitary, np.conj(unitary.T)), np.eye(2 ** 5), decimal=6)
+        np.dot(unitary, np.conj(unitary.T)), np.eye(2 ** 4), decimal=6)
 
 
 def random_moments(num_qubits, num_ops):
