@@ -31,6 +31,17 @@ docs/generated
 # From pytest-benchmark
 *.benchmarks/
 
+# Ignore generated Jupyter files
+*.ipynb_checkpoints/
+
+# Ignore Bazel files
+/bazel-*
+
+# Default pycharm virtual env
+.venv/
+
+
+
 /pyext-myrustlib/target/
 /pyext-myrustlib/**/*.rs.bk
 /pyext-myrustlib/Cargo.lock
@@ -43,4 +54,3 @@ docs/generated
 __pycache__
 myrustlib.so
 /pyext-myrustlib/.gitignore
-

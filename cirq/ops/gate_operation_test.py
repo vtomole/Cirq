@@ -97,6 +97,30 @@ def test_gate_operation_approx_eq():
                           atol=1e-6)
 
 
+def test_gate_operation_qid_shape():
+
+    class ShapeGate(cirq.Gate):
+
+        def _qid_shape_(self):
+            return (1, 2, 3, 4)
+
+    op = ShapeGate().on(*cirq.LineQid.for_qid_shape((1, 2, 3, 4)))
+    assert cirq.qid_shape(op) == (1, 2, 3, 4)
+    assert cirq.num_qubits(op) == 4
+
+
+def test_gate_operation_num_qubits():
+
+    class NumQubitsGate(cirq.Gate):
+
+        def _num_qubits_(self):
+            return 4
+
+    op = NumQubitsGate().on(*cirq.LineQubit.range(4))
+    assert cirq.qid_shape(op) == (2, 2, 2, 2)
+    assert cirq.num_qubits(op) == 4
+
+
 def test_gate_operation_pow():
     Y = cirq.Y
     q = cirq.NamedQubit('q')
@@ -112,11 +136,6 @@ def test_with_qubits_and_transform_qubits():
                                ) == cirq.GateOperation(g, [cirq.LineQubit(0),
                                                            cirq.LineQubit(-1),
                                                            cirq.LineQubit(-2)])
-
-    # The gate's constraints should be applied when changing the qubits.
-    with pytest.raises(ValueError):
-        _ = cirq.H(cirq.LineQubit(0)).with_qubits(cirq.LineQubit(0),
-                                                  cirq.LineQubit(1))
 
 
 def test_extrapolate():
@@ -258,10 +277,43 @@ def test_op_gate_of_type():
     assert cirq.op_gate_of_type(op, cirq.YPowGate) is None
 
     class NonGateOperation(cirq.Operation):
-        def qubits(self) :
+
+        def qubits(self):
             pass
 
         def with_qubits(self, *new_qubits):
             pass
 
-    assert cirq.op_gate_of_type(NonGateOperation(), cirq.X) is None
+    assert cirq.op_gate_of_type(NonGateOperation(), cirq.XPowGate) is None
+
+
+def test_op_gate_isinstance():
+    a = cirq.NamedQubit('a')
+    op = cirq.X(a)
+    assert cirq.op_gate_isinstance(op, cirq.XPowGate)
+    assert not cirq.op_gate_isinstance(op, cirq.YPowGate)
+
+    class NonGateOperation(cirq.Operation):
+
+        def qubits(self):
+            pass
+
+        def with_qubits(self, *new_qubits):
+            pass
+
+    assert not cirq.op_gate_isinstance(NonGateOperation(), cirq.XPowGate)
+    assert not cirq.op_gate_isinstance(NonGateOperation(), NonGateOperation)
+
+
+def test_gate_on_operation_besides_gate_operation():
+    a, b = cirq.LineQubit.range(2)
+
+    assert cirq.op_gate_of_type(
+        -1j * cirq.X(a) * cirq.Y(b),
+        cirq.DensePauliString) == -1j * cirq.DensePauliString('XY')
+
+    assert cirq.op_gate_isinstance(-1j * cirq.X(a) * cirq.Y(b),
+                                   cirq.DensePauliString)
+
+    assert not cirq.op_gate_isinstance(-1j * cirq.X(a) * cirq.Y(b),
+                                       cirq.XPowGate)

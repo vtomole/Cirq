@@ -11,13 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from typing import Mapping, Optional, Union
+from collections import defaultdict
+from typing import (Mapping, Optional, Tuple, Union, List, FrozenSet,
+                    DefaultDict)
 
 import numpy as np
 
 from cirq import protocols, value
-from cirq.ops import raw_types
+from cirq.linalg import operator_spaces
+from cirq.ops import identity, raw_types, pauli_gates, pauli_string
+from cirq.ops.pauli_string import PauliString, _validate_qubit_mapping
+from cirq.value.linear_dict import _format_terms
+
+UnitPauliStringT = FrozenSet[Tuple[raw_types.Qid, pauli_gates.Pauli]]
+PauliSumLike = Union[int, float, complex, PauliString, 'PauliSum', pauli_string.
+                     SingleQubitPauliStringGateOperation]
 
 
 class LinearCombinationOfGates(value.LinearDict[raw_types.Gate]):
@@ -30,7 +38,7 @@ class LinearCombinationOfGates(value.LinearDict[raw_types.Gate]):
 
     represents the linear operator
 
-        A = b1 G1 + b2 G2 + ... + bn * Gn
+        A = b1 G1 + b2 G2 + ... + bn Gn
 
     Note that A may not be unitary or even normal.
 
@@ -91,6 +99,35 @@ class LinearCombinationOfGates(value.LinearDict[raw_types.Gate]):
             other = other.wrap_in_linear_combination()
         return super().__isub__(other)
 
+    def __pow__(self, exponent: int) -> 'LinearCombinationOfGates':
+        if not isinstance(exponent, int):
+            return NotImplemented
+        if exponent < 0:
+            return NotImplemented
+        if self.num_qubits() != 1:
+            return NotImplemented
+        pauli_basis = {
+            identity.I,
+            pauli_gates.X,
+            pauli_gates.Y,
+            pauli_gates.Z,
+        }
+        if not set(self.keys()).issubset(pauli_basis):
+            return NotImplemented
+
+        ai = self[identity.I]
+        ax = self[pauli_gates.X]
+        ay = self[pauli_gates.Y]
+        az = self[pauli_gates.Z]
+        bi, bx, by, bz = operator_spaces.pow_pauli_combination(
+            ai, ax, ay, az, exponent)
+        return LinearCombinationOfGates({
+            identity.I: bi,
+            pauli_gates.X: bx,
+            pauli_gates.Y: by,
+            pauli_gates.Z: bz
+        })
+
     def matrix(self) -> np.ndarray:
         """Reconstructs matrix of self using unitaries of underlying gates.
 
@@ -111,3 +148,384 @@ class LinearCombinationOfGates(value.LinearDict[raw_types.Gate]):
         for gate, coefficient in self.items():
             result += protocols.pauli_expansion(gate) * coefficient
         return result
+
+
+class LinearCombinationOfOperations(value.LinearDict[raw_types.Operation]):
+    """Represents operator defined by linear combination of gate operations.
+
+    If G1, ..., Gn are gate operations, {q1_1, ..., q1_k1}, {q2_1, ..., q2_k2},
+    ..., {qn_1, ..., qn_kn} are (not necessarily disjoint) sets of qubits and
+    b1, b2, ..., bn are complex numbers, then
+
+        LinearCombinationOfOperations({
+            G1(q1_1, ..., q1_k1): b1,
+            G2(q2_1, ..., q2_k2): b2,
+            ...,
+            Gn(qn_1, ..., qn_kn): bn})
+
+    represents the linear operator
+
+        A = b1 G1(q1_1, ..., q1_k1) +
+          + b2 G2(q2_1, ..., q2_k2) +
+          + ... +
+          + bn Gn(qn_1, ..., qn_kn)
+
+    where in each term qubits not explicitly listed are assumed to be acted on
+    by the identity operator. Note that A may not be unitary or even normal.
+    """
+
+    def __init__(self,
+                 terms: Mapping[raw_types.Operation, value.Scalar]) -> None:
+        """Initializes linear combination from a collection of terms.
+
+        Args:
+            terms: Mapping of gate operations to coefficients in the linear
+                combination being initialized.
+        """
+        super().__init__(terms, validator=self._is_compatible)
+
+    def _is_compatible(self, operation: raw_types.Operation) -> bool:
+        return isinstance(operation, raw_types.Operation)
+
+    @property
+    def qubits(self) -> Tuple[raw_types.Qid, ...]:
+        """Returns qubits acted on self."""
+        if not self:
+            return ()
+        qubit_sets = [set(op.qubits) for op in self.keys()]
+        all_qubits = set.union(*qubit_sets)
+        return tuple(sorted(all_qubits))
+
+    def __pow__(self, exponent: int) -> 'LinearCombinationOfOperations':
+        if not isinstance(exponent, int):
+            return NotImplemented
+        if exponent < 0:
+            return NotImplemented
+        if len(self.qubits) != 1:
+            return NotImplemented
+        qubit = self.qubits[0]
+        i = identity.I(qubit)
+        x = pauli_gates.X(qubit)
+        y = pauli_gates.Y(qubit)
+        z = pauli_gates.Z(qubit)
+        pauli_basis = {i, x, y, z}
+        if not set(self.keys()).issubset(pauli_basis):
+            return NotImplemented
+
+        ai, ax, ay, az = self[i], self[x], self[y], self[z]
+        bi, bx, by, bz = operator_spaces.pow_pauli_combination(
+            ai, ax, ay, az, exponent)
+        return LinearCombinationOfOperations({i: bi, x: bx, y: by, z: bz})
+
+    def matrix(self) -> np.ndarray:
+        """Reconstructs matrix of self using unitaries of underlying operations.
+
+        Raises:
+            TypeError: if any of the gates in self does not provide a unitary.
+        """
+        num_qubits = len(self.qubits)
+        num_dim = 2**num_qubits
+        qubit_to_axis = {q: i for i, q in enumerate(self.qubits)}
+        result = np.zeros((2,) * (2 * num_qubits), dtype=np.complex128)
+        for op, coefficient in self.items():
+            identity = np.eye(num_dim,
+                              dtype=np.complex128).reshape(result.shape)
+            workspace = np.empty_like(identity)
+            axes = tuple(qubit_to_axis[q] for q in op.qubits)
+            u = protocols.apply_unitary(
+                op, protocols.ApplyUnitaryArgs(identity, workspace, axes))
+            result += coefficient * u
+        return result.reshape((num_dim, num_dim))
+
+    def _pauli_expansion_(self) -> value.LinearDict[str]:
+        """Computes Pauli expansion of self from Pauli expansions of terms."""
+
+        def extend_term(pauli_names: str, qubits: Tuple[raw_types.Qid, ...],
+                        all_qubits: Tuple[raw_types.Qid, ...]) -> str:
+            """Extends Pauli product on qubits to product on all_qubits."""
+            assert len(pauli_names) == len(qubits)
+            qubit_to_pauli_name = dict(zip(qubits, pauli_names))
+            return ''.join(qubit_to_pauli_name.get(q, 'I') for q in all_qubits)
+
+        def extend(expansion: value.LinearDict[str],
+                   qubits: Tuple[raw_types.Qid, ...],
+                   all_qubits: Tuple[raw_types.Qid, ...]
+                  ) -> value.LinearDict[str]:
+            """Extends Pauli expansion on qubits to expansion on all_qubits."""
+            return value.LinearDict({
+                extend_term(p, qubits, all_qubits): c
+                for p, c in expansion.items()
+            })
+
+        result = value.LinearDict({})  # type: value.LinearDict[str]
+        for op, coefficient in self.items():
+            expansion = protocols.pauli_expansion(op)
+            extended_expansion = extend(expansion, op.qubits, self.qubits)
+            result += extended_expansion * coefficient
+        return result
+
+
+def _is_linear_dict_of_unit_pauli_string(
+        linear_dict: value.LinearDict[UnitPauliStringT]) -> bool:
+    if not isinstance(linear_dict, value.LinearDict):
+        return False
+    for k in linear_dict.keys():
+        if not isinstance(k, frozenset):
+            return False
+        for qid, pauli in k:
+            if not isinstance(qid, raw_types.Qid):
+                return False
+            if not isinstance(pauli, pauli_gates.Pauli):
+                return False
+
+    return True
+
+
+def _pauli_string_from_unit(unit: UnitPauliStringT,
+                            coefficient: Union[int, float, complex] = 1):
+    return PauliString(qubit_pauli_map=dict(unit), coefficient=coefficient)
+
+
+@value.value_equality(approximate=True)
+class PauliSum:
+    """Represents operator defined by linear combination of PauliStrings.
+
+    Since PauliStrings store their own coefficients, this class
+    does not implement the LinearDict interface. Instead, you can
+    add and subtract terms and then iterate over the resulting
+    (simplified) expression.
+
+    Under the hood, this class is backed by a LinearDict with coefficient-less
+    PauliStrings as keys. PauliStrings are reconstructed on-the-fly during
+    iteration.
+    """
+
+    def __init__(
+            self,
+            linear_dict: Optional[value.LinearDict[UnitPauliStringT]] = None):
+        if linear_dict is None:
+            linear_dict = value.LinearDict()
+        if not _is_linear_dict_of_unit_pauli_string(linear_dict):
+            raise ValueError(
+                "PauliSum constructor takes a LinearDict[UnitPauliStringT]. "
+                "Consider using PauliSum.from_pauli_strings() or adding and "
+                "subtracting PauliStrings")
+        self._linear_dict = linear_dict
+
+    def _value_equality_values_(self):
+        return self._linear_dict
+
+    @staticmethod
+    def wrap(val: PauliSumLike) -> 'PauliSum':
+        if isinstance(val, PauliSum):
+            return val
+        return PauliSum() + val
+
+    @classmethod
+    def from_pauli_strings(cls, terms: Union[PauliString, List[PauliString]]) \
+            -> 'PauliSum':
+        if isinstance(terms, PauliString):
+            terms = [terms]
+        termdict = defaultdict(
+            lambda: 0)  # type: DefaultDict[UnitPauliStringT, value.Scalar]
+        for pstring in terms:
+            key = frozenset(pstring._qubit_pauli_map.items())
+            termdict[key] += pstring.coefficient
+        return cls(linear_dict=value.LinearDict(termdict))
+
+    @property
+    def qubits(self) -> Tuple[raw_types.Qid, ...]:
+        qs = {q for k in self._linear_dict.keys() for q, _ in k}
+        return tuple(sorted(qs))
+
+    def copy(self) -> 'PauliSum':
+        factory = type(self)
+        return factory(self._linear_dict.copy())
+
+    def expectation_from_wavefunction(self,
+                                      state: np.ndarray,
+                                      qubit_map: Mapping[raw_types.Qid, int],
+                                      *,
+                                      check_preconditions: bool = True
+                                     ) -> float:
+        """Evaluate the expectation of this PauliSum given a wavefunction.
+
+        See `PauliString.expectation_from_wavefunction`.
+
+        Args:
+            state: An array representing a valid wavefunction.
+            qubit_map: A map from all qubits used in this PauliSum to the
+                indices of the qubits that `state` is defined over.
+            check_preconditions: Whether to check that `state` represents a
+                valid wavefunction.
+
+        Returns:
+            The expectation value of the input state.
+        """
+        if any(abs(p.coefficient.imag) > 0.0001 for p in self):
+            raise NotImplementedError(
+                "Cannot compute expectation value of a non-Hermitian "
+                "PauliString <{}>. Coefficient must be real.".format(self))
+
+        # FIXME: Avoid enforce specific complex type. This is necessary to
+        # prevent an `apply_unitary` bug (Issue #2041).
+        if state.dtype.kind != 'c':
+            raise TypeError("Input state dtype must be np.complex64 or "
+                            "np.complex128")
+
+        size = state.size
+        num_qubits = size.bit_length() - 1
+        _validate_qubit_mapping(qubit_map, self.qubits, num_qubits)
+
+        if len(state.shape) != 1 and state.shape != (2,) * num_qubits:
+            raise ValueError("Input array does not represent a wavefunction "
+                             "with shape `(2 ** n,)` or `(2, ..., 2)`.")
+
+        if check_preconditions:
+            # HACK: avoid circular import
+            from cirq.sim.wave_function import validate_normalized_state
+            validate_normalized_state(state=state,
+                                      qid_shape=(2,) * num_qubits,
+                                      dtype=state.dtype)
+        return sum(
+            p._expectation_from_wavefunction_no_validation(state, qubit_map)
+            for p in self)
+
+    def expectation_from_density_matrix(self,
+                                        state: np.ndarray,
+                                        qubit_map: Mapping[raw_types.Qid, int],
+                                        *,
+                                        check_preconditions: bool = True
+                                       ) -> float:
+        """Evaluate the expectation of this PauliSum given a density matrix.
+
+        See `PauliString.expectation_from_density_matrix`.
+
+        Args:
+            state: An array representing a valid  density matrix.
+            qubit_map: A map from all qubits used in this PauliSum to the
+                indices of the qubits that `state` is defined over.
+            check_preconditions: Whether to check that `state` represents a
+                valid density matrix.
+
+        Returns:
+            The expectation value of the input state.
+        """
+        if any(abs(p.coefficient.imag) > 0.0001 for p in self):
+            raise NotImplementedError(
+                "Cannot compute expectation value of a non-Hermitian "
+                "PauliString <{}>. Coefficient must be real.".format(self))
+
+        # FIXME: Avoid enforce specific complex type. This is necessary to
+        # prevent an `apply_unitary` bug (Issue #2041).
+        if state.dtype.kind != 'c':
+            raise TypeError("Input state dtype must be np.complex64 or "
+                            "np.complex128")
+
+        size = state.size
+        num_qubits = int(np.sqrt(size)).bit_length() - 1
+        _validate_qubit_mapping(qubit_map, self.qubits, num_qubits)
+
+        dim = int(np.sqrt(size))
+        if state.shape != (dim, dim) and state.shape != (2, 2) * num_qubits:
+            raise ValueError("Input array does not represent a density matrix "
+                             "with shape `(2 ** n, 2 ** n)` or `(2, ..., 2)`.")
+
+        if check_preconditions:
+            # HACK: avoid circular import
+            from cirq.sim.density_matrix_utils import to_valid_density_matrix
+            # Do not enforce reshaping if the state all axes are dimension 2.
+            _ = to_valid_density_matrix(density_matrix_rep=state.reshape(
+                dim, dim),
+                                        num_qubits=num_qubits,
+                                        dtype=state.dtype)
+        return sum(
+            p._expectation_from_density_matrix_no_validation(state, qubit_map)
+            for p in self)
+
+    def __iter__(self):
+        for vec, coeff in self._linear_dict.items():
+            yield _pauli_string_from_unit(vec, coeff)
+
+    def __len__(self) -> int:
+        return len(self._linear_dict)
+
+    def __iadd__(self, other):
+        if isinstance(other, (float, int, complex)):
+            other = PauliSum.from_pauli_strings(
+                [PauliString(coefficient=other)])
+        elif isinstance(other, PauliString):
+            other = PauliSum.from_pauli_strings([other])
+
+        if not isinstance(other, PauliSum):
+            return NotImplemented
+
+        self._linear_dict += other._linear_dict
+        return self
+
+    def __add__(self, other):
+        if not isinstance(other, (float, int, complex, PauliString, PauliSum)):
+            return NotImplemented
+        result = self.copy()
+        result += other
+        return result
+
+    def __radd__(self, other):
+        return self.__add__(other)
+
+    def __rsub__(self, other):
+        return -self.__sub__(other)
+
+    def __isub__(self, other):
+        if isinstance(other, (float, int, complex)):
+            other = PauliSum.from_pauli_strings(
+                [PauliString(coefficient=other)])
+        if isinstance(other, PauliString):
+            other = PauliSum.from_pauli_strings([other])
+
+        if not isinstance(other, PauliSum):
+            return NotImplemented
+
+        self._linear_dict -= other._linear_dict
+        return self
+
+    def __sub__(self, other):
+        if not isinstance(other, (float, int, complex, PauliString, PauliSum)):
+            return NotImplemented
+        result = self.copy()
+        result -= other
+        return result
+
+    def __neg__(self):
+        factory = type(self)
+        return factory(-self._linear_dict)
+
+    def __imul__(self, a: value.Scalar):
+        self._linear_dict *= a
+        return self
+
+    def __mul__(self, a: value.Scalar):
+        result = self.copy()
+        result *= a
+        return result
+
+    def __rmul__(self, a: value.Scalar):
+        return self.__mul__(a)
+
+    def __truediv__(self, a: value.Scalar):
+        return self.__mul__(1 / a)
+
+    def __bool__(self) -> bool:
+        return bool(self._linear_dict)
+
+    def __repr__(self) -> str:
+        class_name = self.__class__.__name__
+        return 'cirq.{}({!r})'.format(class_name, self._linear_dict)
+
+    def __format__(self, format_spec: str) -> str:
+        terms = [(_pauli_string_from_unit(v), self._linear_dict[v])
+                 for v in self._linear_dict.keys()]
+        return _format_terms(terms=terms, format_spec=format_spec)
+
+    def __str__(self):
+        return self.__format__('.3f')

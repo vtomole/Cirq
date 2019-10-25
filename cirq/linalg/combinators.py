@@ -20,20 +20,20 @@ from typing import Union, Type
 import numpy as np
 
 
-def kron(*matrices: np.ndarray) -> np.ndarray:
-    """Computes the kronecker product of a sequence of matrices.
+def kron(*factors: Union[np.ndarray, complex, float]) -> np.ndarray:
+    """Computes the kronecker product of a sequence of values.
 
     A *args version of lambda args: functools.reduce(np.kron, args).
 
     Args:
-        *matrices: The matrices and controls to combine with the kronecker
-            product.
+        *factors: The matrices, tensors, and/or scalars to combine together
+            using np.kron.
 
     Returns:
-        The resulting matrix.
+        The kronecker product of all the inputs.
     """
     product = np.eye(1)
-    for m in matrices:
+    for m in factors:
         product = np.kron(product, m)
     return np.array(product)
 
@@ -41,11 +41,12 @@ def kron(*matrices: np.ndarray) -> np.ndarray:
 CONTROL_TAG = np.array([[float('nan'), 0], [0, 1]])  # For kron_with_controls
 
 
-def kron_with_controls(*matrices: np.ndarray) -> np.ndarray:
-    """Computes the kronecker product of a sequence of matrices and controls.
+def kron_with_controls(*factors: Union[np.ndarray, complex, float]
+                      ) -> np.ndarray:
+    """Computes the kronecker product of a sequence of values and control tags.
 
-    Use linalg.CONTROL_TAG to represent controls. Any entry of the output
-    matrix corresponding to a situation where the control is not satisfied will
+    Use `cirq.CONTROL_TAG` to represent controls. Any entry of the output
+    corresponding to a situation where the control is not satisfied will
     be overwritten by identity matrix elements.
 
     The control logic works by imbuing NaN with the meaning "failed to meet one
@@ -58,15 +59,30 @@ def kron_with_controls(*matrices: np.ndarray) -> np.ndarray:
     propagate error-indicating NaNs from its input to its output in the way
     you'd otherwise expect.
 
+    Examples:
+
+        ```
+        result = cirq.kron_with_controls(
+            cirq.CONTROL_TAG,
+            cirq.unitary(cirq.X))
+        print(result.astype(np.int32))
+
+        # prints:
+        # [[1 0 0 0]
+        #  [0 1 0 0]
+        #  [0 0 0 1]
+        #  [0 0 1 0]]
+        ```
+
     Args:
-        *matrices: The matrices and controls to combine with the kronecker
-            product.
+        *factors: The matrices, tensors, scalars, and/or control tags to combine
+            together using np.kron.
 
     Returns:
         The resulting matrix.
     """
 
-    product = kron(*matrices)
+    product = kron(*factors)
 
     # The NaN from CONTROL_TAG spreads to everywhere identity belongs.
     for i in range(product.shape[0]):
@@ -78,10 +94,12 @@ def kron_with_controls(*matrices: np.ndarray) -> np.ndarray:
 
 
 def dot(*values: Union[float, complex, np.ndarray]
-        ) -> Union[float, complex, np.ndarray]:
+       ) -> Union[float, complex, np.ndarray]:
     """Computes the dot/matrix product of a sequence of values.
 
-    A *args version of np.linalg.multi_dot.
+    Performs the computation in serial order without regard to the matrix
+    sizes.  If you are using this for matrices of large and differing sizes,
+    consider using np.lingalg.multi_dot for better performance.
 
     Args:
         *values: The values to combine with the dot/matrix product.
@@ -89,11 +107,17 @@ def dot(*values: Union[float, complex, np.ndarray]
     Returns:
         The resulting value or matrix.
     """
-    if len(values) == 1:
+
+    if len(values) <= 1:
+        if len(values) == 0:
+            raise ValueError("cirq.dot must be called with arguments")
         if isinstance(values[0], np.ndarray):
             return np.array(values[0])
         return values[0]
-    return np.linalg.multi_dot(values)
+    result = values[0]
+    for value in values[1:]:
+        result = np.dot(result, value)
+    return result
 
 
 def _merge_dtypes(dtype1: Type[np.number], dtype2: Type[np.number]

@@ -14,28 +14,31 @@
 
 """Utility classes for representing QASM."""
 
-from typing import Set  # pylint: disable=unused-import
-from typing import (
-    Callable, Dict, Optional, Sequence, Tuple, Union
-)
+from typing import (Callable, Dict, Optional, Sequence, Set, Tuple, Union,
+                    TYPE_CHECKING)
 
 import re
 import numpy as np
 
 from cirq import ops, linalg, protocols, value
 
+if TYPE_CHECKING:
+    import cirq
 
+
+@value.value_equality(approximate=True)
 class QasmUGate(ops.SingleQubitGate):
-    def __init__(self, lmda, theta, phi) -> None:
+
+    def __init__(self, theta, phi, lmda) -> None:
         """A QASM gate representing any single qubit unitary with a series of
         three rotations, Z, Y, and Z.
 
         The angles are normalized to the range [0, 2) half_turns.
 
         Args:
-            lmda: Half turns to rotate about Z (applied first).
-            theta: Half turns to rotate about Y.
+            theta: Half turns to rotate about Y (applied second).
             phi: Half turns to rotate about Z (applied last).
+            lmda: Half turns to rotate about Z (applied first).
         """
         self.lmda = lmda % 2
         self.theta = theta % 2
@@ -45,20 +48,21 @@ class QasmUGate(ops.SingleQubitGate):
     def from_matrix(mat: np.array) -> 'QasmUGate':
         pre_phase, rotation, post_phase = (
             linalg.deconstruct_single_qubit_matrix_into_angles(mat))
-        return QasmUGate(pre_phase/np.pi, rotation/np.pi, post_phase/np.pi)
+        return QasmUGate(
+            rotation / np.pi,
+            post_phase / np.pi,
+            pre_phase / np.pi,
+        )
 
-    def _qasm_(self,
-               qubits: Tuple[ops.Qid, ...],
-               args: protocols.QasmArgs) -> str:
+    def _qasm_(self, qubits: Tuple[ops.Qid, ...], args: 'cirq.QasmArgs') -> str:
         args.validate_version('2.0')
         return args.format(
             'u3({0:half_turns},{1:half_turns},{2:half_turns}) {3};\n',
             self.theta, self.phi, self.lmda, qubits[0])
 
     def __repr__(self) -> str:
-        return 'cirq.QasmUGate({}, {}, {})'.format(self.lmda,
-                                                   self.theta,
-                                                   self.phi)
+        return 'cirq.QasmUGate({}, {}, {})'.format(self.theta, self.phi,
+                                                   self.lmda)
 
     def _unitary_(self) -> np.ndarray:
         # Source: https://arxiv.org/abs/1707.03429 (equation 2)
@@ -68,6 +72,9 @@ class QasmUGate(ops.SingleQubitGate):
             ops.Rz(self.lmda * np.pi),
         ]
         return linalg.dot(*map(protocols.unitary, operations))
+
+    def _value_equality_values_(self):
+        return self.lmda, self.theta, self.phi
 
 
 @value.value_equality
@@ -97,13 +104,13 @@ class QasmTwoQubitGate(ops.TwoQubitGate):
         Returns:
             A QasmTwoQubitGate implementing the matrix.
         """
-        kak = linalg.kak_decomposition(mat ,atol=atol)
+        kak = linalg.kak_decomposition(mat, atol=atol)
         return QasmTwoQubitGate(kak)
 
     def _unitary_(self):
         return protocols.unitary(self.kak)
 
-    def _decompose_(self, qubits: Sequence[ops.Qid]) -> ops.OP_TREE:
+    def _decompose_(self, qubits: Sequence['cirq.Qid']) -> 'cirq.OP_TREE':
         q0, q1 = qubits
         x, y, z = self.kak.interaction_coefficients
         a = x * -2 / np.pi + 0.5
@@ -136,17 +143,16 @@ class QasmOutput:
     valid_id_re = re.compile(r'[a-z][a-zA-Z0-9_]*\Z')
 
     def __init__(self,
-                 operations: ops.OP_TREE,
+                 operations: 'cirq.OP_TREE',
                  qubits: Tuple[ops.Qid, ...],
                  header: str = '',
                  precision: int = 10,
                  version: str = '2.0') -> None:
-        self.operations = tuple(ops.flatten_op_tree(operations))
+        self.operations = tuple(ops.flatten_to_ops(operations))
         self.qubits = qubits
         self.header = header
-        self.measurements = tuple(
-                op for op in self.operations if
-                ops.op_gate_of_type(op, ops.MeasurementGate)) # type: ignore
+        self.measurements = tuple(op for op in self.operations
+                                  if isinstance(op.gate, ops.MeasurementGate))
         meas_key_id_map, meas_comments = self._generate_measurement_ids()
         self.meas_comments = meas_comments
         qubit_id_map = self._generate_qubit_ids()
@@ -189,6 +195,7 @@ class QasmOutput:
         with open(path, 'w') as f:
             def write(s: str) -> None:
                 f.write(s)
+
             self._write_qasm(write)
 
     def __str__(self) -> str:
@@ -229,10 +236,11 @@ class QasmOutput:
         # Register definitions
         # Qubit registers
         output('// Qubits: [{}]\n'.format(', '.join(map(str, self.qubits))))
-        output('qreg q[{}];\n'.format(len(self.qubits)))
+        if len(self.qubits) > 0:
+            output('qreg q[{}];\n'.format(len(self.qubits)))
         # Classical registers
         # Pick an id for the creg that will store each measurement
-        already_output_keys = set()  # type: Set[str]
+        already_output_keys: Set[str] = set()
         for meas in self.measurements:
             key = protocols.measurement_key(meas)
             if key in already_output_keys:
@@ -250,11 +258,11 @@ class QasmOutput:
         # Operations
         self._write_operations(self.operations, output, output_line_gap)
 
-    def _write_operations(self,
-                          op_tree: ops.OP_TREE,
+    def _write_operations(self, op_tree: 'cirq.OP_TREE',
                           output: Callable[[str], None],
                           output_line_gap: Callable[[int], None]) -> None:
-        def keep(op: ops.Operation) -> bool:
+
+        def keep(op: 'cirq.Operation') -> bool:
             return protocols.qasm(op, args=self.args, default=None) is not None
 
         def fallback(op):

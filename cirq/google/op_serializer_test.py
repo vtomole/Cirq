@@ -48,6 +48,11 @@ class GateWithMethod(cirq.SingleQubitGate):
         return self._val
 
 
+class SubclassGate(GateWithAttribute):
+
+    pass
+
+
 def get_val(gate):
     return gate.get_val()
 
@@ -173,6 +178,23 @@ def test_to_proto_callable(val_type, val, arg_value):
     assert result == expected
 
 
+def test_to_proto_gate_predicate():
+    serializer = cg.GateOpSerializer(
+        gate_type=GateWithAttribute,
+        serialized_gate_id='my_gate',
+        args=[
+            cg.SerializingArg(serialized_name='my_val',
+                              serialized_type=float,
+                              gate_getter='val')
+        ],
+        can_serialize_predicate=lambda x: x.val == 1)
+    q = cirq.GridQubit(1, 2)
+    assert serializer.to_proto_dict(GateWithAttribute(0)(q)) is None
+    assert serializer.to_proto_dict(GateWithAttribute(1)(q)) is not None
+    assert not serializer.can_serialize_gate(GateWithAttribute(0)(q))
+    assert not serializer.can_serialize_gate(GateWithAttribute(1)(q))
+
+
 def test_to_proto_gate_mismatch():
     serializer = cg.GateOpSerializer(gate_type=GateWithProperty,
                                      serialized_gate_id='my_gate',
@@ -263,7 +285,7 @@ def test_to_proto_not_required_ok():
         'args': {
             'my_val': {
                 'arg_value': {
-                    'float_value': 0.1
+                    'float_value': 0.125
                 }
             }
         },
@@ -273,13 +295,17 @@ def test_to_proto_not_required_ok():
     }
 
     q = cirq.GridQubit(1, 2)
-    assert serializer.to_proto_dict(GateWithProperty(0.1)(q)) == expected
+    assert serializer.to_proto_dict(GateWithProperty(0.125)(q)) == expected
 
 
-@pytest.mark.parametrize(
-    ('val_type', 'val'),
-    ((float, 's'), (str, 1.0), (sympy.Symbol, 1.0), (List[bool], [1.0]),
-     (List[bool], 'a'), (List[bool], (1.0,))))
+@pytest.mark.parametrize(('val_type', 'val'), (
+    (float, 's'),
+    (str, 1.0),
+    (sympy.Symbol, 1.0),
+    (List[bool], [1.0]),
+    (List[bool], 'a'),
+    (List[bool], (1.0,)),
+))
 def test_to_proto_type_mismatch(val_type, val):
     serializer = cg.GateOpSerializer(gate_type=GateWithProperty,
                                      serialized_gate_id='my_gate',
@@ -292,3 +318,17 @@ def test_to_proto_type_mismatch(val_type, val):
     q = cirq.GridQubit(1, 2)
     with pytest.raises(ValueError, match=str(type(val))):
         serializer.to_proto_dict(GateWithProperty(val)(q))
+
+
+def test_can_serialize_gate_subclass():
+    serializer = cg.GateOpSerializer(
+        gate_type=GateWithAttribute,
+        serialized_gate_id='my_gate',
+        args=[
+            cg.SerializingArg(serialized_name='my_val',
+                              serialized_type=float,
+                              gate_getter='val')
+        ],
+        can_serialize_predicate=lambda x: x.val == 1)
+    assert serializer.can_serialize_gate(SubclassGate(1))
+    assert not serializer.can_serialize_gate(SubclassGate(0))
