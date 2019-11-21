@@ -202,6 +202,7 @@ SHOULDNT_BE_SERIALIZED = [
     'GateOpDeserializer',
     'GateOpSerializer',
     'GreedySequenceSearchStrategy',
+    'GreedySequenceSearchStrategy',
     'SerializingArg',
     'Unique',
 

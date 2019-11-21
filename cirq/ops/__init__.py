@@ -69,6 +69,15 @@ from cirq.ops.common_gates import (
 from cirq.ops.controlled_gate import (
     ControlledGate,)
 
+from cirq.ops.cphase_gates import (
+    CZ00,
+    CZ01,
+    CZ10,
+    CZPowGate00,
+    CZPowGate01,
+    CZPowGate10,
+)
+
 from cirq.ops.eigen_gate import (
     EigenGate,)
 
