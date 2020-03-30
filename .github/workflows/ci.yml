@@ -102,7 +102,7 @@ jobs:
           pip install -r dev_tools/conf/pip-list-dev-tools.txt
           git config --global user.name ${GITHUB_ACTOR}
       - name: Pytest check
-        run: check/pytest --ignore=cirq/contrib --benchmark-skip --actually-quiet
+        run: check/pytest --ignore=cirq/contrib --benchmark-skip
   windows:
     name: Pytest Windows
     runs-on: windows-latest
