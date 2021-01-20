@@ -40,6 +40,7 @@ with _import.delay_import('cirq.protocols'):
 from cirq import (
     # Core
     circuits,
+    schedules,
     # Optimize and run
     optimizers,
     work,
@@ -343,6 +344,12 @@ from cirq.qis import (
     validate_normalized_state_vector,
     validate_qid_shape,
     von_neumann_entropy,
+)
+
+from cirq.schedules import (	
+    moment_by_moment_schedule,	
+    Schedule,	
+    ScheduledOperation,	
 )
 
 from cirq.sim import (

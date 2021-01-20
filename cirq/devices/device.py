@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import abc
+from cirq.value import Duration
 from typing import TYPE_CHECKING, Optional, AbstractSet
 
 if TYPE_CHECKING:
@@ -20,7 +21,7 @@ if TYPE_CHECKING:
 
 
 class Device(metaclass=abc.ABCMeta):
-    """Hardware constraints for validating circuits."""
+    """Hardware constraints for validating circuits and schedules"""
 
     def qubit_set(self) -> Optional[AbstractSet['cirq.Qid']]:
         """Returns a set or frozenset of qubits on the device, if possible.
@@ -46,6 +47,10 @@ class Device(metaclass=abc.ABCMeta):
         # Default to the qubits being unknown.
         return None
 
+    @abc.abstractmethod	
+    def duration_of(self, operation: 'cirq.Operation') -> Duration:	
+        pass
+
     def decompose_operation(self, operation: 'cirq.Operation') -> 'cirq.OP_TREE':
         """Returns a device-valid decomposition for the given operation.
 
@@ -65,6 +70,21 @@ class Device(metaclass=abc.ABCMeta):
             ValueError: The operation isn't valid for this device.
         """
 
+    @abc.abstractmethod	
+    def validate_scheduled_operation(	
+            self,	
+            schedule: 'cirq.Schedule',	
+            scheduled_operation: 'cirq.ScheduledOperation'	
+    ) -> None:	
+        """Raises an exception if the scheduled operation is not valid.	
+        Args:	
+            schedule: The schedule to validate against.	
+            scheduled_operation: The scheduled operation to validate.	
+        Raises:	
+            ValueError: If the scheduled operation is not valid for the	
+                schedule.	
+        """
+
     def validate_circuit(self, circuit: 'cirq.Circuit') -> None:
         """Raises an exception if a circuit is not valid.
 
@@ -76,6 +96,15 @@ class Device(metaclass=abc.ABCMeta):
         """
         for moment in circuit:
             self.validate_moment(moment)
+
+    @abc.abstractmethod	
+    def validate_schedule(self, schedule: 'cirq.Schedule') -> None:	
+        """Raises an exception if a schedule is not valid.	
+        Args:	
+            schedule: The schedule to validate.	
+        Raises:	
+            ValueError: The schedule isn't valid for this device.	
+        """
 
     def validate_moment(self, moment: 'cirq.Moment') -> None:
         """Raises an exception if a moment is not valid.
