@@ -993,7 +993,7 @@ def test_insert_at_frontier():
             super().__init__()
             self.replacer = replacer
 
-        def optimization_at(self, circuit, index, op):
+        def optimization_at(self, circuit, index, op) -> Optional[PointOptimizationSummary]:
             new_ops = self.replacer(op)
             return cirq.PointOptimizationSummary(
                 clear_span=1, clear_qubits=op.qubits, new_operations=new_ops
