@@ -58,7 +58,7 @@ class ReplaceWithXGates(PointOptimizer):
     operation's qubits.
     """
 
-    def optimization_at(self, circuit, index, op) -> Optional[PointOptimizationSummary]:
+    def optimization_at(self, circuit: cirq.Circuit, index: int, op) -> Optional[PointOptimizationSummary]:
         end = index + 1
         new_ops = [cirq.X(q) for q in op.qubits]
         done = False
@@ -150,7 +150,7 @@ def test_point_optimizer_raises_on_gates_changing_qubits():
     class EverythingIs42(cirq.PointOptimizer):
         """Changes all single qubit operations to act on LineQubit(42)"""
 
-        def optimization_at(self, circuit, index, op) -> Optional[PointOptimizationSummary]:
+        def optimization_at(self, circuit, index, op):
             if len(op.qubits) == 1:
                 new_op = op.gate(cirq.LineQubit(42))
                 return cirq.PointOptimizationSummary(

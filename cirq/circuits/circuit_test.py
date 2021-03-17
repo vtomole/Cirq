@@ -14,7 +14,7 @@
 import os
 from collections import defaultdict
 from random import randint, random, sample, randrange
-from typing import Tuple, cast, AbstractSet
+from typing import Tuple, cast, AbstractSet, Optional
 
 import numpy as np
 import pytest

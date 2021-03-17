@@ -1,0 +1,667 @@
+[31mcirq/_import.py:120: error: Function is missing a return type annotation
+cirq/_import.py:148: error: Function is missing a return type annotation
+cirq/protocols/phase_protocol.py:33: error: Function is missing a return type annotation
+cirq/protocols/phase_protocol.py:50: error: Function is missing a return type annotation
+cirq/protocols/act_on_protocol.py:61: error: Function is missing a return type annotation
+cirq/google/optimizers/two_qubit_gates/math_utils.py:112: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/_block_diagram_drawer.py:51: error: Function is missing a return type annotation
+cirq/circuits/_block_diagram_drawer.py:176: error: Function is missing a return type annotation
+cirq/circuits/_block_diagram_drawer.py:182: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:47: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:59: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:64: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:80: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:100: error: Function is missing a return type annotation
+cirq/testing/order_tester.py:135: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:138: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:141: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:144: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:147: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:150: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:158: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:161: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:164: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:167: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:170: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:173: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:181: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:184: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:187: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:190: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:193: error: Function is missing a type annotation for one or more arguments
+cirq/testing/order_tester.py:196: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/graph_device/hypergraph.py:87: error: Function is missing a return type annotation
+cirq/protocols/json_serialization.py:163: error: Function is missing a return type annotation
+cirq/protocols/json_serialization.py:301: error: Function is missing a return type annotation
+cirq/protocols/json_serialization.py:301: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/json_serialization.py:465: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/json_serialization.py:472: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/json_serialization.py:542: error: Function is missing a return type annotation
+cirq/protocols/json_serialization.py:608: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:200: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:278: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:350: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:455: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:524: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:605: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:683: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:753: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:858: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:924: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1005: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1071: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1173: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1242: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1347: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1416: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1521: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1590: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1665: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1734: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1800: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1869: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:1974: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2055: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2055: error: Function is missing a type annotation for one or more arguments
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2114: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2219: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2300: error: Function is missing a return type annotation
+cirq/google/engine/client/quantum_v1alpha1/gapic/quantum_engine_service_client.py:2405: error: Function is missing a return type annotation
+cirq/google/engine/engine_timeslot.py:55: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:130: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:223: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:434: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:767: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:800: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:822: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:840: error: Function is missing a return type annotation
+cirq/google/engine/engine_client.py:885: error: Function is missing a return type annotation
+dev_tools/shell_tools.py:139: error: Function is missing a type annotation for one or more arguments
+dev_tools/shell_tools.py:204: error: Function is missing a type annotation for one or more arguments
+dev_tools/shell_tools.py:260: error: Function is missing a type annotation for one or more arguments
+dev_tools/auto_merge.py:32: error: Function is missing a type annotation for one or more arguments
+dev_tools/auto_merge.py:771: error: Function is missing a return type annotation
+dev_tools/auto_merge.py:883: error: Function is missing a return type annotation
+cirq/work/work_pool.py:49: error: Function is missing a return type annotation
+cirq/ionq/ionq_exceptions.py:25: error: Function is missing a type annotation for one or more arguments
+dev_tools/prepared_env.py:66: error: Function is missing a return type annotation
+cirq/google/engine/calibration_result.py:43: error: Function is missing a type annotation for one or more arguments
+cirq/_compat.py:103: error: Function is missing a return type annotation
+cirq/_compat.py:128: error: Function is missing a type annotation for one or more arguments
+cirq/_compat.py:235: error: Function is missing a type annotation for one or more arguments
+cirq/_compat.py:255: error: Function is missing a return type annotation
+cirq/contrib/json.py:9: error: Function is missing a return type annotation
+cirq/study/resolver.py:52: error: Function is missing a return type annotation
+cirq/work/pauli_sum_collector.py:79: error: Function is missing a return type annotation
+cirq/work/observable_settings.py:114: error: Function is missing a return type annotation
+cirq/work/observable_settings.py:129: error: Function is missing a type annotation for one or more arguments
+cirq/work/observable_settings.py:138: error: Function is missing a return type annotation
+cirq/work/observable_settings.py:138: error: Function is missing a type annotation for one or more arguments
+cirq/vis/heatmap.py:75: error: Function is missing a type annotation for one or more arguments
+cirq/vis/heatmap.py:125: error: Function is missing a type annotation for one or more arguments
+cirq/vis/heatmap.py:154: error: Function is missing a type annotation for one or more arguments
+cirq/vis/heatmap.py:173: error: Function is missing a type annotation for one or more arguments
+cirq/vis/heatmap.py:294: error: Function is missing a type annotation for one or more arguments
+cirq/value/product_state.py:106: error: Function is missing a type annotation for one or more arguments
+cirq/value/product_state.py:183: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:112: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:118: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:121: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:127: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:133: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:138: error: Function is missing a type annotation for one or more arguments
+cirq/value/duration.py:141: error: Function is missing a type annotation for one or more arguments
+cirq/testing/op_tree.py:18: error: Function is missing a return type annotation
+cirq/testing/equivalent_basis_map.py:22: error: Function is missing a return type annotation
+cirq/testing/consistent_resolve_parameters.py:20: error: Function is missing a return type annotation
+cirq/testing/consistent_qasm.py:23: error: Function is missing a return type annotation
+cirq/testing/consistent_qasm.py:133: error: Function is missing a return type annotation
+cirq/testing/consistent_phase_by.py:24: error: Function is missing a return type annotation
+cirq/testing/consistent_decomposition.py:23: error: Function is missing a return type annotation
+cirq/testing/circuit_compare.py:224: error: Function is missing a type annotation for one or more arguments
+cirq/testing/circuit_compare.py:367: error: Function is missing a type annotation for one or more arguments
+cirq/sim/simulator.py:752: error: Function is missing a return type annotation
+cirq/qis/states.py:146: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/resolve_parameters.py:48: error: Function is missing a return type annotation
+cirq/protocols/resolve_parameters.py:122: error: Function is missing a return type annotation
+cirq/protocols/resolve_parameters.py:179: error: Function is missing a return type annotation
+cirq/protocols/quil.py:46: error: Function is missing a return type annotation
+cirq/protocols/decompose_protocol.py:255: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/decompose_protocol.py:260: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/decompose_protocol.py:266: error: Function is missing a return type annotation
+cirq/protocols/decompose_protocol.py:266: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/decompose_protocol.py:328: error: Function is missing a return type annotation
+cirq/protocols/decompose_protocol.py:328: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/circuit_diagram_info_protocol.py:79: error: Function is missing a return type annotation
+cirq/protocols/circuit_diagram_info_protocol.py:372: error: Function is missing a return type annotation
+cirq/protocols/circuit_diagram_info_protocol.py:372: error: Function is missing a type annotation for one or more arguments
+cirq/pasqal/pasqal_qubits.py:134: error: Function is missing a return type annotation
+cirq/optimizers/three_qubit_decomposition.py:193: error: Function is missing a return type annotation
+cirq/optimizers/three_qubit_decomposition.py:232: error: Function is missing a return type annotation
+cirq/optimizers/synchronize_terminal_measurements.py:40: error: Function is missing a return type annotation
+cirq/optimizers/stratify.py:86: error: Function is missing a return type annotation
+cirq/optimizers/stratify.py:132: error: Function is missing a type annotation for one or more arguments
+cirq/optimizers/eject_z.py:30: error: Function is missing a return type annotation
+cirq/optimizers/eject_z.py:63: error: Function is missing a return type annotation
+cirq/optimizers/eject_phased_paulis.py:61: error: Function is missing a return type annotation
+cirq/optimizers/eject_phased_paulis.py:131: error: Function is missing a return type annotation
+cirq/optimizers/drop_negligible.py:32: error: Function is missing a return type annotation
+cirq/optimizers/convert_to_cz_and_single_gates.py:74: error: Function is missing a return type annotation
+cirq/optimizers/align_right.py:24: error: Function is missing a return type annotation
+cirq/optimizers/align_right.py:27: error: Function is missing a return type annotation
+cirq/optimizers/align_left.py:24: error: Function is missing a return type annotation
+cirq/optimizers/align_left.py:27: error: Function is missing a return type annotation
+cirq/ops/wait_gate.py:120: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:368: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:368: error: Function is missing a type annotation for one or more arguments
+cirq/ops/raw_types.py:372: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:372: error: Function is missing a type annotation for one or more arguments
+cirq/ops/raw_types.py:519: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:589: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:592: error: Function is missing a return type annotation
+cirq/ops/raw_types.py:767: error: Function is missing a return type annotation
+cirq/ops/phased_x_z_gate.py:175: error: Function is missing a type annotation for one or more arguments
+cirq/ops/phased_x_z_gate.py:183: error: Function is missing a type annotation for one or more arguments
+cirq/ops/phased_x_gate.py:154: error: Function is missing a type annotation for one or more arguments
+cirq/ops/permutation_gate.py:60: error: Function is missing a return type annotation
+cirq/ops/pauli_string_phasor.py:92: error: Function is missing a return type annotation
+cirq/ops/pauli_string_phasor.py:159: error: Function is missing a type annotation for one or more arguments
+cirq/ops/pauli_string.py:207: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:207: error: Function is missing a type annotation for one or more arguments
+cirq/ops/pauli_string.py:268: error: Function is missing a type annotation for one or more arguments
+cirq/ops/pauli_string.py:449: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1196: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1203: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1219: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1219: error: Function is missing a type annotation for one or more arguments
+cirq/ops/pauli_string.py:1294: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1330: error: Function is missing a return type annotation
+cirq/ops/pauli_string.py:1524: error: Function is missing a return type annotation
+cirq/ops/named_qubit.py:79: error: Function is missing a type annotation for one or more arguments
+cirq/ops/named_qubit.py:131: error: Function is missing a type annotation for one or more arguments
+cirq/ops/moment.py:207: error: Function is missing a return type annotation
+cirq/ops/moment.py:221: error: Function is missing a type annotation for one or more arguments
+cirq/ops/moment.py:240: error: Function is missing a type annotation for one or more arguments
+cirq/ops/moment.py:355: error: Function is missing a return type annotation
+cirq/ops/measurement_gate.py:81: error: Function is missing a return type annotation
+cirq/ops/matrix_gates.py:117: error: Function is missing a type annotation for one or more arguments
+cirq/ops/identity.py:93: error: Function is missing a type annotation for one or more arguments
+cirq/ops/identity.py:117: error: Function is missing a return type annotation
+cirq/ops/identity.py:117: error: Function is missing a type annotation for one or more arguments
+cirq/ops/identity.py:128: error: Function is missing a type annotation for one or more arguments
+cirq/ops/global_phase_op.py:37: error: Function is missing a type annotation for one or more arguments
+cirq/ops/global_phase_op.py:56: error: Function is missing a type annotation for one or more arguments
+cirq/ops/global_phase_op.py:63: error: Function is missing a return type annotation
+cirq/ops/gate_operation.py:83: error: Function is missing a return type annotation
+cirq/ops/gate_operation.py:215: error: Function is missing a return type annotation
+cirq/ops/fsim_gate.py:164: error: Function is missing a type annotation for one or more arguments
+cirq/ops/fsim_gate.py:177: error: Function is missing a type annotation for one or more arguments
+cirq/ops/fsim_gate.py:402: error: Function is missing a type annotation for one or more arguments
+cirq/ops/fourier_transform.py:115: error: Function is missing a return type annotation
+cirq/ops/eigen_gate.py:142: error: Function is missing a return type annotation
+cirq/ops/eigen_gate.py:352: error: Function is missing a type annotation for one or more arguments
+cirq/ops/dense_pauli_string.py:280: error: Function is missing a type annotation for one or more arguments
+cirq/ops/controlled_operation.py:195: error: Function is missing a type annotation for one or more arguments
+cirq/ops/common_channels.py:722: error: Function is missing a return type annotation
+cirq/linalg/transformations.py:34: error: Function is missing a return type annotation
+cirq/linalg/decompositions.py:539: error: Function is missing a return type annotation
+cirq/linalg/decompositions.py:539: error: Function is missing a type annotation for one or more arguments
+cirq/ionq/service.py:37: error: Function is missing a type annotation for one or more arguments
+cirq/ionq/service.py:121: error: Function is missing a return type annotation
+cirq/ionq/serializer.py:101: error: Function is missing a return type annotation
+cirq/ionq/results.py:208: error: Function is missing a type annotation for one or more arguments
+cirq/ionq/ionq_devices.py:43: error: Function is missing a type annotation for one or more arguments
+cirq/ionq/ionq_devices.py:75: error: Function is missing a return type annotation
+cirq/ion/ion_device.py:72: error: Function is missing a return type annotation
+cirq/ion/ion_device.py:114: error: Function is missing a return type annotation
+cirq/ion/ion_device.py:169: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sqrt_iswap.py:51: error: Function is missing a type annotation for one or more arguments
+cirq/google/ops/sycamore_gate.py:52: error: Function is missing a return type annotation
+cirq/google/ops/physical_z_tag.py:43: error: Function is missing a type annotation for one or more arguments
+cirq/google/ops/calibration_tag.py:41: error: Function is missing a type annotation for one or more arguments
+cirq/google/engine/engine_program.py:344: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:193: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:213: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:224: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:235: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:255: error: Function is missing a return type annotation
+cirq/google/engine/engine_processor.py:261: error: Function is missing a return type annotation
+cirq/google/engine/engine_job.py:386: error: Function is missing a type annotation for one or more arguments
+cirq/google/engine/calibration.py:150: error: Function is missing a type annotation for one or more arguments
+cirq/google/api/v1/programs.py:26: error: Function is missing a return type annotation
+cirq/google/api/v1/programs.py:126: error: Function is missing a return type annotation
+cirq/google/api/v1/programs.py:322: error: Function is missing a return type annotation
+cirq/experiments/t2_decay_experiment.py:257: error: Function is missing a return type annotation
+cirq/experiments/t1_decay_experiment.py:137: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/t1_decay_experiment.py:142: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/random_quantum_circuit_generation.py:100: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/random_quantum_circuit_generation.py:288: error: Function is missing a return type annotation
+cirq/experiments/random_quantum_circuit_generation.py:520: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/random_quantum_circuit_generation.py:628: error: Function is missing a return type annotation
+cirq/experiments/qubit_characterizations.py:713: error: Function is missing a return type annotation
+cirq/experiments/cross_entropy_benchmarking.py:257: error: Function is missing a type annotation for one or more arguments
+cirq/devices/unconstrained_device.py:35: error: Function is missing a type annotation for one or more arguments
+cirq/devices/unconstrained_device.py:38: error: Function is missing a type annotation for one or more arguments
+cirq/devices/noise_model.py:179: error: Function is missing a return type annotation
+cirq/devices/noise_model.py:182: error: Function is missing a return type annotation
+cirq/devices/noise_model.py:185: error: Function is missing a return type annotation
+cirq/devices/noise_model.py:226: error: Function is missing a return type annotation
+cirq/devices/line_qubit.py:147: error: Function is missing a type annotation for one or more arguments
+cirq/devices/line_qubit.py:229: error: Function is missing a type annotation for one or more arguments
+cirq/devices/grid_qubit.py:314: error: Function is missing a return type annotation
+cirq/contrib/quirk/quirk_gate.py:55: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quirk/linearize_circuit.py:30: error: Function is missing a return type annotation
+cirq/contrib/graph_device/graph_device.py:101: error: Function is missing a return type annotation
+cirq/contrib/graph_device/graph_device.py:197: error: Function is missing a return type annotation
+cirq/circuits/text_diagram_drawer.py:117: error: Function is missing a return type annotation
+cirq/circuits/text_diagram_drawer.py:150: error: Function is missing a return type annotation
+cirq/circuits/text_diagram_drawer.py:378: error: Function is missing a return type annotation
+cirq/circuits/text_diagram_drawer.py:419: error: Function is missing a return type annotation
+cirq/circuits/text_diagram_drawer.py:458: error: Function is missing a return type annotation
+cirq/circuits/quil_output.py:21: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/qasm_output.py:30: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/qasm_output.py:104: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/circuit_operation.py:43: error: Function is missing a return type annotation
+cirq/circuits/circuit_operation.py:161: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/circuit_operation.py:165: error: Function is missing a type annotation for one or more arguments
+cirq/work/observable_measurement_data.py:35: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:43: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:136: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:364: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:364: error: Function is missing a type annotation for one or more arguments
+cirq/work/observable_measurement_data.py:386: error: Function is missing a type annotation for one or more arguments
+cirq/work/observable_measurement_data.py:419: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:428: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:473: error: Function is missing a return type annotation
+cirq/work/observable_measurement_data.py:481: error: Function is missing a return type annotation
+cirq/value/timestamp.py:50: error: Function is missing a type annotation for one or more arguments
+cirq/value/timestamp.py:57: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/measurement_key_protocol.py:68: error: Function is missing a return type annotation
+cirq/protocols/measurement_key_protocol.py:75: error: Function is missing a return type annotation
+cirq/protocols/measurement_key_protocol.py:152: error: Function is missing a return type annotation
+cirq/protocols/apply_unitary_protocol.py:510: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:118: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:127: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:142: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:164: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:212: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:237: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_decompositions.py:242: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:352: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:608: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:624: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:631: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:641: error: Function is missing a return type annotation
+cirq/ops/linear_combinations.py:653: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:53: error: Function is missing a type annotation for one or more arguments
+cirq/ops/common_gates.py:95: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:318: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:507: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:635: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:794: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:957: error: Function is missing a return type annotation
+cirq/ops/common_gates.py:1180: error: Function is missing a return type annotation
+cirq/ops/clifford_gate.py:252: error: Function is missing a type annotation for one or more arguments
+cirq/ops/arithmetic_operation.py:184: error: Function is missing a return type annotation
+cirq/ion/ion_decomposition.py:55: error: Function is missing a return type annotation
+cirq/ion/ion_decomposition.py:87: error: Function is missing a return type annotation
+cirq/ion/ion_decomposition.py:92: error: Function is missing a return type annotation
+cirq/ion/ion_decomposition.py:111: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/swap_cell.py:39: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/swap_cell.py:53: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/input_rotation_cells.py:83: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/input_rotation_cells.py:140: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/input_rotation_cells.py:160: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/input_cells.py:36: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/control_cells.py:54: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/control_cells.py:98: error: Function is missing a return type annotation
+cirq/google/engine/engine.py:65: error: Function is missing a return type annotation
+cirq/google/engine/engine.py:668: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:55: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:78: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:92: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:101: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:138: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:142: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device.py:202: error: Function is missing a return type annotation
+cirq/contrib/quirk/export_to_quirk.py:54: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/circuit.py:161: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/circuit.py:223: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:891: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1556: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1560: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1582: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1615: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1621: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:1626: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2143: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2158: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2218: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2326: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2435: error: Function is missing a return type annotation
+cirq/circuits/circuit.py:2435: error: Function is missing a type annotation for one or more arguments
+cirq/sim/act_on_state_vector_args.py:69: error: Function is missing a return type annotation
+cirq/sim/act_on_state_vector_args.py:136: error: Function is missing a return type annotation
+cirq/sim/act_on_state_vector_args.py:210: error: Function is missing a return type annotation
+cirq/sim/act_on_density_matrix_args.py:63: error: Function is missing a return type annotation
+cirq/optimizers/drop_empty_moments.py:24: error: Function is missing a return type annotation
+cirq/optimizers/drop_empty_moments.py:27: error: Function is missing a return type annotation
+cirq/google/common_serializers.py:68: error: Function is missing a return type annotation
+cirq/google/common_serializers.py:385: error: Function is missing a return type annotation
+cirq/google/common_serializers.py:515: error: Function is missing a return type annotation
+cirq/google/common_serializers.py:553: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sycamore_gates.py:50: error: Function is missing a type annotation for one or more arguments
+cirq/google/optimizers/convert_to_sycamore_gates.py:354: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sycamore_gates.py:367: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sycamore_gates.py:382: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sycamore_gates.py:398: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/gates.py:75: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/acquaintance/gates.py:147: error: Function is missing a return type annotation
+cirq/circuits/optimization_pass.py:103: error: Function is missing a return type annotation
+cirq/circuits/optimization_pass.py:129: error: Function is missing a return type annotation
+cirq/sim/state_vector.py:36: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/stabilizer_state_ch_form.py:244: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/clifford_tableau.py:35: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/clifford_tableau.py:201: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_tableau.py:201: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/mixture_protocol.py:143: error: Function is missing a return type annotation
+cirq/neutral_atoms/convert_to_neutral_atom_gates.py:41: error: Function is missing a type annotation for one or more arguments
+cirq/google/optimizers/convert_to_xmon_gates.py:42: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/acquaintance/shift_swap_network.py:133: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/acquaintance/bipartite.py:157: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/frozen_circuit.py:139: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/frozen_circuit.py:142: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/frozen_circuit.py:149: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/frozen_circuit.py:152: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/frozen_circuit.py:155: error: Function is missing a type annotation for one or more arguments
+cirq/sim/sparse_simulator.py:331: error: Function is missing a return type annotation
+cirq/sim/sparse_simulator.py:367: error: Function is missing a return type annotation
+cirq/sim/density_matrix_simulator.py:232: error: Function is missing a type annotation for one or more arguments
+cirq/sim/density_matrix_simulator.py:343: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices.py:93: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices.py:113: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices.py:143: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices.py:192: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices.py:289: error: Function is missing a return type annotation
+cirq/interop/quirk/url_to_circuit.py:301: error: Function is missing a return type annotation
+cirq/google/devices/known_devices.py:191: error: Function is missing a type annotation for one or more arguments
+cirq/google/devices/known_devices.py:199: error: Function is missing a return type annotation
+cirq/google/devices/known_devices.py:199: error: Function is missing a type annotation for one or more arguments
+cirq/google/calibration/phased_fsim.py:268: error: Function is missing a type annotation for one or more arguments
+cirq/google/calibration/phased_fsim.py:449: error: Function is missing a return type annotation
+cirq/google/calibration/phased_fsim.py:502: error: Function is missing a type annotation for one or more arguments
+cirq/google/line/placement/greedy.py:167: error: Function is missing a return type annotation
+cirq/google/line/placement/greedy.py:262: error: Function is missing a return type annotation
+cirq/google/line/placement/anneal.py:38: error: Function is missing a type annotation for one or more arguments
+cirq/google/line/placement/anneal.py:67: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/executor.py:76: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/executor.py:84: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_simulator.py:119: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_simulator.py:119: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/clifford_simulator.py:293: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_simulator.py:305: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_simulator.py:305: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/clifford_simulator.py:329: error: Function is missing a return type annotation
+cirq/sim/clifford/clifford_simulator.py:329: error: Function is missing a type annotation for one or more arguments
+cirq/sim/clifford/act_on_stabilizer_ch_form_args.py:59: error: Function is missing a return type annotation
+cirq/sim/clifford/act_on_clifford_tableau_args.py:62: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/inspection_utils.py:51: error: Function is missing a return type annotation
+cirq/testing/consistent_act_on.py:144: error: Function is missing a type annotation for one or more arguments
+cirq/testing/consistent_act_on.py:175: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/grid_parallel_two_qubit_xeb.py:539: error: Function is missing a return type annotation
+cirq/testing/deprecation.py:39: error: Function is missing a return type annotation
+cirq/pasqal/pasqal_device.py:130: error: Function is missing a return type annotation
+cirq/pasqal/pasqal_device.py:276: error: Function is missing a return type annotation
+cirq/pasqal/pasqal_device.py:296: error: Function is missing a return type annotation
+cirq/contrib/routing/swap_network.py:54: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/routing/device.py:37: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/routing/device.py:44: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:45: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/routing/greedy.py:100: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/routing/greedy.py:160: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:165: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:176: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:237: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:242: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:258: error: Function is missing a return type annotation
+cirq/contrib/routing/greedy.py:266: error: Function is missing a return type annotation
+cirq/contrib/routing/router.py:28: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quantum_volume/quantum_volume.py:99: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quantum_volume/quantum_volume.py:216: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quantum_volume/quantum_volume.py:361: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quantum_volume/quantum_volume.py:426: error: Function is missing a return type annotation
+cirq/contrib/quantum_volume/quantum_volume.py:446: error: Function is missing a type annotation for one or more arguments
+examples/swap_networks.py:42: error: Function is missing a return type annotation
+examples/swap_networks.py:91: error: Function is missing a return type annotation
+examples/shors_code.py:61: error: Function is missing a return type annotation
+examples/shor.py:348: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:52: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:72: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:106: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:134: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:346: error: Function is missing a return type annotation
+examples/direct_fidelity_estimation.py:509: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:350: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:368: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:465: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:486: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:509: error: Function is missing a return type annotation
+dev_tools/snippets_test.py:525: error: Function is missing a return type annotation
+dev_tools/profiling/benchmark_simulators.py:70: error: Function is missing a return type annotation
+dev_tools/profiling/benchmark_serializers.py:87: error: Function is missing a return type annotation
+cirq/work/sampler_test.py:27: error: Function is missing a return type annotation
+cirq/work/sampler_test.py:27: error: Function is missing a type annotation for one or more arguments
+cirq/work/observable_measurement.py:128: error: Function is missing a type annotation for one or more arguments
+cirq/testing/random_circuit_test.py:75: error: Function is missing a return type annotation
+cirq/testing/order_tester_test.py:133: error: Function is missing a return type annotation
+cirq/testing/equivalent_repr_eval_test.py:43: error: Function is missing a type annotation for one or more arguments
+cirq/testing/consistent_qasm_test.py:39: error: Function is missing a return type annotation
+cirq/testing/consistent_qasm_test.py:50: error: Function is missing a return type annotation
+cirq/testing/consistent_protocols_test.py:111: error: Function is missing a type annotation for one or more arguments
+cirq/testing/consistent_phase_by_test.py:29: error: Function is missing a return type annotation
+cirq/testing/consistent_phase_by_test.py:52: error: Function is missing a return type annotation
+cirq/testing/consistent_phase_by_test.py:66: error: Function is missing a return type annotation
+cirq/testing/consistent_phase_by_test.py:77: error: Function is missing a return type annotation
+cirq/testing/consistent_phase_by_test.py:90: error: Function is missing a return type annotation
+cirq/testing/consistent_act_on_test.py:28: error: Function is missing a return type annotation
+cirq/testing/consistent_act_on_test.py:41: error: Function is missing a return type annotation
+cirq/testing/circuit_compare_test.py:540: error: Function is missing a return type annotation
+cirq/sim/sparse_simulator_test.py:684: error: Function is missing a return type annotation
+cirq/sim/sparse_simulator_test.py:705: error: Function is missing a return type annotation
+cirq/sim/density_matrix_simulator_test.py:748: error: Function is missing a return type annotation
+cirq/sim/act_on_state_vector_args_test.py:130: error: Function is missing a return type annotation
+cirq/sim/act_on_state_vector_args_test.py:142: error: Function is missing a return type annotation
+cirq/protocols/resolve_parameters_test.py:46: error: Function is missing a return type annotation
+cirq/protocols/pow_protocol_test.py:30: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/measurement_key_protocol_test.py:77: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/json_serialization_test.py:163: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:175: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:185: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:194: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:206: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:416: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:416: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/json_serialization_test.py:519: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:541: error: Function is missing a return type annotation
+cirq/protocols/json_serialization_test.py:622: error: Function is missing a return type annotation
+cirq/protocols/inverse_protocol_test.py:30: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/inverse_protocol_test.py:35: error: Function is missing a type annotation for one or more arguments
+cirq/protocols/apply_unitary_protocol_test.py:35: error: Function is missing a return type annotation
+cirq/protocols/apply_unitary_protocol_test.py:39: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:30: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:93: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:125: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:139: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:146: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:266: error: Function is missing a return type annotation
+cirq/protocols/apply_mixture_protocol_test.py:311: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:82: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:113: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:128: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:135: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:252: error: Function is missing a return type annotation
+cirq/protocols/apply_channel_protocol_test.py:295: error: Function is missing a return type annotation
+cirq/pasqal/pasqal_device_test.py:24: error: Function is missing a type annotation for one or more arguments
+cirq/pasqal/pasqal_device_test.py:28: error: Function is missing a type annotation for one or more arguments
+cirq/optimizers/two_qubit_to_fsim_test.py:54: error: Function is missing a return type annotation
+cirq/optimizers/two_qubit_to_fsim_test.py:85: error: Function is missing a return type annotation
+cirq/optimizers/merge_single_qubit_gates_test.py:22: error: Function is missing a return type annotation
+cirq/optimizers/merge_interactions_test.py:23: error: Function is missing a return type annotation
+cirq/optimizers/eject_z_test.py:22: error: Function is missing a return type annotation
+cirq/optimizers/eject_z_test.py:43: error: Function is missing a return type annotation
+cirq/optimizers/eject_phased_paulis_test.py:23: error: Function is missing a return type annotation
+cirq/optimizers/drop_negligible_test.py:18: error: Function is missing a return type annotation
+cirq/optimizers/drop_negligible_test.py:18: error: Function is missing a type annotation for one or more arguments
+cirq/optimizers/decompositions_test.py:25: error: Function is missing a return type annotation
+cirq/ops/three_qubit_gates_test.py:204: error: Function is missing a return type annotation
+cirq/ops/raw_types_test.py:661: error: Function is missing a type annotation for one or more arguments
+cirq/ops/phased_x_z_gate_test.py:195: error: Function is missing a return type annotation
+cirq/ops/pauli_string_test.py:627: error: Function is missing a return type annotation
+cirq/ops/pauli_string_test.py:633: error: Function is missing a return type annotation
+cirq/ops/pauli_string_test.py:674: error: Function is missing a return type annotation
+cirq/ops/pauli_string_phasor_test.py:303: error: Function is missing a return type annotation
+cirq/ops/pauli_string_phasor_test.py:303: error: Function is missing a type annotation for one or more arguments
+cirq/ops/op_tree_test.py:125: error: Function is missing a return type annotation
+cirq/ops/gate_operation_test.py:74: error: Function is missing a return type annotation
+cirq/ops/controlled_operation_test.py:136: error: Function is missing a return type annotation
+cirq/ops/controlled_operation_test.py:299: error: Function is missing a return type annotation
+cirq/ops/controlled_gate_test.py:338: error: Function is missing a return type annotation
+cirq/ops/clifford_gate_test.py:31: error: Function is missing a type annotation for one or more arguments
+cirq/ops/clifford_gate_test.py:41: error: Function is missing a type annotation for one or more arguments
+cirq/ops/arithmetic_operation_test.py:160: error: Function is missing a return type annotation
+cirq/neutral_atoms/neutral_atom_devices_test.py:22: error: Function is missing a type annotation for one or more arguments
+cirq/linalg/diagonalize_test.py:68: error: Function is missing a return type annotation
+cirq/linalg/diagonalize_test.py:68: error: Function is missing a type annotation for one or more arguments
+cirq/linalg/diagonalize_test.py:85: error: Function is missing a return type annotation
+cirq/linalg/diagonalize_test.py:85: error: Function is missing a type annotation for one or more arguments
+cirq/linalg/diagonalize_test.py:175: error: Function is missing a return type annotation
+cirq/linalg/diagonalize_test.py:175: error: Function is missing a type annotation for one or more arguments
+cirq/linalg/diagonalize_test.py:224: error: Function is missing a return type annotation
+cirq/linalg/diagonalize_test.py:224: error: Function is missing a type annotation for one or more arguments
+cirq/linalg/decompositions_test.py:596: error: Function is missing a return type annotation
+cirq/linalg/decompositions_test.py:740: error: Function is missing a return type annotation
+cirq/ion/ion_device_test.py:24: error: Function is missing a type annotation for one or more arguments
+cirq/ion/ion_device_test.py:35: error: Function is missing a type annotation for one or more arguments
+cirq/ion/ion_decomposition_test.py:119: error: Function is missing a return type annotation
+cirq/interop/quirk/cells/testing.py:23: error: Function is missing a return type annotation
+cirq/google/arg_func_langs_test.py:64: error: Function is missing a return type annotation
+cirq/google/arg_func_langs_test.py:129: error: Function is missing a return type annotation
+cirq/google/optimizers/optimize_for_xmon_test.py:35: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sqrt_iswap_test.py:39: error: Function is missing a return type annotation
+cirq/google/optimizers/convert_to_sqrt_iswap_test.py:64: error: Function is missing a return type annotation
+cirq/google/optimizers/two_qubit_gates/example.py:31: error: Function is missing a return type annotation
+cirq/google/line/placement/greedy_test.py:28: error: Function is missing a return type annotation
+cirq/google/line/placement/anneal_test.py:33: error: Function is missing a return type annotation
+cirq/google/line/placement/anneal_test.py:90: error: Function is missing a return type annotation
+cirq/google/line/placement/anneal_test.py:290: error: Function is missing a return type annotation
+cirq/google/line/placement/anneal_test.py:335: error: Function is missing a return type annotation
+cirq/google/devices/xmon_device_test.py:21: error: Function is missing a type annotation for one or more arguments
+cirq/google/devices/xmon_device_test.py:37: error: Function is missing a type annotation for one or more arguments
+cirq/google/calibration/phased_fsim_test.py:391: error: Function is missing a return type annotation
+cirq/google/calibration/phased_fsim_test.py:423: error: Function is missing a return type annotation
+cirq/google/api/v1/programs_test.py:25: error: Function is missing a return type annotation
+cirq/experiments/xeb_simulation.py:89: error: Function is missing a return type annotation
+cirq/experiments/xeb_sampling.py:112: error: Function is missing a return type annotation
+cirq/experiments/xeb_sampling.py:124: error: Function is missing a return type annotation
+cirq/experiments/xeb_sampling.py:146: error: Function is missing a return type annotation
+cirq/experiments/xeb_sampling.py:298: error: Function is missing a return type annotation
+cirq/experiments/random_quantum_circuit_generation_test.py:110: error: Function is missing a return type annotation
+cirq/experiments/random_quantum_circuit_generation_test.py:249: error: Function is missing a return type annotation
+cirq/experiments/random_quantum_circuit_generation_test.py:340: error: Function is missing a return type annotation
+cirq/experiments/random_quantum_circuit_generation_test.py:429: error: Function is missing a return type annotation
+cirq/devices/noise_model_test.py:26: error: Function is missing a return type annotation
+cirq/devices/noise_model_test.py:80: error: Function is missing a return type annotation
+cirq/contrib/svg/svg.py:12: error: Function is missing a return type annotation
+cirq/contrib/svg/svg.py:32: error: Function is missing a return type annotation
+cirq/contrib/svg/svg.py:47: error: Function is missing a return type annotation
+cirq/contrib/svg/svg.py:245: error: Function is missing a return type annotation
+cirq/contrib/quirk/export_to_quirk_test.py:22: error: Function is missing a return type annotation
+cirq/contrib/quirk/export_to_quirk_test.py:22: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quimb/state_vector.py:141: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quimb/mps_simulator.py:422: error: Function is missing a return type annotation
+cirq/contrib/quimb/mps_simulator.py:522: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quimb/grid_circuits.py:8: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/quimb/grid_circuits.py:126: error: Function is missing a return type annotation
+cirq/contrib/quimb/density_matrix.py:12: error: Function is missing a return type annotation
+cirq/contrib/quimb/density_matrix.py:24: error: Function is missing a return type annotation
+cirq/contrib/quimb/density_matrix.py:41: error: Function is missing a return type annotation
+cirq/contrib/quimb/density_matrix.py:41: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/qcircuit/qcircuit_test.py:20: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/qcircuit/qcircuit_pdf.py:26: error: Function is missing a return type annotation
+cirq/contrib/qcircuit/qcircuit_pdf.py:26: error: Function is missing a type annotation for one or more arguments
+cirq/contrib/qasm_import/_parser.py:76: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser.py:83: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser.py:320: error: Function is missing a return type annotation
+cirq/contrib/paulistring/convert_to_clifford_gates.py:95: error: Function is missing a return type annotation
+cirq/contrib/noise_models/noise_models.py:41: error: Function is missing a return type annotation
+cirq/contrib/noise_models/noise_models.py:73: error: Function is missing a return type annotation
+cirq/contrib/noise_models/noise_models.py:107: error: Function is missing a return type annotation
+cirq/contrib/noise_models/noise_models.py:139: error: Function is missing a return type annotation
+cirq/contrib/noise_models/noise_models.py:180: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/executor_test.py:35: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/executor_test.py:110: error: Function is missing a return type annotation
+cirq/contrib/acquaintance/strategies/quartic_paired_test.py:31: error: Function is missing a return type annotation
+cirq/circuits/optimization_pass_test.py:61: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/optimization_pass_test.py:70: error: Incompatible types in assignment (expression has type "List[Any]", variable has type "Set[Any]")
+cirq/circuits/optimization_pass_test.py:71: error: Incompatible types in assignment (expression has type "List[Any]", variable has type "Set[Any]")
+cirq/circuits/circuit_test.py:996: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/circuit_test.py:996: error: Name 'PointOptimizationSummary' is not defined
+cirq/circuits/_block_diagram_drawer_test.py:29: error: Function is missing a return type annotation
+cirq/aqt/aqt_device.py:166: error: Function is missing a return type annotation
+cirq/experiments/xeb_simulation_test.py:79: error: Function is missing a return type annotation
+cirq/experiments/xeb_simulation_test.py:103: error: Function is missing a return type annotation
+cirq/experiments/xeb_sampling_test.py:85: error: Function is missing a return type annotation
+cirq/experiments/xeb_fitting.py:46: error: Function is missing a return type annotation
+cirq/experiments/xeb_fitting.py:352: error: Function is missing a type annotation for one or more arguments
+cirq/circuits/text_diagram_drawer_test.py:24: error: Function is missing a type annotation for one or more arguments
+cirq/experiments/xeb_fitting_test.py:64: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:60: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:115: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:133: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:357: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:412: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:447: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:462: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:778: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:820: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:859: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:876: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:896: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:938: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:954: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_parser_test.py:968: error: Function is missing a return type annotation
+cirq/contrib/qasm_import/_lexer_test.py:53: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:54: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:57: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:58: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:61: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:62: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:65: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:66: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:69: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:70: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:115: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:116: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:123: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:124: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:127: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:128: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:131: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:132: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:135: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:136: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:139: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:140: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:147: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:148: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:151: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:152: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:155: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:156: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:159: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:160: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/qasm_import/_lexer_test.py:163: error: Item "None" of "Optional[Any]" has no attribute "type"
+cirq/contrib/qasm_import/_lexer_test.py:164: error: Item "None" of "Optional[Any]" has no attribute "value"
+cirq/contrib/paulistring/pauli_string_optimize.py:68: error: Function is missing a type annotation for one or more arguments
+Found 665 errors in 247 files (checked 802 source files)
+[0m

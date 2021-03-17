@@ -66,7 +66,7 @@ def _format_term(format_spec: str, vector: TVector, coefficient: Scalar) -> str:
     return '+' + result
 
 
-def _format_terms(terms: Iterable[Tuple[TVector, Scalar]], format_spec: str):
+def _format_terms(terms: Iterable[Tuple[TVector, Scalar]], format_spec: str) -> str:
     formatted_terms = [_format_term(format_spec, vector, coeff) for vector, coeff in terms]
     s = ''.join(formatted_terms)
     if not s:
