@@ -108,6 +108,22 @@ def _get_each_measurement(
 ) -> List[raw_types.Operation]:
     if isinstance(target, raw_types.Qid):
         return [MeasurementGate(1, key_func(target), qid_shape=(target.dimension,)).on(target)]
+
+def _get_measurement(
+    target: Union['cirq.Qid', Iterable['cirq.Qid']],
+    key: [Union[str, value.MeasurementKey]],
+    invert_mask: Tuple[bool, ...] = (),
+) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+    if key is None:
+        key = _default_measurement_key(target)
+    qid_shape = protocols.qid_shape(target)
+    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
+
+
+def _get_each_measurement(
+        target: Iterable['cirq.Qid'],
+        key_func: Callable[[raw_types.Qid], str]
+) -> List[raw_types.Operation]:
     return [MeasurementGate(1, key_func(q), qid_shape=(q.dimension,)).on(q) for q in target]
 
 
@@ -138,7 +154,7 @@ def measure(
 
     for qubit in target:
         if isinstance(qubit, list):
-            return measure_each(*qubit)
+            return _get_measurement(qubit, key=key, invert_mask=invert_mask)
         if isinstance(qubit, np.ndarray):
             raise ValueError(
                 'measure() was called a numpy ndarray. Perhaps you meant '
@@ -147,18 +163,12 @@ def measure(
         elif not isinstance(qubit, raw_types.Qid):
             raise ValueError('measure() was called with type different than Qid.')
 
-    if key is None:
-        key = _default_measurement_key(target[0])
-    qid_shape = protocols.qid_shape(target)
-
-    if isinstance(target[0], raw_types.Qid):
-        return MeasurementGate(len(target), key, invert_mask, qid_shape).on(target[0])
-
-    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target[0])
+    return _get_measurement(target, key=key, invert_mask=invert_mask)
 
 
 def measure_each(
-    *qubits: Union['cirq.Qid', Iterable['cirq.Qid']], key_func: Callable[[raw_types.Qid], str] = str
+    *qubits: Union['cirq.Qid', Iterable['cirq.Qid']],
+    key_func: Callable[[raw_types.Qid], str] = str
 ) -> List[raw_types.Operation]:
     """Returns a list of operations individually measuring the given qubits.
 
@@ -172,7 +182,7 @@ def measure_each(
     Returns:
         A list of operations individually measuring the given qubits.
     """
-    if len(qubits) == 1 and not isinstance(qubits[0], raw_types.Qid):
+    if len(qubits) == 1 and isinstance(qubits[0], list):
         return _get_each_measurement(qubits[0], key_func)
 
-    return _get_each_measurement(qubits[0], key_func)
+    return _get_each_measurement(qubits, key_func)
