@@ -80,6 +80,23 @@ def measure_paulistring_terms(
         )
     return [PauliMeasurementGate([pauli_basis[q]], key=key_func(q)).on(q) for q in pauli_basis]
 
+def _get_measurement(
+    target: Union['cirq.Qid', Iterable['cirq.Qid']],
+    key: Optional[Union[str, value.MeasurementKey]],
+    invert_mask: Tuple[bool, ...] = (),
+) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+    if key is None:
+        key = _default_measurement_key(target)
+    qid_shape = protocols.qid_shape(target)
+    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
+
+
+def _get_each_measurement(
+        target: Iterable['cirq.Qid'],
+        key_func: Callable[[raw_types.Qid], str]
+) -> List[raw_types.Operation]:
+    return [MeasurementGate(1, key_func(q), qid_shape=(q.dimension,)).on(q) for q in target]
+
 
 def measure(
     *target: Union['cirq.Qid', Iterable['cirq.Qid']],
@@ -107,7 +124,7 @@ def measure(
     """
     for qubit in target:
         if isinstance(qubit, list):
-            return measure_each(*qubit)
+            return _get_measurement(qubit, key=key, invert_mask=invert_mask)
         if isinstance(qubit, np.ndarray):
             raise ValueError(
                 'measure() was called a numpy ndarray. Perhaps you meant '
@@ -116,25 +133,26 @@ def measure(
         elif not isinstance(qubit, raw_types.Qid):
             raise ValueError('measure() was called with type different than Qid.')
 
-    if key is None:
-        key = _default_measurement_key(target)
-    qid_shape = protocols.qid_shape(target)
-    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
+    return _get_measurement(target, key=key, invert_mask=invert_mask)
 
 
 def measure_each(
-    *qubits: 'cirq.Qid', key_func: Callable[[raw_types.Qid], str] = str
+    *qubits: Union['cirq.Qid', Iterable['cirq.Qid']],
+    key_func: Callable[[raw_types.Qid], str] = str
 ) -> List[raw_types.Operation]:
     """Returns a list of operations individually measuring the given qubits.
 
     The qubits are measured in the computational basis.
 
     Args:
-        *qubits: The qubits to measure.
+        *qubits: The qubits or list of qubits to measure.
         key_func: Determines the key of the measurements of each qubit. Takes
             the qubit and returns the key for that qubit. Defaults to str.
 
     Returns:
         A list of operations individually measuring the given qubits.
     """
-    return [MeasurementGate(1, key_func(q), qid_shape=(q.dimension,)).on(q) for q in qubits]
+    if len(qubits) == 1 and isinstance(qubits[0], list):
+        return _get_each_measurement(qubits[0], key_func)
+
+    return _get_each_measurement(qubits, key_func)
