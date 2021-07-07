@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union, Any
 
 import numpy as np
 
-from cirq import protocols
+from cirq import protocols, value
 from cirq.ops import raw_types, pauli_string
 from cirq.ops.measurement_gate import MeasurementGate
 from cirq.ops.pauli_measurement_gate import PauliMeasurementGate
@@ -82,11 +82,12 @@ def measure_paulistring_terms(
 
 
 def measure(
-    *target: 'cirq.Qid',
-    key: Optional[Union[str, 'cirq.MeasurementKey']] = None,
+    *target: Union['cirq.Qid', Iterable['cirq.Qid']],
+    key: Optional[Union[str, value.MeasurementKey]] = None,
     invert_mask: Tuple[bool, ...] = (),
-) -> raw_types.Operation:
-    """Returns a single MeasurementGate applied to all the given qubits.
+) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+    """Returns a single MeasurementGate applied to all the given qubits
+     or a list given a list of qubits.
 
     The qubits are measured in the computational basis.
 
@@ -102,9 +103,11 @@ def measure(
         An operation targeting the given qubits with a measurement.
 
     Raises:
-        ValueError: If the qubits are not instances of Qid.
+        ValueError if the qubits are not instances of Qid or list of Qid.
     """
     for qubit in target:
+        if isinstance(qubit, list):
+            return measure_each(*qubit)
         if isinstance(qubit, np.ndarray):
             raise ValueError(
                 'measure() was called a numpy ndarray. Perhaps you meant '
