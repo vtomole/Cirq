@@ -72,6 +72,11 @@ class OperationTarget(Generic[TActOnArgs], metaclass=abc.ABCMeta):
     def log_of_measurement_results(self) -> Dict[str, Any]:
         """Gets the log of measurement results."""
 
+    @property
+    @abc.abstractmethod
+    def all_measurements(self) -> Dict[str, bool]:
+        """Gets the log of measurement results."""
+
     @abc.abstractmethod
     def sample(
         self,

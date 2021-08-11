@@ -68,6 +68,7 @@ class ActOnArgsContainer(
         self._qubits = tuple(qubits)
         self.split_untangled_states = split_untangled_states
         self._log_of_measurement_results = log_of_measurement_results
+        self._all_measurements: Dict[str, bool] = {}
 
     def create_merged_state(self) -> TActOnArgs:
         if not self.split_untangled_states:
@@ -148,6 +149,10 @@ class ActOnArgsContainer(
     @property
     def log_of_measurement_results(self) -> Dict[str, Any]:
         return self._log_of_measurement_results
+
+    @property
+    def all_measurements(self) -> Dict[str, bool]:
+        return self._all_measurements
 
     def sample(
         self,
