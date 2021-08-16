@@ -1384,6 +1384,8 @@ def test_ifelse1():
     r = sim.simulate(c)
     e = [1, 0]
     assert np.allclose(r.final_state_vector, e)
+    print()
+    print(c)
 
 
 def test_ifelse2():
@@ -1408,4 +1410,5 @@ def test_ifelse2():
         r = sim.simulate(c)
         e = [1, 0] if b else [0, 1j]
         assert np.allclose(r.final_state_vector, e)
+        print()
         print(c)
