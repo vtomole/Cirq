@@ -13,8 +13,9 @@
 # limitations under the License.
 import itertools
 import random
-from typing import Type
+from typing import Type, Dict, Union
 from unittest import mock
+
 import numpy as np
 import pytest
 import sympy
@@ -1332,3 +1333,82 @@ def test_noise_model():
     result = simulator.run(circuit, repetitions=100)
 
     assert 40 <= sum(result.measurements['0'])[0] < 60
+
+
+class IfElse(cirq.Operation):
+    import sympy.parsing.sympy_parser
+
+    def __init__(self, key: Union[str, sympy.Expr], fst: cirq.Operation, snd: cirq.Operation):
+        self.key = sympy.parsing.sympy_parser.parse_expr(key) if isinstance(key, str) else key
+        self.fst = fst
+        self.snd = snd
+
+    def _act_on_(self, args):
+        opt = self.fst if self.key.subs(args.all_measurements) else self.snd
+        cirq.act_on(opt, args)
+        return True
+
+    @property
+    def qubits(self):
+        return sorted(set(self.fst.qubits + self.snd.qubits))
+
+    def with_qubits(self, qubits):
+        return IfElse(
+            self.key,
+            self.fst.with_qubits(qubits),
+            self.snd.with_qubits(qubits),
+        )
+
+    def _with_measurement_key_mapping_(self, key_map: Dict[str, str]):
+        return IfElse(
+            self.key.subs(key_map),
+            self.fst,
+            self.snd,
+        )
+
+    def _measurement_keys_(self):
+        return [str(s) for s in self.key.free_symbols]
+
+
+def test_ifelse1():
+
+    q = cirq.LineQubit(0)
+    c = cirq.Circuit(
+        cirq.measure(q, key='a'),
+        cirq.X(q),
+        cirq.measure(q, key='b'),
+        IfElse('b|a', cirq.X(q), cirq.Y(q)),
+    )
+
+    sim = cirq.Simulator(split_untangled_states=False)
+    r = sim.simulate(c)
+    e = [1, 0]
+    assert np.allclose(r.final_state_vector, e)
+    print()
+    print(c)
+
+
+def test_ifelse2():
+
+    q = cirq.LineQubit(0)
+    for b in [False, True]:
+        c = cirq.Circuit(
+            cirq.X(q) if b else cirq.I(q),
+            cirq.CircuitOperation(
+                cirq.FrozenCircuit(
+                    cirq.measure(q, key='a'),
+                )
+            ).with_measurement_key_mapping({'a': 'z'}),
+            cirq.CircuitOperation(
+                cirq.FrozenCircuit(
+                    IfElse('b', cirq.X(q), cirq.Y(q)),
+                )
+            ).with_measurement_key_mapping({'b': 'z'}),
+        )
+
+        sim = cirq.Simulator(split_untangled_states=False)
+        r = sim.simulate(c)
+        e = [1, 0] if b else [0, 1j]
+        assert np.allclose(r.final_state_vector, e)
+        print()
+        print(c)

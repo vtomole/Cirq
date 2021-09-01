@@ -77,6 +77,7 @@ class ActOnArgs(OperationTarget[TSelf]):
         self._axes = tuple(axes)
         self.prng = prng
         self._log_of_measurement_results = log_of_measurement_results
+        self._all_measurements: Dict[str, bool] = {}
 
     # TODO(#3388) Add documentation for Raises.
     # pylint: disable=missing-raises-doc
@@ -95,6 +96,7 @@ class ActOnArgs(OperationTarget[TSelf]):
         if key in self._log_of_measurement_results:
             raise ValueError(f"Measurement already logged to key {key!r}")
         self._log_of_measurement_results[key] = corrected
+        self._all_measurements[key] = any(corrected)
 
     # pylint: enable=missing-raises-doc
     def get_axes(self, qubits: Sequence['cirq.Qid']) -> List[int]:
@@ -134,6 +136,10 @@ class ActOnArgs(OperationTarget[TSelf]):
     @property
     def log_of_measurement_results(self) -> Dict[str, Any]:
         return self._log_of_measurement_results
+
+    @property
+    def all_measurements(self) -> Dict[str, bool]:
+        return self._all_measurements
 
     @property
     def qubits(self) -> Tuple['cirq.Qid', ...]:

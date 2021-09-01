@@ -2039,10 +2039,10 @@ def test_qid_shape_qudit(circuit_cls):
 
 @pytest.mark.parametrize('circuit_cls', [cirq.Circuit, cirq.FrozenCircuit])
 def test_to_text_diagram_teleportation_to_diagram(circuit_cls):
-    ali = cirq.NamedQubit('(0, 0)')
-    bob = cirq.NamedQubit('(0, 1)')
-    msg = cirq.NamedQubit('(1, 0)')
-    tmp = cirq.NamedQubit('(1, 1)')
+    ali = cirq.NamedQubit('ali')
+    bob = cirq.NamedQubit('bob')
+    msg = cirq.NamedQubit('msg')
+    tmp = cirq.NamedQubit('tmp')
 
     c = circuit_cls(
         [
@@ -2051,7 +2051,7 @@ def test_to_text_diagram_teleportation_to_diagram(circuit_cls):
             cirq.Moment([cirq.X(msg) ** 0.5]),
             cirq.Moment([cirq.CNOT(msg, ali)]),
             cirq.Moment([cirq.H(msg)]),
-            cirq.Moment([cirq.measure(msg), cirq.measure(ali)]),
+            cirq.Moment([cirq.measure(msg, key='creg_msg'), cirq.measure(ali, key='creg_ali')]),
             cirq.Moment([cirq.CNOT(ali, bob)]),
             cirq.Moment([cirq.CNOT(msg, tmp)]),
             cirq.Moment([cirq.CZ(bob, tmp)]),

@@ -147,6 +147,10 @@ def test_subcircuit_identity_does_not_join():
     args.apply_operation(cirq.CircuitOperation(cirq.FrozenCircuit(cirq.IdentityGate(2)(q0, q1))))
     assert len(set(args.values())) == 3
     assert args[q0] is not args[q1]
+<<<<<<< HEAD
+=======
+    assert args[q0] is not args[None]
+>>>>>>> 7022638e3ee6735ee10f11d4720472d9dafa928e
 
 
 def test_measurement_causes_split():
@@ -166,6 +170,7 @@ def test_subcircuit_measurement_causes_split():
     args.apply_operation(cirq.CircuitOperation(cirq.FrozenCircuit(cirq.measure(q0))))
     assert len(set(args.values())) == 3
     assert args[q0] is not args[q1]
+<<<<<<< HEAD
 
 
 def test_subcircuit_measurement_causes_split_in_subset():
@@ -181,6 +186,9 @@ def test_subcircuit_measurement_causes_split_in_subset():
     assert args[q0] is not args[q1]
     assert args[q0] is not args[q2]
     assert args[q1] is not args[q2]
+=======
+    assert args[q0] is not args[None]
+>>>>>>> 7022638e3ee6735ee10f11d4720472d9dafa928e
 
 
 def test_reset_causes_split():
