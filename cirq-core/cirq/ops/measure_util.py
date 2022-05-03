@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union, Any
+from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union
 
 import numpy as np
 
@@ -113,7 +113,7 @@ def measure(
     *target: Union['cirq.Qid', Iterable['cirq.Qid']],
     key: Optional[Union[str, value.MeasurementKey]] = None,
     invert_mask: Tuple[bool, ...] = (),
-) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+) -> raw_types.Operation:
     """Returns a single MeasurementGate applied to all the given qubits
      or a list given a list of qubits.
 
