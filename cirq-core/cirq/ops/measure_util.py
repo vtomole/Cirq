@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union, Any
+from typing import Callable, Iterable, List, Optional, Tuple, TYPE_CHECKING, Union
 
 import numpy as np
 
@@ -80,14 +80,16 @@ def measure_paulistring_terms(
         )
     return [PauliMeasurementGate([pauli_basis[q]], key=key_func(q)).on(q) for q in pauli_basis]
 
+
 def _get_measurement(
-    target: Union['cirq.Qid', Iterable['cirq.Qid']],
+    target: Iterable['cirq.Qid'],
     key: Optional[Union[str, value.MeasurementKey]] = None,
     invert_mask: Tuple[bool, ...] = (),
 ) -> Union[raw_types.Operation, List[raw_types.Operation]]:
     if key is None:
         key = _default_measurement_key(target)
     qid_shape = protocols.qid_shape(target)
+
     return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
 
 
@@ -101,7 +103,7 @@ def measure(
     *target: Union['cirq.Qid', Iterable['cirq.Qid']],
     key: Optional[Union[str, value.MeasurementKey]] = None,
     invert_mask: Tuple[bool, ...] = (),
-) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+) -> raw_types.Operation:
     """Returns a single MeasurementGate applied to all the given qubits
      or a list given a list of qubits.
 
@@ -119,10 +121,11 @@ def measure(
         An operation targeting the given qubits with a measurement.
 
     Raises:
-        ValueError if the qubits are not instances of Qid or list of Qid.
+        ValueError: if the qubits are not instances of Qid or list of Qid.
     """
+
     for qubit in target:
-        if isinstance(qubit, list):
+        if isinstance(qubit, (tuple, list)):
             return _get_measurement(qubit, key=key, invert_mask=invert_mask)
         if isinstance(qubit, np.ndarray):
             raise ValueError(
@@ -150,7 +153,7 @@ def measure_each(
     Returns:
         A list of operations individually measuring the given qubits.
     """
-    if len(qubits) == 1 and isinstance(qubits[0], list):
+    if len(qubits) == 1 and not isinstance(qubits[0], raw_types.Qid):
         return _get_each_measurement(qubits[0], key_func)
 
     return _get_each_measurement(qubits, key_func)
