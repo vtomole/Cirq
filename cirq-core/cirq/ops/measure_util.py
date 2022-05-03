@@ -25,7 +25,11 @@ if TYPE_CHECKING:
     import cirq
 
 
-def _default_measurement_key(qubits: Iterable[raw_types.Qid]) -> str:
+def _default_measurement_key(qubits: Union['cirq.Qid', Iterable['cirq.Qid']]) -> str:
+
+    if isinstance(qubits, raw_types.Qid):
+        return str(qubits)
+
     return ','.join(str(q) for q in qubits)
 
 
@@ -82,20 +86,28 @@ def measure_paulistring_terms(
 
 
 def _get_measurement(
-    target: Iterable['cirq.Qid'],
+    target: Union['cirq.Qid', Iterable['cirq.Qid']],
     key: Optional[Union[str, value.MeasurementKey]] = None,
     invert_mask: Tuple[bool, ...] = (),
-) -> Union[raw_types.Operation, List[raw_types.Operation]]:
+) -> raw_types.Operation:
+    import collections.abc
+
     if key is None:
         key = _default_measurement_key(target)
     qid_shape = protocols.qid_shape(target)
-
-    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
+    if isinstance(target, raw_types.Qid):
+        return MeasurementGate(1, key, invert_mask, qid_shape).on(target)
+    elif isinstance(target, collections.abc.Sized):
+        return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
+    else:
+        raise ValueError("Can't make a measurement gate out of Target")
 
 
 def _get_each_measurement(
-    target: Iterable['cirq.Qid'], key_func: Callable[[raw_types.Qid], str]
+    target: Union['cirq.Qid', Iterable['cirq.Qid']], key_func: Callable[[raw_types.Qid], str]
 ) -> List[raw_types.Operation]:
+    if isinstance(target, raw_types.Qid):
+        return [MeasurementGate(1, key_func(target), qid_shape=(target.dimension,)).on(target)]
     return [MeasurementGate(1, key_func(q), qid_shape=(q.dimension,)).on(q) for q in target]
 
 
@@ -125,8 +137,12 @@ def measure(
     """
 
     for qubit in target:
-        if isinstance(qubit, (tuple, list)):
-            return _get_measurement(qubit, key=key, invert_mask=invert_mask)
+        # if isinstance(qubit, (tuple, list)):
+        #     if key is None:
+        #         key = _default_measurement_key(qubit)
+        #     qid_shape = protocols.qid_shape(qubit)
+        #
+        #     return MeasurementGate(len(qubit), key, invert_mask, qid_shape).on(*qubit)
         if isinstance(qubit, np.ndarray):
             raise ValueError(
                 'measure() was called a numpy ndarray. Perhaps you meant '
@@ -135,7 +151,14 @@ def measure(
         elif not isinstance(qubit, raw_types.Qid):
             raise ValueError('measure() was called with type different than Qid.')
 
-    return _get_measurement(target, key=key, invert_mask=invert_mask)
+    if key is None:
+        key = _default_measurement_key(target[0])
+    qid_shape = protocols.qid_shape(target)
+
+    if isinstance(target[0], raw_types.Qid):
+        return MeasurementGate(len(target), key, invert_mask, qid_shape).on(target[0])
+
+    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target[0])
 
 
 def measure_each(
@@ -156,4 +179,4 @@ def measure_each(
     if len(qubits) == 1 and not isinstance(qubits[0], raw_types.Qid):
         return _get_each_measurement(qubits[0], key_func)
 
-    return _get_each_measurement(qubits, key_func)
+    return _get_each_measurement(qubits[0], key_func)
