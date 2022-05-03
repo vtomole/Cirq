@@ -1307,6 +1307,9 @@ class AbstractCircuit(abc.ABC):
 
         return str(self._to_qasm_output(header, precision, qubit_order))
 
+    @_compat.deprecated(
+        deadline='v1.0', fix='Use cirq.merge_single_qubit_gates_to_phased_x_and_z instead.'
+    )
     def to_quil(self, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT) -> str:
         return str(self._to_quil_output(qubit_order))
 
