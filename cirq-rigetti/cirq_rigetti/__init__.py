@@ -15,7 +15,7 @@
 from cirq_rigetti._version import __version__
 from cirq_rigetti.sampler import RigettiQCSSampler, get_rigetti_qcs_sampler
 from cirq_rigetti.service import RigettiQCSService, get_rigetti_qcs_service
-from cirq_rigetti import circuit_sweep_executors
+from cirq_rigetti import circuit_sweep_executors, quil_output
 from cirq_rigetti import circuit_transformers
 from cirq_rigetti.aspen_device import (
     RigettiQCSAspenDevice,
@@ -25,7 +25,6 @@ from cirq_rigetti.aspen_device import (
     UnsupportedRigettiQCSOperation,
     UnsupportedRigettiQCSQuantumProcessor,
 )
-
 
 # Registers the cirq_rigetti's public classes for JSON serialization.
 from cirq.protocols.json_serialization import _register_resolver

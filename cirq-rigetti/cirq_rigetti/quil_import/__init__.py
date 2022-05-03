@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from cirq.contrib.quil_import.quil import circuit_from_quil
+from cirq_rigetti.quil_import.quil import circuit_from_quil
