@@ -104,23 +104,6 @@ def _get_measurement(
 
 
 def _get_each_measurement(
-    target: Union['cirq.Qid', Iterable['cirq.Qid']], key_func: Callable[[raw_types.Qid], str]
-) -> List[raw_types.Operation]:
-    if isinstance(target, raw_types.Qid):
-        return [MeasurementGate(1, key_func(target), qid_shape=(target.dimension,)).on(target)]
-
-def _get_measurement(
-    target: Union['cirq.Qid', Iterable['cirq.Qid']],
-    key: Optional[Union[str, value.MeasurementKey]] = None,
-    invert_mask: Tuple[bool, ...] = (),
-) -> Union[raw_types.Operation, List[raw_types.Operation]]:
-    if key is None:
-        key = _default_measurement_key(target)
-    qid_shape = protocols.qid_shape(target)
-    return MeasurementGate(len(target), key, invert_mask, qid_shape).on(*target)
-
-
-def _get_each_measurement(
     target: Iterable['cirq.Qid'], key_func: Callable[[raw_types.Qid], str]
 ) -> List[raw_types.Operation]:
     return [MeasurementGate(1, key_func(q), qid_shape=(q.dimension,)).on(q) for q in target]
