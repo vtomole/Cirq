@@ -16,8 +16,10 @@ import string
 from typing import Any, Optional, Dict, Iterable
 import cirq
 from cirq import _compat
+from cirq._compat import deprecated_class
 
 
+@deprecated_class(deadline='v1.0', fix='Use cirq_rigetti.quil_protocol.QuilFormatter instead.')
 class QuilFormatter(string.Formatter):
     """A unique formatter to correctly output values to QUIL."""
 
@@ -67,16 +69,6 @@ def quil(
         Otherwise, returns `None`. (`None` normally indicates that the
         `_decompose_` function should be called on `val`)
     """
-    method = getattr(val, '_quil_', None)
-    result = NotImplemented
-    if method is not None:
-        kwargs: Dict[str, Any] = {}
-        if qubits is not None:
-            kwargs['qubits'] = tuple(qubits)
-        if formatter is not None:
-            kwargs['formatter'] = formatter
-        result = method(**kwargs)
-    if result is not None and result is not NotImplemented:
-        return result
+    import cirq_rigetti
 
-    return None
+    return cirq_rigetti.quil(val, qubits, formatter)

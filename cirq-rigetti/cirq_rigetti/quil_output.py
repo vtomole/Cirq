@@ -127,7 +127,7 @@ class QuilOutput:
         )
         self.qubit_id_map = self._generate_qubit_ids()
         self.measurement_id_map = self._generate_measurement_ids()
-        self.formatter = protocols.QuilFormatter(
+        self.formatter = cirq_rigetti.quil_protocol.QuilFormatter(
             qubit_id_map=self.qubit_id_map, measurement_id_map=self.measurement_id_map
         )
 
@@ -266,7 +266,7 @@ class RigettiQCSQuilOutput(QuilOutput):
         self.qubit_id_map = qubit_id_map or self._generate_qubit_ids()
         self.measurement_id_map = self._generate_measurement_ids()
 
-        self.formatter = cirq.QuilFormatter(
+        self.formatter = cirq_rigetti.quil_protocol.QuilFormatter(
             qubit_id_map=self.qubit_id_map, measurement_id_map=self.measurement_id_map
         )
         self._decompose_operation = decompose_operation
