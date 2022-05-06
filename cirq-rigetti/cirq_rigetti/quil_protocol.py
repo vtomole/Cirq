@@ -45,7 +45,6 @@ class QuilFormatter(string.Formatter):
         return super().format_field(value, spec)
 
 
-@_compat.deprecated(deadline='v1.0', fix='Use cirq_rigetti.quil instead.')
 def quil(
     val: Any,
     *,

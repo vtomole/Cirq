@@ -169,7 +169,7 @@ class QuilOutput:
             output_func('\n')
 
         def keep(op: 'cirq.Operation') -> bool:
-            return protocols.quil(op, formatter=self.formatter) is not None
+            return cirq_rigetti.quil(op, formatter=self.formatter) is not None
 
         def fallback(op):
             if len(op.qubits) not in [1, 2]:
@@ -196,7 +196,7 @@ class QuilOutput:
             )
 
             for decomposed_op in decomposed:
-                output_func(protocols.quil(decomposed_op, formatter=self.formatter))
+                output_func(cirq_rigetti.quil(decomposed_op, formatter=self.formatter))
 
     def rename_defgates(self, output: str) -> str:
         """A function for renaming the DEFGATEs within the QUIL output. This
@@ -299,4 +299,4 @@ class RigettiQCSQuilOutput(QuilOutput):
         for main_op in self.operations:
             decomposed = self._decompose_operation(main_op)
             for decomposed_op in decomposed:
-                output_func(cirq.quil(decomposed_op, formatter=self.formatter))
+                output_func(cirq_rigetti.quil(decomposed_op, formatter=self.formatter))

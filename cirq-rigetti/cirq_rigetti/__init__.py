@@ -26,6 +26,8 @@ from cirq_rigetti.aspen_device import (
     UnsupportedRigettiQCSQuantumProcessor,
 )
 
+from cirq_rigetti.quil_protocol import quil
+
 # Registers the cirq_rigetti's public classes for JSON serialization.
 from cirq.protocols.json_serialization import _register_resolver
 from cirq_rigetti.json_resolver_cache import _class_resolver_dictionary
