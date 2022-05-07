@@ -69,6 +69,16 @@ def quil(
         Otherwise, returns `None`. (`None` normally indicates that the
         `_decompose_` function should be called on `val`)
     """
-    import cirq_rigetti
+    method = getattr(val, '_quil_', None)
+    result = NotImplemented
+    if method is not None:
+        kwargs: Dict[str, Any] = {}
+        if qubits is not None:
+            kwargs['qubits'] = tuple(qubits)
+        if formatter is not None:
+            kwargs['formatter'] = formatter
+        result = method(**kwargs)
+    if result is not None and result is not NotImplemented:
+        return result
 
-    return cirq_rigetti.quil(val, qubits, formatter)
+    return None

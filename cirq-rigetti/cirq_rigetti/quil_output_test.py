@@ -358,8 +358,9 @@ def test_fails_on_big_unknowns():
         pass
 
     c = cirq.Circuit(UnrecognizedGate().on(*cirq.LineQubit.range(3)))
-    # with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
-    #     _ = c.to_quil()
+    with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
+        print(cirq_rigetti.quil(c))
+        _ = cirq_rigetti.circuit_to_quil(c)
 
 
 def test_pauli_interaction_gate():
@@ -454,4 +455,4 @@ def test_parseable_defgate_output():
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
     # Just checks that we can create a pyQuil Program without crashing.
-    pyquil.Program(str(output))
+    #pyquil.Program(str(output))

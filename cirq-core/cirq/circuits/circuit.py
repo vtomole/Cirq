@@ -1283,11 +1283,15 @@ class AbstractCircuit(abc.ABC):
             version='2.0',
         )
 
+    @_compat.deprecated(
+        deadline='v1.0', fix='Use cirq_rigetti.quil_ouput._circuit_to_quil_ouput(circuit) instead.'
+    )
     def _to_quil_output(
         self, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT
     ) -> 'cirq.QuilOutput':
-        qubits = ops.QubitOrder.as_qubit_order(qubit_order).order_for(self.all_qubits())
-        return QuilOutput(operations=self.all_operations(), qubits=qubits)
+        from cirq_rigetti.quil_ouput import _circuit_to_quil_output
+
+        return _circuit_to_quil_output(self, qubit_order)
 
     def to_qasm(
         self,
@@ -1307,9 +1311,11 @@ class AbstractCircuit(abc.ABC):
 
         return str(self._to_qasm_output(header, precision, qubit_order))
 
-    @_compat.deprecated(deadline='v1.0', fix='Use cirq_rigetti.quil(circuit) instead.')
+    @_compat.deprecated(deadline='v1.0', fix='Use cirq_rigetti.circuit_to_quil(circuit) instead.')
     def to_quil(self, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT) -> str:
-        return str(self._to_quil_output(qubit_order))
+        import cirq_rigetti
+
+        return cirq_rigetti.circuit_to_quil(self, qubit_order)
 
     def save_qasm(
         self,

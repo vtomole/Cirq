@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Callable, Dict, Set, Tuple, Optional, List
+from typing import Callable, Dict, Set, Tuple, List, Optional, Union
 import cirq
 import cirq_rigetti
-from typing import Callable, Dict, Set, Tuple, Union
 import numpy as np
 import cirq
 from cirq import protocols, value, ops
@@ -300,3 +299,14 @@ class RigettiQCSQuilOutput(QuilOutput):
             decomposed = self._decompose_operation(main_op)
             for decomposed_op in decomposed:
                 output_func(cirq_rigetti.quil(decomposed_op, formatter=self.formatter))
+
+
+def circuit_to_quil(circuit, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT) -> str:
+    return str(_circuit_to_quil_output(circuit, qubit_order))
+
+
+def _circuit_to_quil_output(
+    circuit, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT
+) -> 'cirq.QuilOutput':
+    qubits = ops.QubitOrder.as_qubit_order(qubit_order).order_for(circuit.all_qubits())
+    return QuilOutput(operations=circuit.all_operations(), qubits=qubits)

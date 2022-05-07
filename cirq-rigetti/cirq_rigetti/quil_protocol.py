@@ -15,7 +15,6 @@
 import string
 from typing import Any, Optional, Dict, Iterable
 import cirq
-from cirq import _compat
 
 
 class QuilFormatter(string.Formatter):

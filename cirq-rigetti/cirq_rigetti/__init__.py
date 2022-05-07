@@ -27,6 +27,7 @@ from cirq_rigetti.aspen_device import (
 )
 
 from cirq_rigetti.quil_protocol import quil
+from cirq_rigetti.quil_output import circuit_to_quil
 
 # Registers the cirq_rigetti's public classes for JSON serialization.
 from cirq.protocols.json_serialization import _register_resolver
