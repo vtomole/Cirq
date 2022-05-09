@@ -27,12 +27,15 @@ def test_with_quilc_compilation_and_cirq_parameter_resolution(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-    results = executors.with_quilc_compilation_and_cirq_parameter_resolution(
-        quantum_computer=quantum_computer,
-        circuit=parametric_circuit,
-        resolvers=param_resolvers,  # ignore: type
-        repetitions=repetitions,
-    )
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=None
+    ):
+        results = executors.with_quilc_compilation_and_cirq_parameter_resolution(
+            quantum_computer=quantum_computer,
+            circuit=parametric_circuit,
+            resolvers=param_resolvers,  # ignore: type
+            repetitions=repetitions,
+        )
     assert len(param_resolvers) == len(results)
     assert len(param_resolvers) == quantum_computer.compiler.quil_to_native_quil.call_count
     assert len(param_resolvers) == quantum_computer.compiler.native_quil_to_executable.call_count
@@ -70,12 +73,15 @@ def test_with_quilc_parametric_compilation(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-    results = executors.with_quilc_parametric_compilation(
-        quantum_computer=quantum_computer,
-        circuit=parametric_circuit,
-        resolvers=param_resolvers,  # noqa
-        repetitions=repetitions,
-    )
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=None
+    ):
+        results = executors.with_quilc_parametric_compilation(
+            quantum_computer=quantum_computer,
+            circuit=parametric_circuit,
+            resolvers=param_resolvers,  # noqa
+            repetitions=repetitions,
+        )
     assert len(param_resolvers) == len(results)
     assert 1 == quantum_computer.compiler.quil_to_native_quil.call_count
     assert 1 == quantum_computer.compiler.native_quil_to_executable.call_count
@@ -98,12 +104,15 @@ def test_parametric_with_symbols(
         expected_results
     )
     with pytest.raises(ValueError, match='Symbols not valid'):
-        _ = executors.with_quilc_parametric_compilation(
-            quantum_computer=quantum_computer,
-            circuit=parametric_circuit,
-            resolvers=[{sympy.Symbol('a') + sympy.Symbol('b'): sympy.Symbol('c')}],
-            repetitions=repetitions,
-        )
+        with cirq.testing.assert_deprecated(
+            'quil was used but is deprecated', deadline='v1.0', count=None
+        ):
+            _ = executors.with_quilc_parametric_compilation(
+                quantum_computer=quantum_computer,
+                circuit=parametric_circuit,
+                resolvers=[{sympy.Symbol('a') + sympy.Symbol('b'): sympy.Symbol('c')}],
+                repetitions=repetitions,
+            )
 
 
 def test_without_quilc_compilation(
@@ -125,12 +134,16 @@ def test_without_quilc_compilation(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-    results = executors.without_quilc_compilation(
-        quantum_computer=quantum_computer,
-        circuit=parametric_circuit,
-        resolvers=param_resolvers,  # noqa
-        repetitions=repetitions,
-    )
+
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=None
+    ):
+        results = executors.without_quilc_compilation(
+            quantum_computer=quantum_computer,
+            circuit=parametric_circuit,
+            resolvers=param_resolvers,  # noqa
+            repetitions=repetitions,
+        )
     assert len(param_resolvers) == len(results)
     assert 0 == quantum_computer.compiler.quil_to_native_quil.call_count
     assert len(param_resolvers) == quantum_computer.compiler.native_quil_to_executable.call_count

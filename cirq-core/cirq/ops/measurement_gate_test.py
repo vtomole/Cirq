@@ -157,7 +157,9 @@ def test_qudit_measure_quil():
 
         formatter = cirq.QuilFormatter(qubit_id_map=qubit_id_map, measurement_id_map={})
 
-    with cirq.testing.assert_deprecated('quil was used but is deprecated', deadline='v1.0'):
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
         assert cirq.quil(cirq.measure(q0, key='a'), formatter=formatter) is None
 
 

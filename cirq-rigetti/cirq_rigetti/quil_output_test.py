@@ -30,54 +30,69 @@ def _make_qubits(n):
 def test_single_gate_no_parameter():
     (q0,) = _make_qubits(1)
     output = cirq_rigetti.quil_output.QuilOutput((cirq.X(q0),), (q0,))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 X 0\n"""
-    )
+        )
 
 
 def test_single_gate_with_parameter():
     (q0,) = _make_qubits(1)
     output = cirq_rigetti.quil_output.QuilOutput((cirq.X(q0) ** 0.5,), (q0,))
-    assert (
-        str(output)
-        == f"""# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == f"""# Created using Cirq.
 
 RX({np.pi / 2}) 0\n"""
-    )
+        )
 
 
 def test_single_gate_named_qubit():
     q = cirq.NamedQubit('qTest')
     output = cirq_rigetti.quil_output.QuilOutput((cirq.X(q),), (q,))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 X 0\n"""
-    )
+        )
 
 
 def test_h_gate_with_parameter():
     (q0,) = _make_qubits(1)
     output = cirq_rigetti.quil_output.QuilOutput((cirq.H(q0) ** 0.25,), (q0,))
-    assert (
-        str(output)
-        == f"""# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == f"""# Created using Cirq.
 
 RY({np.pi / 4}) 0
 RX({np.pi / 4}) 0
 RY({-np.pi / 4}) 0\n"""
-    )
+        )
 
 
 def test_save_to_file(tmpdir):
     file_path = os.path.join(tmpdir, 'test.quil')
     (q0,) = _make_qubits(1)
     output = cirq_rigetti.quil_output.QuilOutput((cirq.X(q0)), (q0,))
-    output.save_to_file(file_path)
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        output.save_to_file(file_path)
     with open(file_path, 'r') as f:
         file_content = f.read()
     assert (
@@ -132,16 +147,19 @@ def test_quil_one_qubit_gate_output():
     (q0,) = _make_qubits(1)
     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
     output = cirq_rigetti.quil_output.QuilOutput((gate.on(q0),), (q0,))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 DEFGATE USERGATE1:
     1.0+0.0i, 0.0+0.0i
     0.0+0.0i, 1.0+0.0i
 USERGATE1 0
 """
-    )
+        )
 
 
 def test_two_quil_one_qubit_gate_output():
@@ -149,9 +167,12 @@ def test_two_quil_one_qubit_gate_output():
     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
     gate1 = QuilOneQubitGate(np.array([[2, 0], [0, 3]]))
     output = cirq_rigetti.quil_output.QuilOutput((gate.on(q0), gate1.on(q0)), (q0,))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=4
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 DEFGATE USERGATE1:
     1.0+0.0i, 0.0+0.0i
@@ -162,16 +183,19 @@ DEFGATE USERGATE2:
     0.0+0.0i, 3.0+0.0i
 USERGATE2 0
 """
-    )
+        )
 
 
 def test_quil_two_qubit_gate_output():
     (q0, q1) = _make_qubits(2)
     gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
     output = cirq_rigetti.quil_output.QuilOutput((gate.on(q0, q1),), (q0, q1))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 DEFGATE USERGATE1:
     1.0+0.0i, 0.0+0.0i, 0.0+0.0i, 0.0+0.0i
@@ -180,7 +204,7 @@ DEFGATE USERGATE1:
     0.0+0.0i, 0.0+0.0i, 0.0+0.0i, 1.0+0.0i
 USERGATE1 0 1
 """
-    )
+        )
 
 
 def test_unsupported_operation():
@@ -199,22 +223,28 @@ def test_i_swap_with_power():
     q0, q1 = _make_qubits(2)
 
     output = cirq_rigetti.quil_output.QuilOutput((cirq.ISWAP(q0, q1) ** 0.25,), (q0, q1))
-    assert (
-        str(output)
-        == f"""# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=2
+    ):
+        assert (
+            str(output)
+            == f"""# Created using Cirq.
 
 XY({np.pi / 4}) 0 1
 """
-    )
+        )
 
 
 def test_all_operations():
     qubits = tuple(_make_qubits(5))
     operations = _all_operations(*qubits, include_measurements=False)
     output = cirq_rigetti.quil_output.QuilOutput(operations, qubits)
-    assert (
-        str(output)
-        == f"""# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=155
+    ):
+        assert (
+            str(output)
+            == f"""# Created using Cirq.
 
 DECLARE m0 BIT[1]
 DECLARE m1 BIT[1]
@@ -309,7 +339,7 @@ X 2 # Inverting for following measurement
 MEASURE 2 m3[1]
 MEASURE 3 m3[2]
 """
-    )
+        )
 
 
 def _all_operations(q0, q1, q2, q3, q4, include_measurements=True):
@@ -359,20 +389,23 @@ def test_fails_on_big_unknowns():
 
     c = cirq.Circuit(UnrecognizedGate().on(*cirq.LineQubit.range(3)))
     with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
-        print(cirq_rigetti.quil(c))
-        _ = cirq_rigetti.circuit_to_quil(c)
+        with cirq.testing.assert_deprecated('quil was used but is deprecated', deadline='v1.0'):
+            _ = cirq_rigetti.circuit_to_quil(c)
 
 
 def test_pauli_interaction_gate():
     (q0, q1) = _make_qubits(2)
     output = cirq_rigetti.quil_output.QuilOutput(PauliInteractionGate.CZ.on(q0, q1), (q0, q1))
-    assert (
-        str(output)
-        == """# Created using Cirq.
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=7
+    ):
+        assert (
+            str(output)
+            == """# Created using Cirq.
 
 CZ 0 1
 """
-    )
+        )
 
 
 def test_equivalent_unitaries():
@@ -393,7 +426,10 @@ def test_equivalent_unitaries():
         cirq.ISwapPowGate(exponent=0.5)(q0, q1),
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
-    program = pyquil.Program(str(output))
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=10
+    ):
+        program = pyquil.Program(str(output))
     pyquil_unitary = pyquil_simulation_tools.program_unitary(program, n_qubits=2)
     # Qubit ordering differs between pyQuil and Cirq.
     cirq_unitary = cirq.Circuit(cirq.SWAP(q0, q1), operations, cirq.SWAP(q0, q1)).unitary()
@@ -430,7 +466,10 @@ def test_two_qubit_diagonal_gate_quil_output():
         cirq.TwoQubitDiagonalGate([0, 0, 0, np.pi / 2])(q0, q1),
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
-    program = pyquil.Program(str(output))
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=8
+    ):
+        program = pyquil.Program(str(output))
     assert f"\n{program.out()}" == QUIL_CPHASES_PROGRAM
 
     pyquil_unitary = pyquil_simulation_tools.program_unitary(program, n_qubits=2)
@@ -440,7 +479,10 @@ def test_two_qubit_diagonal_gate_quil_output():
     # Also test non-CPHASE case, which decomposes into X/RZ/CPhase
     operations = [cirq.TwoQubitDiagonalGate([0, 0, 0, 0])(q0, q1)]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
-    program = pyquil.Program(str(output))
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=17
+    ):
+        program = pyquil.Program(str(output))
     assert f"\n{program.out()}" == QUIL_DIAGONAL_DECOMPOSE_PROGRAM
 
 
@@ -455,4 +497,7 @@ def test_parseable_defgate_output():
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
     # Just checks that we can create a pyQuil Program without crashing.
-    pyquil.Program(str(output))
+    with cirq.testing.assert_deprecated(
+        'quil was used but is deprecated', deadline='v1.0', count=4
+    ):
+        pyquil.Program(str(output))
