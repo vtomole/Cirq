@@ -335,21 +335,22 @@ class GateOperation(raw_types.Operation):
         return protocols.qasm(self.gate, args=args, qubits=self.qubits, default=None)
 
     def _quil_(self, formatter: 'protocols.QuilFormatter') -> Optional[str]:
-        method = getattr(self.gate, '_quil_', None)
-        result = NotImplemented
-        if method is not None:
-            kwargs: Dict[str, Any] = {}
-            if self.qubits is not None:
-                kwargs['qubits'] = tuple(self.qubits)
-            if formatter is not None:
-                kwargs['formatter'] = formatter
-            result = method(**kwargs)
-        if result is not None and result is not NotImplemented:
-            return result
-
-        return None
-
-        #return protocols.quil(self.gate, qubits=self.qubits, formatter=formatter)
+        # method = getattr(self.gate, '_quil_', None)
+        # result = NotImplemented
+        # if method is not None:
+        #     kwargs: Dict[str, Any] = {}
+        #     if self.qubits is not None:
+        #         kwargs['qubits'] = tuple(self.qubits)
+        #     if formatter is not None:
+        #         kwargs['formatter'] = formatter
+        #     result = method(**kwargs)
+        # if result is not None and result is not NotImplemented:
+        #     return result
+        #
+        # return None
+        from cirq_rigetti import quil_protocol
+        print("Here")
+        return quil_protocol.quil(self.gate, qubits=self.qubits, formatter=formatter)
 
     def _equal_up_to_global_phase_(
         self, other: Any, atol: Union[int, float] = 1e-8
