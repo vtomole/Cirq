@@ -455,4 +455,4 @@ def test_parseable_defgate_output():
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
     # Just checks that we can create a pyQuil Program without crashing.
-    #pyquil.Program(str(output))
+    pyquil.Program(str(output))

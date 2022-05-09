@@ -307,6 +307,6 @@ def circuit_to_quil(circuit, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrd
 
 def _circuit_to_quil_output(
     circuit, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT
-) -> 'cirq.QuilOutput':
+) -> QuilOutput:
     qubits = ops.QubitOrder.as_qubit_order(qubit_order).order_for(circuit.all_qubits())
     return QuilOutput(operations=circuit.all_operations(), qubits=qubits)

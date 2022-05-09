@@ -56,7 +56,6 @@ from cirq.circuits._bucket_priority_queue import BucketPriorityQueue
 from cirq.circuits.circuit_operation import CircuitOperation
 from cirq.circuits.insert_strategy import InsertStrategy
 from cirq.circuits.qasm_output import QasmOutput
-from cirq.circuits.quil_output import QuilOutput
 from cirq.circuits.text_diagram_drawer import TextDiagramDrawer
 from cirq.circuits.moment import Moment
 from cirq.protocols import circuit_diagram_info_protocol
@@ -1313,9 +1312,7 @@ class AbstractCircuit(abc.ABC):
 
     @_compat.deprecated(deadline='v1.0', fix='Use cirq_rigetti.circuit_to_quil(circuit) instead.')
     def to_quil(self, qubit_order: 'cirq.QubitOrderOrList' = ops.QubitOrder.DEFAULT) -> str:
-        import cirq_rigetti
-
-        return cirq_rigetti.circuit_to_quil(self, qubit_order)
+        return str(self._to_quil_output(qubit_order))
 
     def save_qasm(
         self,

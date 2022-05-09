@@ -17,6 +17,7 @@ def test_transform_cirq_circuit_to_pyquil_program(
 
     parametric_circuit, param_resolvers = parametric_circuit_with_params
     circuit = cirq.protocols.resolve_parameters(parametric_circuit, param_resolvers[1])
+
     program, _ = transformers.default(circuit=circuit)
 
     assert (

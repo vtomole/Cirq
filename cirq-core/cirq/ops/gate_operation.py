@@ -348,9 +348,12 @@ class GateOperation(raw_types.Operation):
         #     return result
         #
         # return None
-        from cirq_rigetti import quil_protocol
-        print("Here")
-        return quil_protocol.quil(self.gate, qubits=self.qubits, formatter=formatter)
+        # from cirq_rigetti import quil_protocol
+        # print("Here")
+        # return quil_protocol.quil(self.gate, qubits=self.qubits, formatter=formatter)
+        import cirq_rigetti
+
+        return cirq_rigetti.quil(self.gate, qubits=self.qubits, formatter=formatter)
 
     def _equal_up_to_global_phase_(
         self, other: Any, atol: Union[int, float] = 1e-8

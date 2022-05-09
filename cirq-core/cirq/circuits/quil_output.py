@@ -16,6 +16,7 @@ from typing import Callable, Dict, Set, Tuple, Union
 import numpy as np
 import cirq
 from cirq import protocols, value, ops
+from cirq._compat import deprecated_class
 
 
 def to_quil_complex_format(num) -> str:
@@ -104,6 +105,7 @@ class QuilTwoQubitGate(ops.Gate):
         return f'cirq.circuits.quil_output.QuilTwoQubitGate(matrix=\n{self.matrix}\n)'
 
 
+@deprecated_class(deadline='v1.0', fix='Use cirq_rigetti.quil_output.QuilOutput instead.')
 class QuilOutput:
     """An object for passing operations and qubits then outputting them to
     QUIL format. The string representation returns the QUIL output for the
