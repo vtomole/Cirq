@@ -11,8 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from typing import Callable, Dict, Set, Tuple, Union
+import string
+from typing import Callable, Dict, Set, Tuple, Union, Any
 import numpy as np
 import cirq
 from cirq import protocols, value, ops
@@ -23,6 +23,31 @@ def to_quil_complex_format(num) -> str:
     cnum = complex(str(num))
     return f"{cnum.real}+{cnum.imag}i"
 
+class QuilFormatter(string.Formatter):
+    """A unique formatter to correctly output values to QUIL."""
+
+    def __init__(
+        self, qubit_id_map: Dict['cirq.Qid', str], measurement_id_map: Dict[str, str]
+    ) -> None:
+        """Inits QuilFormatter.
+
+        Args:
+            qubit_id_map: A dictionary {qubit, quil_output_string} for
+            the proper QUIL output for each qubit.
+            measurement_id_map: A dictionary {measurement_key,
+            quil_output_string} for the proper QUIL output for each
+            measurement key.
+        """
+        self.qubit_id_map = {} if qubit_id_map is None else qubit_id_map
+        self.measurement_id_map = {} if measurement_id_map is None else measurement_id_map
+
+    def format_field(self, value: Any, spec: str) -> str:
+        if isinstance(value, cirq.ops.Qid):
+            value = self.qubit_id_map[value]
+        if isinstance(value, str) and spec == 'meas':
+            value = self.measurement_id_map[value]
+            spec = ''
+        return super().format_field(value, spec)
 
 @value.value_equality(approximate=True)
 class QuilOneQubitGate(ops.Gate):
@@ -103,6 +128,135 @@ class QuilTwoQubitGate(ops.Gate):
     def __repr__(self) -> str:
         return f'cirq.circuits.quil_output.QuilTwoQubitGate(matrix=\n{self.matrix}\n)'
 
+supported_gates = {
+    ops.X: "X"
+}
+
+def cphase(param: float) -> ops.CZPowGate:
+    """Returns a controlled-phase gate as a Cirq CZPowGate with exponent
+    determined by the input param. The angle parameter of pyQuil's CPHASE
+    gate and the exponent of Cirq's CZPowGate differ by a factor of pi.
+    Args:
+        param: Gate parameter (in radians).
+    Returns:
+        A CZPowGate equivalent to a CPHASE gate of given angle.
+    """
+    return ops.CZPowGate(exponent=param / np.pi)
+
+
+def cphase00(phi: float) -> ops.TwoQubitDiagonalGate:
+    """Returns a Cirq TwoQubitDiagonalGate for pyQuil's CPHASE00 gate.
+    In pyQuil, CPHASE00(phi) = diag([exp(1j * phi), 1, 1, 1]), and in Cirq,
+    a TwoQubitDiagonalGate is specified by its diagonal in radians, which
+    would be [phi, 0, 0, 0].
+    Args:
+        phi: Gate parameter (in radians).
+    Returns:
+        A TwoQubitDiagonalGate equivalent to a CPHASE00 gate of given angle.
+    """
+    return ops.TwoQubitDiagonalGate([phi, 0, 0, 0])
+
+
+def cphase01(phi: float) -> ops.TwoQubitDiagonalGate:
+    """Returns a Cirq TwoQubitDiagonalGate for pyQuil's CPHASE01 gate.
+    In pyQuil, CPHASE01(phi) = diag(1, [exp(1j * phi), 1, 1]), and in Cirq,
+    a TwoQubitDiagonalGate is specified by its diagonal in radians, which
+    would be [0, phi, 0, 0].
+    Args:
+        phi: Gate parameter (in radians).
+    Returns:
+        A TwoQubitDiagonalGate equivalent to a CPHASE01 gate of given angle.
+    """
+    return ops.TwoQubitDiagonalGate([0, phi, 0, 0])
+
+
+def cphase10(phi: float) -> ops.TwoQubitDiagonalGate:
+    """Returns a Cirq TwoQubitDiagonalGate for pyQuil's CPHASE10 gate.
+    In pyQuil, CPHASE10(phi) = diag(1, 1, [exp(1j * phi), 1]), and in Cirq,
+    a TwoQubitDiagonalGate is specified by its diagonal in radians, which
+    would be [0, 0, phi, 0].
+    Args:
+        phi: Gate parameter (in radians).
+    Returns:
+        A TwoQubitDiagonalGate equivalent to a CPHASE10 gate of given angle.
+    """
+    return ops.TwoQubitDiagonalGate([0, 0, phi, 0])
+
+
+def phase(param: float) -> ops.ZPowGate:
+    """Returns a single-qubit phase gate as a Cirq ZPowGate with exponent
+    determined by the input param. The angle parameter of pyQuil's PHASE
+    gate and the exponent of Cirq's ZPowGate differ by a factor of pi.
+    Args:
+        param: Gate parameter (in radians).
+    Returns:
+        A ZPowGate equivalent to a PHASE gate of given angle.
+    """
+    return ops.ZPowGate(exponent=param / np.pi)
+
+
+def pswap(phi: float) -> ops.MatrixGate:
+    """Returns a Cirq MatrixGate for pyQuil's PSWAP gate.
+    Args:
+        phi: Gate parameter (in radians).
+    Returns:
+        A MatrixGate equivalent to a PSWAP gate of given angle.
+    """
+    # fmt: off
+    pswap_matrix = np.array(
+        [
+            [1, 0, 0, 0],
+            [0, 0, np.exp(1j * phi), 0],
+            [0, np.exp(1j * phi), 0, 0],
+            [0, 0, 0, 1]
+        ],
+        dtype=complex,
+    )
+    # fmt: on
+    return ops.MatrixGate(pswap_matrix)
+
+
+def xy(param: float) -> ops.ISwapPowGate:
+    """Returns an ISWAP-family gate as a Cirq ISwapPowGate with exponent
+    determined by the input param. The angle parameter of pyQuil's XY gate
+    and the exponent of Cirq's ISwapPowGate differ by a factor of pi.
+    Args:
+        param: Gate parameter (in radians).
+    Returns:
+        An ISwapPowGate equivalent to an XY gate of given angle.
+    """
+    return ops.ISwapPowGate(exponent=param / np.pi)
+
+
+
+old_dict = {
+    "CCNOT": ops.CCNOT,
+    "CNOT": ops.CNOT,
+    "CSWAP": ops.CSWAP,
+    "CPHASE": cphase,
+    "CPHASE00": cphase00,
+    "CPHASE01": cphase01,
+    "CPHASE10": cphase10,
+    "CZ": ops.CZ,
+    "PHASE": phase,
+    "H": ops.H,
+    "I": ops.I,
+    "ISWAP": ops.ISWAP,
+    "PSWAP": pswap,
+    "RX": ops.rx,
+    "RY": ops.ry,
+    "RZ": ops.rz,
+    "S": ops.S,
+    "SWAP": ops.SWAP,
+    "T": ops.T,
+    "X": ops.X,
+    "Y": ops.Y,
+    "Z": ops.Z,
+    "XY": xy,
+    # "X**0.5": ops.X**0.5
+}
+
+supported_gates = dict([(value, key) for key, value in old_dict.items()])
 
 class QuilOutput:
     """An object for passing operations and qubits then outputting them to
@@ -124,7 +278,7 @@ class QuilOutput:
         )
         self.qubit_id_map = self._generate_qubit_ids()
         self.measurement_id_map = self._generate_measurement_ids()
-        self.formatter = protocols.QuilFormatter(
+        self.formatter = QuilFormatter(
             qubit_id_map=self.qubit_id_map, measurement_id_map=self.measurement_id_map
         )
 
@@ -166,11 +320,26 @@ class QuilOutput:
             output_func('\n')
 
         def keep(op: 'cirq.Operation') -> bool:
-            return protocols.quil(op, formatter=self.formatter) is not None
+            # print(supported_gates)
+            print("Keep")
+            print(op.gate)
+            print("In supported gates")
+
+            if isinstance(op.gate, (ops.Rx, ops.HPowGate)):
+                return True
+            print(op.gate in supported_gates)
+            return op.gate in supported_gates
 
         def fallback(op):
             if len(op.qubits) not in [1, 2]:
                 return NotImplemented
+
+            if len(op.qubits) == 1:
+                if isinstance(op.gate, ops.XPowGate):
+                    if op.gate.exponent == 0.5:
+                        return ops.Rx(rads=op.gate.exponent * np.pi).on(*op.qubits)
+                if isinstance(op.gate, ops.HPowGate):
+                    return op
 
             mat = protocols.unitary(op, None)
             if mat is None:
@@ -188,12 +357,42 @@ class QuilOutput:
             return ValueError(f'Cannot output operation as QUIL: {bad_op!r}')
 
         for main_op in self.operations:
+            print("Mian op")
+            print(main_op)
             decomposed = protocols.decompose(
                 main_op, keep=keep, fallback_decomposer=fallback, on_stuck_raise=on_stuck
             )
 
             for decomposed_op in decomposed:
-                output_func(protocols.quil(decomposed_op, formatter=self.formatter))
+                print("Decomposed op")
+                print(decomposed_op)
+                if len(decomposed_op.qubits) == 1:
+                    # print(type(supported_gates))
+                    # print(supported_gates[decomposed_op.gate])
+                    #print(self.formatter.format(f'{supported_gates[decomposed_op.gate]} {0}\n', decomposed_op.qubits[0]))
+                #output_func(protocols.quil(decomposed_op, formatter=self.formatter))
+
+                    formated_str = ""
+
+                    if isinstance(decomposed_op.gate, ops.Rx):
+                        formated_str = self.formatter.format('RX({0}) {1}\n', decomposed_op.gate._exponent * np.pi, decomposed_op.qubits[0])
+
+                    elif isinstance(decomposed_op.gate, ops.HPowGate):
+                        if decomposed_op.gate._exponent == 1:
+                            formated_str =  self.formatter.format('H {0}\n', decomposed_op.qubits[0])
+                        else:
+                            formated_str = self.formatter.format(
+                            'RY({0}) {3}\nRX({1}) {3}\nRY({2}) {3}\n',
+                            0.25 * np.pi,
+                            decomposed_op.gate._exponent * np.pi,
+                            -0.25 * np.pi,
+                            decomposed_op.qubits[0],
+                        )
+                    else:
+                        formated_str = self.formatter.format(f'{supported_gates[decomposed_op.gate]} {0}\n', decomposed_op.qubits[0])
+
+
+                    output_func(formated_str)
 
     def rename_defgates(self, output: str) -> str:
         """A function for renaming the DEFGATEs within the QUIL output. This
