@@ -86,126 +86,126 @@ X 0\n"""
     )
 
 
-# def test_quil_one_qubit_gate_repr():
-#     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     assert repr(gate) == (
-#         """cirq.circuits.quil_output.QuilOneQubitGate(matrix=
-# [[1 0]
-#  [0 1]]
-# )"""
-#     )
-#
-#
-# def test_quil_two_qubit_gate_repr():
-#     gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-#     assert repr(gate) == (
-#         """cirq.circuits.quil_output.QuilTwoQubitGate(matrix=
-# [[1 0 0 0]
-#  [0 1 0 0]
-#  [0 0 1 0]
-#  [0 0 0 1]]
-# )"""
-#     )
-#
-#
-# def test_quil_one_qubit_gate_eq():
-#     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     gate2 = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     assert cirq.approx_eq(gate, gate2, atol=1e-16)
-#     gate3 = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     gate4 = QuilOneQubitGate(np.array([[1, 0], [0, 2]]))
-#     assert not cirq.approx_eq(gate4, gate3, atol=1e-16)
-#
-#
-# def test_quil_two_qubit_gate_eq():
-#     gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-#     gate2 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-#     assert cirq.approx_eq(gate, gate2, atol=1e-8)
-#     gate3 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-#     gate4 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 1]]))
-#     assert not cirq.approx_eq(gate4, gate3, atol=1e-8)
-#
-#
-# def test_quil_one_qubit_gate_output():
-#     (q0,) = _make_qubits(1)
-#     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     output = cirq.QuilOutput((gate.on(q0),), (q0,))
-#     assert (
-#         str(output)
-#         == """# Created using Cirq.
-#
-# DEFGATE USERGATE1:
-#     1.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 1.0+0.0i
-# USERGATE1 0
-# """
-#     )
-#
-#
-# def test_two_quil_one_qubit_gate_output():
-#     (q0,) = _make_qubits(1)
-#     gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
-#     gate1 = QuilOneQubitGate(np.array([[2, 0], [0, 3]]))
-#     output = cirq.QuilOutput((gate.on(q0), gate1.on(q0)), (q0,))
-#     assert (
-#         str(output)
-#         == """# Created using Cirq.
-#
-# DEFGATE USERGATE1:
-#     1.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 1.0+0.0i
-# USERGATE1 0
-# DEFGATE USERGATE2:
-#     2.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 3.0+0.0i
-# USERGATE2 0
-# """
-#     )
-#
-#
-# def test_quil_two_qubit_gate_output():
-#     (q0, q1) = _make_qubits(2)
-#     gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-#     output = cirq.QuilOutput((gate.on(q0, q1),), (q0, q1))
-#     assert (
-#         str(output)
-#         == """# Created using Cirq.
-#
-# DEFGATE USERGATE1:
-#     1.0+0.0i, 0.0+0.0i, 0.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 1.0+0.0i, 0.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 0.0+0.0i, 1.0+0.0i, 0.0+0.0i
-#     0.0+0.0i, 0.0+0.0i, 0.0+0.0i, 1.0+0.0i
-# USERGATE1 0 1
-# """
-#     )
-#
-#
-# def test_unsupported_operation():
-#     (q0,) = _make_qubits(1)
-#
-#     class UnsupportedOperation(cirq.Operation):
-#         qubits = (q0,)
-#         with_qubits = NotImplemented
-#
-#     output = cirq.QuilOutput((UnsupportedOperation(),), (q0,))
-#     with pytest.raises(ValueError):
-#         _ = str(output)
-#
-#
-# def test_i_swap_with_power():
-#     q0, q1 = _make_qubits(2)
-#
-#     output = cirq.QuilOutput((cirq.ISWAP(q0, q1) ** 0.25,), (q0, q1))
-#     assert (
-#         str(output)
-#         == f"""# Created using Cirq.
-#
-# XY({np.pi / 4}) 0 1
-# """
-#     )
-#
-#
+def test_quil_one_qubit_gate_repr():
+    gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    assert repr(gate) == (
+        """cirq.circuits.quil_output.QuilOneQubitGate(matrix=
+[[1 0]
+ [0 1]]
+)"""
+    )
+
+
+def test_quil_two_qubit_gate_repr():
+    gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    assert repr(gate) == (
+        """cirq.circuits.quil_output.QuilTwoQubitGate(matrix=
+[[1 0 0 0]
+ [0 1 0 0]
+ [0 0 1 0]
+ [0 0 0 1]]
+)"""
+    )
+
+
+def test_quil_one_qubit_gate_eq():
+    gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    gate2 = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    assert cirq.approx_eq(gate, gate2, atol=1e-16)
+    gate3 = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    gate4 = QuilOneQubitGate(np.array([[1, 0], [0, 2]]))
+    assert not cirq.approx_eq(gate4, gate3, atol=1e-16)
+
+
+def test_quil_two_qubit_gate_eq():
+    gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    gate2 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    assert cirq.approx_eq(gate, gate2, atol=1e-8)
+    gate3 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    gate4 = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 1]]))
+    assert not cirq.approx_eq(gate4, gate3, atol=1e-8)
+
+
+def test_quil_one_qubit_gate_output():
+    (q0,) = _make_qubits(1)
+    gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    output = cirq.QuilOutput((gate.on(q0),), (q0,))
+    assert (
+        str(output)
+        == """# Created using Cirq.
+
+DEFGATE USERGATE1:
+    1.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 1.0+0.0i
+USERGATE1 0
+"""
+    )
+
+
+def test_two_quil_one_qubit_gate_output():
+    (q0,) = _make_qubits(1)
+    gate = QuilOneQubitGate(np.array([[1, 0], [0, 1]]))
+    gate1 = QuilOneQubitGate(np.array([[2, 0], [0, 3]]))
+    output = cirq.QuilOutput((gate.on(q0), gate1.on(q0)), (q0,))
+    assert (
+        str(output)
+        == """# Created using Cirq.
+
+DEFGATE USERGATE1:
+    1.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 1.0+0.0i
+USERGATE1 0
+DEFGATE USERGATE2:
+    2.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 3.0+0.0i
+USERGATE2 0
+"""
+    )
+
+
+def test_quil_two_qubit_gate_output():
+    (q0, q1) = _make_qubits(2)
+    gate = QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    output = cirq.QuilOutput((gate.on(q0, q1),), (q0, q1))
+    assert (
+        str(output)
+        == """# Created using Cirq.
+
+DEFGATE USERGATE1:
+    1.0+0.0i, 0.0+0.0i, 0.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 1.0+0.0i, 0.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 0.0+0.0i, 1.0+0.0i, 0.0+0.0i
+    0.0+0.0i, 0.0+0.0i, 0.0+0.0i, 1.0+0.0i
+USERGATE1 0 1
+"""
+    )
+
+
+def test_unsupported_operation():
+    (q0,) = _make_qubits(1)
+
+    class UnsupportedOperation(cirq.Operation):
+        qubits = (q0,)
+        with_qubits = NotImplemented
+
+    output = cirq.QuilOutput((UnsupportedOperation(),), (q0,))
+    with pytest.raises(ValueError):
+        _ = str(output)
+
+
+def test_i_swap_with_power():
+    q0, q1 = _make_qubits(2)
+
+    output = cirq.QuilOutput((cirq.ISWAP(q0, q1) ** 0.25,), (q0, q1))
+    assert (
+        str(output)
+        == f"""# Created using Cirq.
+
+XY({np.pi / 4}) 0 1
+"""
+    )
+
+
 # def test_all_operations():
 #     qubits = tuple(_make_qubits(5))
 #     operations = _all_operations(*qubits, include_measurements=False)
@@ -351,17 +351,17 @@ X 0\n"""
 #         cirq.measure(q2, key='x_a'),
 #         cirq.measure(q1, q2, q3, key='multi', invert_mask=(False, True)),
 #     )
-#
-#
-# def test_fails_on_big_unknowns():
-#     class UnrecognizedGate(cirq.testing.ThreeQubitGate):
-#         pass
-#
-#     c = cirq.Circuit(UnrecognizedGate().on(*cirq.LineQubit.range(3)))
-#     with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
-#         _ = c.to_quil()
-#
-#
+
+
+def test_fails_on_big_unknowns():
+    class UnrecognizedGate(cirq.testing.ThreeQubitGate):
+        pass
+
+    c = cirq.Circuit(UnrecognizedGate().on(*cirq.LineQubit.range(3)))
+    with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
+        _ = c.to_quil()
+
+
 # def test_pauli_interaction_gate():
 #     (q0, q1) = _make_qubits(2)
 #     output = cirq.QuilOutput(PauliInteractionGate.CZ.on(q0, q1), (q0, q1))
@@ -372,31 +372,31 @@ X 0\n"""
 # CZ 0 1
 # """
 #     )
-#
-#
-# def test_equivalent_unitaries():
-#     """This test covers the factor of pi change. However, it will be skipped
-#     if pyquil is unavailable for import.
-#
-#     References:
-#         https://docs.pytest.org/en/latest/skipping.html#skipping-on-a-missing-import-dependency
-#     """
-#     pyquil = pytest.importorskip("pyquil")
-#     pyquil_simulation_tools = pytest.importorskip("pyquil.simulation.tools")
-#     q0, q1 = _make_qubits(2)
-#     operations = [
-#         cirq.XPowGate(exponent=0.5, global_shift=-0.5)(q0),
-#         cirq.YPowGate(exponent=0.5, global_shift=-0.5)(q0),
-#         cirq.ZPowGate(exponent=0.5, global_shift=-0.5)(q0),
-#         cirq.CZPowGate(exponent=0.5)(q0, q1),
-#         cirq.ISwapPowGate(exponent=0.5)(q0, q1),
-#     ]
-#     output = cirq.QuilOutput(operations, (q0, q1))
-#     program = pyquil.Program(str(output))
-#     pyquil_unitary = pyquil_simulation_tools.program_unitary(program, n_qubits=2)
-#     # Qubit ordering differs between pyQuil and Cirq.
-#     cirq_unitary = cirq.Circuit(cirq.SWAP(q0, q1), operations, cirq.SWAP(q0, q1)).unitary()
-#     assert np.allclose(pyquil_unitary, cirq_unitary)
+
+
+def test_equivalent_unitaries():
+    """This test covers the factor of pi change. However, it will be skipped
+    if pyquil is unavailable for import.
+
+    References:
+        https://docs.pytest.org/en/latest/skipping.html#skipping-on-a-missing-import-dependency
+    """
+    pyquil = pytest.importorskip("pyquil")
+    pyquil_simulation_tools = pytest.importorskip("pyquil.simulation.tools")
+    q0, q1 = _make_qubits(2)
+    operations = [
+        cirq.XPowGate(exponent=0.5, global_shift=-0.5)(q0),
+        cirq.YPowGate(exponent=0.5, global_shift=-0.5)(q0),
+        cirq.ZPowGate(exponent=0.5, global_shift=-0.5)(q0),
+        cirq.CZPowGate(exponent=0.5)(q0, q1),
+        cirq.ISwapPowGate(exponent=0.5)(q0, q1),
+    ]
+    output = cirq.QuilOutput(operations, (q0, q1))
+    program = pyquil.Program(str(output))
+    pyquil_unitary = pyquil_simulation_tools.program_unitary(program, n_qubits=2)
+    # Qubit ordering differs between pyQuil and Cirq.
+    cirq_unitary = cirq.Circuit(cirq.SWAP(q0, q1), operations, cirq.SWAP(q0, q1)).unitary()
+    assert np.allclose(pyquil_unitary, cirq_unitary)
 #
 #
 # QUIL_CPHASES_PROGRAM = """

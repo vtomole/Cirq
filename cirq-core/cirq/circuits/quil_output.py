@@ -128,9 +128,6 @@ class QuilTwoQubitGate(ops.Gate):
     def __repr__(self) -> str:
         return f'cirq.circuits.quil_output.QuilTwoQubitGate(matrix=\n{self.matrix}\n)'
 
-supported_gates = {
-    ops.X: "X"
-}
 
 def cphase(param: float) -> ops.CZPowGate:
     """Returns a controlled-phase gate as a Cirq CZPowGate with exponent
@@ -228,35 +225,89 @@ def xy(param: float) -> ops.ISwapPowGate:
     return ops.ISwapPowGate(exponent=param / np.pi)
 
 
+def xpow(op, formatter):
+    if op.gate._exponent == 1 and op.gate._global_shift != -0.5:
+        return formatter.format('X {0}\n', op.qubits[0])
+    return formatter.format('RX({0}) {1}\n', op.gate._exponent * np.pi,
+                                             op.qubits[0])
+def ypow(op, formatter):
+    if op.gate._exponent == 1 and op.global_shift != -0.5:
+        return formatter.format('Y {0}\n', op.qubits[0])
+    return formatter.format('RY({0}) {1}\n', op.gate._exponent * np.pi, op.qubits[0])
+def zpow(op, formatter):
+    if op.gate._exponent == 1 and op.gate.global_shift != -0.5:
+        return formatter.format('Z {0}\n', op.qubits[0])
+    return formatter.format('RZ({0}) {1}\n', op.gate._exponent * np.pi, op.qubits[0])
+def hpow(op, formatter):
+    if op.gate._exponent == 1:
+        return formatter.format('H {0}\n', op.qubits[0])
+    return formatter.format(
+            'RY({0}) {3}\nRX({1}) {3}\nRY({2}) {3}\n',
+            0.25 * np.pi,
+            op.gate._exponent * np.pi,
+            -0.25 * np.pi,
+            op.qubits[0],
+        )
 
-old_dict = {
-    "CCNOT": ops.CCNOT,
-    "CNOT": ops.CNOT,
-    "CSWAP": ops.CSWAP,
-    "CPHASE": cphase,
-    "CPHASE00": cphase00,
-    "CPHASE01": cphase01,
-    "CPHASE10": cphase10,
-    "CZ": ops.CZ,
-    "PHASE": phase,
-    "H": ops.H,
-    "I": ops.I,
-    "ISWAP": ops.ISWAP,
-    "PSWAP": pswap,
-    "RX": ops.rx,
-    "RY": ops.ry,
-    "RZ": ops.rz,
-    "S": ops.S,
-    "SWAP": ops.SWAP,
-    "T": ops.T,
-    "X": ops.X,
-    "Y": ops.Y,
-    "Z": ops.Z,
-    "XY": xy,
-    # "X**0.5": ops.X**0.5
-}
+def cz(op, formatter):
+    if op.gate._exponent == 1:
+        return formatter.format('CZ {0} {1}\n', op.qubits[0], op.qubits[1])
+    return formatter.format(
+        'CPHASE({0}) {1} {2}\n', op.gate._exponent * np.pi, op.qubits[0], op.qubits[1]
+    )
 
-supported_gates = dict([(value, key) for key, value in old_dict.items()])
+def iswap(op, formatter):
+    if op.gate._exponent == 1:
+        return formatter.format('ISWAP {0} {1}\n', op.qubits[0], op.qubits[1])
+    return formatter.format('XY({0}) {1} {2}\n', op.gate._exponent * np.pi, op.qubits[0], op.qubits[1])
+
+def measure(op, formatter):
+    if not all(d == 2 for d in op.gate._qid_shape):
+        return NotImplemented
+    invert_mask = op.gate.invert_mask
+    if len(invert_mask) < len(op.qubits):
+        invert_mask = invert_mask + (False,) * (len(op.qubits) - len(invert_mask))
+    lines = []
+    for i, (qubit, inv) in enumerate(zip(op.qubits, invert_mask)):
+        if inv:
+            lines.append(
+                formatter.format('X {0} # Inverting for following measurement\n', qubit)
+            )
+        lines.append(formatter.format('MEASURE {0} {1:meas}[{2}]\n', qubit, op.gate.key, i))
+    return ''.join(lines)
+
+def quilonequbit(op, formatter):
+    return (
+        f'DEFGATE USERGATE:\n    '
+        f'{to_quil_complex_format(op.gate.matrix[0, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[0, 1])}\n    '
+        f'{to_quil_complex_format(op.gate.matrix[1, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[1, 1])}\n'
+        f'{formatter.format("USERGATE {0}", op.qubits[0])}\n'
+    )
+
+def quiltwoqubit(op, formatter):
+    return (
+        f'DEFGATE USERGATE:\n    '
+        f'{to_quil_complex_format(op.gate.matrix[0, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[0, 1])}, '
+        f'{to_quil_complex_format(op.gate.matrix[0, 2])}, '
+        f'{to_quil_complex_format(op.gate.matrix[0, 3])}\n    '
+        f'{to_quil_complex_format(op.gate.matrix[1, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[1, 1])}, '
+        f'{to_quil_complex_format(op.gate.matrix[1, 2])}, '
+        f'{to_quil_complex_format(op.gate.matrix[1, 3])}\n    '
+        f'{to_quil_complex_format(op.gate.matrix[2, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[2, 1])}, '
+        f'{to_quil_complex_format(op.gate.matrix[2, 2])}, '
+        f'{to_quil_complex_format(op.gate.matrix[2, 3])}\n    '
+        f'{to_quil_complex_format(op.gate.matrix[3, 0])}, '
+        f'{to_quil_complex_format(op.gate.matrix[3, 1])}, '
+        f'{to_quil_complex_format(op.gate.matrix[3, 2])}, '
+        f'{to_quil_complex_format(op.gate.matrix[3, 3])}\n'
+        f'{formatter.format("USERGATE {0} {1}", op.qubits[0], op.qubits[1])}\n'
+    )
+
 
 class QuilOutput:
     """An object for passing operations and qubits then outputting them to
@@ -320,26 +371,15 @@ class QuilOutput:
             output_func('\n')
 
         def keep(op: 'cirq.Operation') -> bool:
-            # print(supported_gates)
-            print("Keep")
-            print(op.gate)
-            print("In supported gates")
-
-            if isinstance(op.gate, (ops.Rx, ops.HPowGate)):
+            if isinstance(op.gate, (ops.XPowGate, ops.YPowGate, ops.ZPowGate, ops.CZPowGate,
+                                    ops.HPowGate, ops.MeasurementGate, ops.ISwapPowGate,
+                                    QuilOneQubitGate, QuilTwoQubitGate)):
                 return True
-            print(op.gate in supported_gates)
-            return op.gate in supported_gates
+            return False
 
         def fallback(op):
             if len(op.qubits) not in [1, 2]:
                 return NotImplemented
-
-            if len(op.qubits) == 1:
-                if isinstance(op.gate, ops.XPowGate):
-                    if op.gate.exponent == 0.5:
-                        return ops.Rx(rads=op.gate.exponent * np.pi).on(*op.qubits)
-                if isinstance(op.gate, ops.HPowGate):
-                    return op
 
             mat = protocols.unitary(op, None)
             if mat is None:
@@ -357,42 +397,32 @@ class QuilOutput:
             return ValueError(f'Cannot output operation as QUIL: {bad_op!r}')
 
         for main_op in self.operations:
-            print("Mian op")
-            print(main_op)
             decomposed = protocols.decompose(
                 main_op, keep=keep, fallback_decomposer=fallback, on_stuck_raise=on_stuck
             )
 
             for decomposed_op in decomposed:
-                print("Decomposed op")
-                print(decomposed_op)
-                if len(decomposed_op.qubits) == 1:
-                    # print(type(supported_gates))
-                    # print(supported_gates[decomposed_op.gate])
-                    #print(self.formatter.format(f'{supported_gates[decomposed_op.gate]} {0}\n', decomposed_op.qubits[0]))
-                #output_func(protocols.quil(decomposed_op, formatter=self.formatter))
-
-                    formated_str = ""
-
-                    if isinstance(decomposed_op.gate, ops.Rx):
-                        formated_str = self.formatter.format('RX({0}) {1}\n', decomposed_op.gate._exponent * np.pi, decomposed_op.qubits[0])
-
-                    elif isinstance(decomposed_op.gate, ops.HPowGate):
-                        if decomposed_op.gate._exponent == 1:
-                            formated_str =  self.formatter.format('H {0}\n', decomposed_op.qubits[0])
-                        else:
-                            formated_str = self.formatter.format(
-                            'RY({0}) {3}\nRX({1}) {3}\nRY({2}) {3}\n',
-                            0.25 * np.pi,
-                            decomposed_op.gate._exponent * np.pi,
-                            -0.25 * np.pi,
-                            decomposed_op.qubits[0],
-                        )
-                    else:
-                        formated_str = self.formatter.format(f'{supported_gates[decomposed_op.gate]} {0}\n', decomposed_op.qubits[0])
+                if isinstance(decomposed_op.gate, ops.XPowGate):
+                    formated_str = xpow(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.YPowGate):
+                    formated_str = ypow(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.ZPowGate):
+                    formated_str = zpow(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.CZPowGate):
+                    formated_str = cz(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.HPowGate):
+                   formated_str = hpow(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.ISwapPowGate):
+                    formated_str = iswap(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, ops.MeasurementGate):
+                    formated_str = measure(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, QuilOneQubitGate):
+                    formated_str = quilonequbit(decomposed_op, self.formatter)
+                elif isinstance(decomposed_op.gate, QuilTwoQubitGate):
+                    formated_str = quiltwoqubit(decomposed_op, self.formatter)
 
 
-                    output_func(formated_str)
+                output_func(formated_str)
 
     def rename_defgates(self, output: str) -> str:
         """A function for renaming the DEFGATEs within the QUIL output. This
