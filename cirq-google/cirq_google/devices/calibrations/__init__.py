@@ -1,4 +1,4 @@
-# Copyright 2021 The Cirq Developers
+# Copyright 2022 The Cirq Developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,8 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# Replacements to apply during testing. See devtools/notebook_test.py for syntax.
-
-repetitions=20_000->repetitions=10
-grid_size = 5->grid_size = 2
