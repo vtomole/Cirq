@@ -18,6 +18,8 @@ import pytest
 
 import cirq
 from cirq.ops.pauli_interaction_gate import PauliInteractionGate
+
+from cirq_rigetti.quil_output import QuilOutput
 from cirq.circuits.quil_output import QuilOneQubitGate, QuilTwoQubitGate
 
 
@@ -196,7 +198,7 @@ def test_unsupported_operation():
 def test_i_swap_with_power():
     q0, q1 = _make_qubits(2)
 
-    output = cirq.QuilOutput((cirq.ISWAP(q0, q1) ** 0.25,), (q0, q1))
+    output = QuilOutput((cirq.ISWAP(q0, q1) ** 0.25,), (q0, q1))
     assert (
         str(output)
         == f"""# Created using Cirq.

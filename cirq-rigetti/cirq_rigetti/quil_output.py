@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import string
-from typing import Callable, Dict, Set, Tuple, Union, Any
+from typing import Callable, Dict, Set, Tuple, Union, Any, Optional, List
 import numpy as np
 import cirq
 from cirq import protocols, value, ops
@@ -315,7 +315,10 @@ class QuilOutput:
     circuit.
     """
 
-    def __init__(self, operations: 'cirq.OP_TREE', qubits: Tuple['cirq.Qid', ...]) -> None:
+    def __init__(self, operations: 'cirq.OP_TREE', qubits: Tuple['cirq.Qid', ...],
+                 decompose_operation: Optional[Callable[[cirq.Operation], List[cirq.Operation]]] = None,
+                 qubit_id_map: Optional[Dict[cirq.Qid, str]] = None,
+                 ) -> None:
         """Inits QuilOutput.
 
         Args:
