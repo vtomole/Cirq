@@ -150,17 +150,13 @@ def test_qudit_measure_qasm():
 def test_qudit_measure_quil():
     q0 = cirq.LineQid(0, 3)
     qubit_id_map = {q0: '0'}
-
-    with cirq.testing.assert_deprecated(
-        'QuilFormatter was used but is deprecated', deadline='v1.0'
-    ):
-
-        formatter = cirq.QuilFormatter(qubit_id_map=qubit_id_map, measurement_id_map={})
-
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=2
-    ):
-        assert cirq.quil(cirq.measure(q0, key='a'), formatter=formatter) is None
+    assert (
+        cirq.quil(
+            cirq.measure(q0, key='a'),
+            formatter=cirq.QuilFormatter(qubit_id_map=qubit_id_map, measurement_id_map={}),
+        )
+        is None
+    )
 
 
 def test_measurement_gate_diagram():

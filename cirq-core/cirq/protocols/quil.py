@@ -15,11 +15,8 @@
 import string
 from typing import Any, Optional, Dict, Iterable
 import cirq
-from cirq import _compat
-from cirq._compat import deprecated_class
 
 
-@deprecated_class(deadline='v1.0', fix='Use cirq_rigetti.quil_protocol.QuilFormatter instead.')
 class QuilFormatter(string.Formatter):
     """A unique formatter to correctly output values to QUIL."""
 
@@ -47,7 +44,6 @@ class QuilFormatter(string.Formatter):
         return super().format_field(value, spec)
 
 
-@_compat.deprecated(deadline='v1.0', fix='Use cirq_rigetti.quil instead.')
 def quil(
     val: Any,
     *,

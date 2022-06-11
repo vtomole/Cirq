@@ -27,7 +27,6 @@ def test_with_quilc_compilation_and_cirq_parameter_resolution(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-
     results = executors.with_quilc_compilation_and_cirq_parameter_resolution(
         quantum_computer=quantum_computer,
         circuit=parametric_circuit,
@@ -71,7 +70,6 @@ def test_with_quilc_parametric_compilation(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-
     results = executors.with_quilc_parametric_compilation(
         quantum_computer=quantum_computer,
         circuit=parametric_circuit,
@@ -100,7 +98,6 @@ def test_parametric_with_symbols(
         expected_results
     )
     with pytest.raises(ValueError, match='Symbols not valid'):
-
         _ = executors.with_quilc_parametric_compilation(
             quantum_computer=quantum_computer,
             circuit=parametric_circuit,
@@ -128,7 +125,6 @@ def test_without_quilc_compilation(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-
     results = executors.without_quilc_compilation(
         quantum_computer=quantum_computer,
         circuit=parametric_circuit,
