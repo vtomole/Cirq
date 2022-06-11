@@ -290,7 +290,3 @@ def circuit_from_quil(quil: str) -> Circuit:
             )
 
     return circuit
-
-
-# def circuit_to_quil(circuit: Circuit) -> str:
-#
