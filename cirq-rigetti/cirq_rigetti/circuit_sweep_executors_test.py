@@ -27,10 +27,8 @@ def test_with_quilc_compilation_and_cirq_parameter_resolution(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=None
-    ):
-        results = executors.with_quilc_compilation_and_cirq_parameter_resolution(
+
+    results = executors.with_quilc_compilation_and_cirq_parameter_resolution(
             quantum_computer=quantum_computer,
             circuit=parametric_circuit,
             resolvers=param_resolvers,  # ignore: type
@@ -73,10 +71,8 @@ def test_with_quilc_parametric_compilation(
     quantum_computer = mock_qpu_implementer.implement_passive_quantum_computer_with_results(
         expected_results
     )
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=None
-    ):
-        results = executors.with_quilc_parametric_compilation(
+
+    results = executors.with_quilc_parametric_compilation(
             quantum_computer=quantum_computer,
             circuit=parametric_circuit,
             resolvers=param_resolvers,  # noqa
@@ -104,10 +100,8 @@ def test_parametric_with_symbols(
         expected_results
     )
     with pytest.raises(ValueError, match='Symbols not valid'):
-        with cirq.testing.assert_deprecated(
-            'quil was used but is deprecated', deadline='v1.0', count=None
-        ):
-            _ = executors.with_quilc_parametric_compilation(
+
+        _ = executors.with_quilc_parametric_compilation(
                 quantum_computer=quantum_computer,
                 circuit=parametric_circuit,
                 resolvers=[{sympy.Symbol('a') + sympy.Symbol('b'): sympy.Symbol('c')}],
@@ -135,10 +129,8 @@ def test_without_quilc_compilation(
         expected_results
     )
 
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=None
-    ):
-        results = executors.without_quilc_compilation(
+
+    results = executors.without_quilc_compilation(
             quantum_computer=quantum_computer,
             circuit=parametric_circuit,
             resolvers=param_resolvers,  # noqa

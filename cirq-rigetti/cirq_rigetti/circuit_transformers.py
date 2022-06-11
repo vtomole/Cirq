@@ -17,7 +17,7 @@
 from typing import Dict, cast, Optional, Tuple, List, Callable
 from pyquil import Program
 import cirq
-from cirq_rigetti.quil_output import QuilOutput
+from cirq_rigetti.quil_output import RigettiQCSQuilOutput
 from typing_extensions import Protocol
 
 class _PostTransformationHook(Protocol):
@@ -39,7 +39,7 @@ def _transform_cirq_circuit_to_pyquil_program(
         qubits = cirq.QubitOrder.as_qubit_order(cirq.ops.QubitOrder.DEFAULT).order_for(
             circuit.all_qubits()
         )
-    quil_output = QuilOutput(
+    quil_output = RigettiQCSQuilOutput(
         operations=circuit.all_operations(),
         qubits=qubits,
         qubit_id_map=qubit_id_map,

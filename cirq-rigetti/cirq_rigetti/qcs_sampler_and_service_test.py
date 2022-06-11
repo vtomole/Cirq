@@ -97,10 +97,8 @@ def test_parametric_circuit(
     parametric_circuit = parametric_circuit_with_params[0]
     sweepable = parametric_circuit_with_params[1]
 
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=None
-    ):
-        results, quantum_computer, expected_results, param_resolvers = result_builder(
+
+    results, quantum_computer, expected_results, param_resolvers = result_builder(
             mock_qpu_implementer, parametric_circuit, sweepable
         )
 
@@ -161,10 +159,8 @@ def test_bell_circuit(
     """
 
     param_resolvers = [cirq.ParamResolver({})]
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=6
-    ):
-        results, quantum_computer, expected_results, param_resolvers = result_builder(
+
+    results, quantum_computer, expected_results, param_resolvers = result_builder(
             mock_qpu_implementer, bell_circuit, param_resolvers
         )
 
@@ -226,10 +222,8 @@ def test_explicit_qubit_id_map(
 
     qubit_id_map = {qubits[1]: "11", qubits[0]: "13"}
     param_resolvers = [cirq.ParamResolver({})]
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=6
-    ):
-        results, quantum_computer, expected_results, param_resolvers = result_builder(
+
+    results, quantum_computer, expected_results, param_resolvers = result_builder(
             mock_qpu_implementer,
             bell_circuit,
             param_resolvers,
@@ -290,10 +284,8 @@ def test_run_without_quilc_compilation(
     """
     param_resolvers = [cirq.ParamResolver({})]
 
-    with cirq.testing.assert_deprecated(
-        'quil was used but is deprecated', deadline='v1.0', count=6
-    ):
-        results, quantum_computer, expected_results, param_resolvers = result_builder(
+
+    results, quantum_computer, expected_results, param_resolvers = result_builder(
             mock_qpu_implementer,
             bell_circuit,
             param_resolvers,
