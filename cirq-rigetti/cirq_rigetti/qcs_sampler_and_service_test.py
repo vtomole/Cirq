@@ -96,7 +96,6 @@ def test_parametric_circuit(
 
     parametric_circuit = parametric_circuit_with_params[0]
     sweepable = parametric_circuit_with_params[1]
-
     results, quantum_computer, expected_results, param_resolvers = result_builder(
         mock_qpu_implementer, parametric_circuit, sweepable
     )
@@ -158,7 +157,6 @@ def test_bell_circuit(
     """
 
     param_resolvers = [cirq.ParamResolver({})]
-
     results, quantum_computer, expected_results, param_resolvers = result_builder(
         mock_qpu_implementer, bell_circuit, param_resolvers
     )
@@ -221,7 +219,6 @@ def test_explicit_qubit_id_map(
 
     qubit_id_map = {qubits[1]: "11", qubits[0]: "13"}
     param_resolvers = [cirq.ParamResolver({})]
-
     results, quantum_computer, expected_results, param_resolvers = result_builder(
         mock_qpu_implementer,
         bell_circuit,
@@ -282,7 +279,6 @@ def test_run_without_quilc_compilation(
     without using quilc to compile to native Quil.
     """
     param_resolvers = [cirq.ParamResolver({})]
-
     results, quantum_computer, expected_results, param_resolvers = result_builder(
         mock_qpu_implementer,
         bell_circuit,
