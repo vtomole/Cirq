@@ -1,10 +1,8 @@
 # pylint: disable=wrong-or-nonexistent-copyright-notice
-from typing import Tuple, List
-from unittest.mock import create_autospec
+from typing import Tuple
 import cirq
 import numpy as np
-from pyquil.gates import MEASURE, RX, DECLARE, H, CNOT, I
-from pyquil.quilbase import Pragma, Reset
+from pyquil.gates import MEASURE, RX, DECLARE
 from cirq_rigetti import circuit_transformers as transformers
 
 

@@ -22,6 +22,7 @@ from cirq.ops.pauli_interaction_gate import PauliInteractionGate
 import cirq_rigetti
 from cirq_rigetti.quil_output import QuilOutput
 
+
 def _make_qubits(n):
     return [cirq.NamedQubit(f'q{i}') for i in range(n)]
 
@@ -51,7 +52,6 @@ RX({np.pi / 2}) 0\n"""
 def test_single_gate_named_qubit():
     q = cirq.NamedQubit('qTest')
     output = cirq_rigetti.quil_output.QuilOutput((cirq.X(q),), (q,))
-
 
     assert (
         str(output)
@@ -100,7 +100,9 @@ def test_quil_one_qubit_gate_repr():
 
 
 def test_quil_two_qubit_gate_repr():
-    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    )
     assert repr(gate) == (
         """cirq.circuits.quil_output.QuilTwoQubitGate(matrix=
 [[1 0 0 0]
@@ -121,11 +123,19 @@ def test_quil_one_qubit_gate_eq():
 
 
 def test_quil_two_qubit_gate_eq():
-    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-    gate2 = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    )
+    gate2 = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    )
     assert cirq.approx_eq(gate, gate2, atol=1e-8)
-    gate3 = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
-    gate4 = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 1]]))
+    gate3 = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    )
+    gate4 = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 2, 0], [0, 0, 0, 1]])
+    )
     assert not cirq.approx_eq(gate4, gate3, atol=1e-8)
 
 
@@ -168,7 +178,9 @@ USERGATE2 0
 
 def test_quil_two_qubit_gate_output():
     (q0, q1) = _make_qubits(2)
-    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]))
+    gate = cirq_rigetti.quil_output.QuilTwoQubitGate(
+        np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+    )
     output = cirq_rigetti.quil_output.QuilOutput((gate.on(q0, q1),), (q0, q1))
     assert (
         str(output)
@@ -366,6 +378,7 @@ def test_fails_on_big_unknowns():
     with pytest.raises(ValueError, match='Cannot output operation as QUIL'):
         _ = str(res)
 
+
 def test_pauli_interaction_gate():
     (q0, q1) = _make_qubits(2)
     output = cirq_rigetti.quil_output.QuilOutput(PauliInteractionGate.CZ.on(q0, q1), (q0, q1))
@@ -452,9 +465,9 @@ def test_parseable_defgate_output():
     q0, q1 = _make_qubits(2)
     operations = [
         cirq_rigetti.quil_output.QuilOneQubitGate(np.array([[1, 0], [0, 1]])).on(q0),
-        cirq_rigetti.quil_output.QuilTwoQubitGate(np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])).on(
-            q0, q1
-        ),
+        cirq_rigetti.quil_output.QuilTwoQubitGate(
+            np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+        ).on(q0, q1),
     ]
     output = cirq_rigetti.quil_output.QuilOutput(operations, (q0, q1))
     # Just checks that we can create a pyQuil Program without crashing.
