@@ -145,6 +145,7 @@ def cz(op, formatter):
 def cnot(op, formatter):
     if op.gate._exponent == 1:
         return formatter.format('CNOT {0} {1}\n', op.qubits[0], op.qubits[1])
+    return None
 
 
 def swap(op, formatter):
@@ -156,6 +157,8 @@ def swap(op, formatter):
 
 
 def ccz(op, formatter):
+    if op.gate._exponent != 1:
+        return None
     lines = [
         formatter.format('H {0}\n', op.qubits[2]),
         formatter.format('CCNOT {0} {1} {2}\n', op.qubits[0], op.qubits[1], op.qubits[2]),
@@ -165,6 +168,8 @@ def ccz(op, formatter):
 
 
 def ccnot(op, formatter):
+    if op.gate._exponent != 1:
+        return None
     return formatter.format('CCNOT {0} {1} {2}\n', op.qubits[0], op.qubits[1], op.qubits[2])
 
 
@@ -241,6 +246,7 @@ def twoqubitdiag(op, formatter):
             return formatter.format(
                 'CPHASE({0}) {1} {2}\n', op.gate._diag_angles_radians[3], op.qubits[0], op.qubits[1]
             )
+        return None
 
 
 def cswap(op, formatter):
@@ -297,48 +303,34 @@ def quiltwoqubit(op, formatter):
     )
 
 
+SUPPORTED_GATES = {
+    ops.IdentityGate: i,
+    ops.XPowGate: xpow,
+    ops.YPowGate: ypow,
+    ops.CSwapGate: cswap,
+    ops.ZPowGate: zpow,
+    ops.CCNotPowGate: ccnot,
+    ops.CCZPowGate: ccz,
+    ops.CNotPowGate: cnot,
+    ops.CZPowGate: cz,
+    ops.XXPowGate: xx,
+    ops.YYPowGate: yy,
+    ops.ZZPowGate: zz,
+    ops.WaitGate: wait,
+    ops.HPowGate: hpow,
+    ops.MeasurementGate: measure,
+    ops.SwapPowGate: swap,
+    ops.TwoQubitDiagonalGate: twoqubitdiag,
+    ops.ISwapPowGate: iswap,
+    QuilOneQubitGate: quilonequbit,
+    QuilTwoQubitGate: quiltwoqubit,
+}
+
+
 def get_format_str(decomposed_op, formatter):
-    if isinstance(decomposed_op.gate, ops.XPowGate):
-        formated_str = xpow(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.IdentityGate):
-        formated_str = i(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.YPowGate):
-        formated_str = ypow(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.ZPowGate):
-        formated_str = zpow(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.CNotPowGate):
-        formated_str = cnot(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.CZPowGate):
-        formated_str = cz(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.HPowGate):
-        formated_str = hpow(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.XXPowGate):
-        formated_str = xx(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.YYPowGate):
-        formated_str = yy(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.ZZPowGate):
-        formated_str = zz(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.ISwapPowGate):
-        formated_str = iswap(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.CSwapGate):
-        formated_str = cswap(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.SwapPowGate):
-        formated_str = swap(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.TwoQubitDiagonalGate):
-        formated_str = twoqubitdiag(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.CCZPowGate):
-        formated_str = ccz(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.CCNotPowGate):
-        formated_str = ccnot(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.WaitGate):
-        formated_str = wait(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, ops.MeasurementGate):
-        formated_str = measure(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, QuilOneQubitGate):
-        formated_str = quilonequbit(decomposed_op, formatter)
-    elif isinstance(decomposed_op.gate, QuilTwoQubitGate):
-        formated_str = quiltwoqubit(decomposed_op, formatter)
-    return formated_str
+    for gate_type in SUPPORTED_GATES.keys():
+        if isinstance(decomposed_op.gate, gate_type):
+            return SUPPORTED_GATES[gate_type](decomposed_op, formatter)
 
 
 class QuilOutput:
@@ -409,37 +401,9 @@ class QuilOutput:
             output_func('\n')
 
         def keep(op: 'cirq.Operation') -> bool:
-            if isinstance(
-                op.gate,
-                (
-                    ops.IdentityGate,
-                    ops.XPowGate,
-                    ops.YPowGate,
-                    ops.CSwapGate,
-                    ops.ZPowGate,
-                    ops.CCNotPowGate,
-                    ops.CCZPowGate,
-                    ops.CNotPowGate,
-                    ops.CZPowGate,
-                    ops.XXPowGate,
-                    ops.YYPowGate,
-                    ops.ZZPowGate,
-                    ops.WaitGate,
-                    ops.HPowGate,
-                    ops.MeasurementGate,
-                    ops.SwapPowGate,
-                    ops.TwoQubitDiagonalGate,
-                    ops.ISwapPowGate,
-                    QuilOneQubitGate,
-                    QuilTwoQubitGate,
-                ),
-            ):
-                if isinstance(op.gate, ops.TwoQubitDiagonalGate):
-                    if np.count_nonzero(op.gate._diag_angles_radians) != 1:
-                        return False
-                if isinstance(op.gate, (ops.CCZPowGate, ops.CCNotPowGate, ops.CXPowGate)):
-                    if op.gate._exponent != 1:
-                        return False
+            if isinstance(op.gate, tuple(SUPPORTED_GATES.keys())):
+                if not get_format_str(op, self.formatter):
+                    return False
                 return True
             return False
 
