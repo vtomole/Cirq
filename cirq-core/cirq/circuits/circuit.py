@@ -1820,7 +1820,6 @@ class Circuit(AbstractCircuit):
         # each index.
         for i in range(length):
             self._moments.append(moments_by_index[i].with_operations(op_lists_by_index[i]))
-
     def __copy__(self) -> 'cirq.Circuit':
         return self.copy()
 
