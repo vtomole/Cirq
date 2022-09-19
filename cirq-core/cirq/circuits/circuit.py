@@ -1819,10 +1819,7 @@ class Circuit(AbstractCircuit):
         # Finally, once everything is placed, we can construct and append the actual moments for
         # each index.
         for i in range(length):
-            if i in moments_by_index:
-                self._moments.append(moments_by_index[i].with_operations(op_lists_by_index[i]))
-            else:
-                self._moments.append(Moment(op_lists_by_index[i]))
+            self._moments.append(moments_by_index[i].with_operations(op_lists_by_index[i]))
 
     def __copy__(self) -> 'cirq.Circuit':
         return self.copy()
