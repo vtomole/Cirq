@@ -341,8 +341,6 @@ def _op_info_with_fallback(
     if args.label_map is not None:
         rows += protocols.measurement_keys_touched(op) & args.label_map.keys()
     if info is not None:
-        if max(1, len(rows)) != len(info.wire_symbols):
-            raise ValueError(f'Wanted diagram info from {op!r} for {rows!r}) but got {info!r}')
         return info
 
     # Use the untagged operation's __str__.
