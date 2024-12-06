@@ -131,7 +131,7 @@ class AsymmetricDepolarizingChannel(raw_types.Gate):
         return True
 
     def _value_equality_values_(self):
-        return self._num_qubits, hash(tuple(sorted(self._error_probabilities.items())))
+        return self._num_qubits, tuple(sorted(self._error_probabilities.items()))
 
     def __repr__(self) -> str:
         return 'cirq.asymmetric_depolarize(' + f"error_probabilities={self._error_probabilities})"
@@ -702,7 +702,7 @@ class ResetChannel(raw_types.Gate):
         return True
 
     def _qasm_(self, args: 'cirq.QasmArgs', qubits: Tuple['cirq.Qid', ...]) -> Optional[str]:
-        args.validate_version('2.0')
+        args.validate_version('2.0', '3.0')
         return args.format('reset {0};\n', qubits[0])
 
     def _qid_shape_(self):
