@@ -14,8 +14,8 @@
 
 """Module for use in exporting cirq-google objects in JSON."""
 
-import warnings
 import functools
+import warnings
 from typing import Dict
 
 from cirq.protocols.json_serialization import ObjectFactory
@@ -47,6 +47,7 @@ def _class_resolver_dictionary() -> Dict[str, ObjectFactory]:
         'Coupler': cirq_google.Coupler,
         'GoogleNoiseProperties': cirq_google.GoogleNoiseProperties,
         'SycamoreGate': cirq_google.SycamoreGate,
+        'WillowGate': cirq_google.WillowGate,
         # cirq_google.GateTabulation has been removed and replaced by cirq.TwoQubitGateTabulation.
         'GateTabulation': TwoQubitGateTabulation,
         'PhysicalZTag': cirq_google.PhysicalZTag,
@@ -78,5 +79,7 @@ def _class_resolver_dictionary() -> Dict[str, ObjectFactory]:
         'cirq.google.GridDevice': cirq_google.GridDevice,
         'cirq.google.GoogleCZTargetGateset': cirq_google.GoogleCZTargetGateset,
         'cirq.google.DeviceParameter': cirq_google.study.device_parameter.DeviceParameter,
+        'cirq.google.Metadata': cirq_google.study.device_parameter.Metadata,
         'InternalGate': cirq_google.InternalGate,
+        'InternalTag': cirq_google.InternalTag,
     }

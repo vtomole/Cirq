@@ -11,6 +11,7 @@ import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import sys
+import tunits.proto.tunits_pb2
 import typing
 
 if sys.version_info >= (3, 10):
@@ -163,6 +164,15 @@ class SweepFunction(google.protobuf.message.Message):
         the iterator will produce: {a: 1, b: 3} and {a: 2, b: 3}.
         The shorter sweeps will be filled by repeating their last value.
         """
+        CONCAT: SweepFunction._FunctionType.ValueType  # 4
+        """Concatenates multiple sweeps to a new sweep.
+        All sweeps must share the same descriptors.
+
+        Example of concat:
+        If one sweep assigns 'a' to the values 0, 1, 2, and another sweep assigns
+        'a' to the values 3, 4, 5, the concatenation produces a sweep assigning
+        'a' to the values 0, 1, 2, 3, 4, 5 in sequence.
+        """
 
     class FunctionType(_FunctionType, metaclass=_FunctionTypeEnumTypeWrapper):
         """The type of sweep function."""
@@ -206,6 +216,15 @@ class SweepFunction(google.protobuf.message.Message):
     Suppose we zip_longest([sweep.points(a, [1, 2]), sweep.points(b, [3])]),
     the iterator will produce: {a: 1, b: 3} and {a: 2, b: 3}.
     The shorter sweeps will be filled by repeating their last value.
+    """
+    CONCAT: SweepFunction.FunctionType.ValueType  # 4
+    """Concatenates multiple sweeps to a new sweep.
+    All sweeps must share the same descriptors.
+
+    Example of concat:
+    If one sweep assigns 'a' to the values 0, 1, 2, and another sweep assigns
+    'a' to the values 3, 4, 5, the concatenation produces a sweep assigning
+    'a' to the values 0, 1, 2, 3, 4, 5 in sequence.
     """
 
     FUNCTION_TYPE_FIELD_NUMBER: builtins.int
@@ -259,6 +278,47 @@ class DeviceParameter(google.protobuf.message.Message):
 global___DeviceParameter = DeviceParameter
 
 @typing.final
+class Metadata(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    DEVICE_PARAMETERS_FIELD_NUMBER: builtins.int
+    LABEL_FIELD_NUMBER: builtins.int
+    IS_CONST_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
+    label: builtins.str
+    """If specified, use this label instead of parameter_key as the independent
+    column name in returned dataset.
+    """
+    is_const: builtins.bool
+    """If true, store this sweep as parameters instead of the independent axes."""
+    unit: builtins.str
+    """A temporary solution that we store the unit information here."""
+    @property
+    def device_parameters(self) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[global___DeviceParameter]:
+        """Optional arguments for if this is a device parameter.
+        Note one single_sweep may be associated with multiple device parameters.
+        """
+
+    def __init__(
+        self,
+        *,
+        device_parameters: collections.abc.Iterable[global___DeviceParameter] | None = ...,
+        label: builtins.str | None = ...,
+        is_const: builtins.bool | None = ...,
+        unit: builtins.str | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["_is_const", b"_is_const", "_label", b"_label", "_unit", b"_unit", "is_const", b"is_const", "label", b"label", "unit", b"unit"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["_is_const", b"_is_const", "_label", b"_label", "_unit", b"_unit", "device_parameters", b"device_parameters", "is_const", b"is_const", "label", b"label", "unit", b"unit"]) -> None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_is_const", b"_is_const"]) -> typing.Literal["is_const"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_label", b"_label"]) -> typing.Literal["label"] | None: ...
+    @typing.overload
+    def WhichOneof(self, oneof_group: typing.Literal["_unit", b"_unit"]) -> typing.Literal["unit"] | None: ...
+
+global___Metadata = Metadata
+
+@typing.final
 class DeviceParametersDiff(google.protobuf.message.Message):
     """A bundle of multiple DeviceParameters and their values.
     The main use case is to set those parameters with the
@@ -309,8 +369,8 @@ class DeviceParametersDiff(google.protobuf.message.Message):
         type_descriptor: builtins.str
         """Type description of the value representation. Eg. if the following value
         bytes field is a JSON string, type_descriptor can be its JSON namespace;
-        or if the following value field is a protobuf serialization, type_descriptor
-        can be its protobuf definition URL.
+        or if the following value field is a protobuf serialization,
+        type_descriptor can be its protobuf definition URL.
         """
         value: builtins.bytes
         """The value in client's encoding."""
@@ -344,8 +404,8 @@ class DeviceParametersDiff(google.protobuf.message.Message):
 
         @property
         def generic_value(self) -> global___DeviceParametersDiff.GenericValue:
-            """this param's new value, and its type is not among the variants supported
-            by ArgValue.
+            """this param's new value, and its type is not among the variants
+            supported by ArgValue.
             """
 
         def __init__(
@@ -370,7 +430,8 @@ class DeviceParametersDiff(google.protobuf.message.Message):
     @property
     def strs(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.str]:
         """List of all key, dir, and deletion names in these contents.
-        ResourceGroup.name, Param.name, and Deletion.name are indexes into this list.
+        ResourceGroup.name, Param.name, and Deletion.name are indexes into this
+        list.
         """
 
     def __init__(
@@ -395,6 +456,7 @@ class SingleSweep(google.protobuf.message.Message):
     LINSPACE_FIELD_NUMBER: builtins.int
     CONST_VALUE_FIELD_NUMBER: builtins.int
     PARAMETER_FIELD_NUMBER: builtins.int
+    METADATA_FIELD_NUMBER: builtins.int
     parameter_key: builtins.str
     """The parameter key being varied. This cannot be the empty string.
     These are must appear as string Args in the quantum program.
@@ -417,6 +479,10 @@ class SingleSweep(google.protobuf.message.Message):
         (as opposed to a circuit symbol)
         """
 
+    @property
+    def metadata(self) -> global___Metadata:
+        """Optional arguments for storing extra metadata information."""
+
     def __init__(
         self,
         *,
@@ -425,9 +491,10 @@ class SingleSweep(google.protobuf.message.Message):
         linspace: global___Linspace | None = ...,
         const_value: global___ConstValue | None = ...,
         parameter: global___DeviceParameter | None = ...,
+        metadata: global___Metadata | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["const_value", b"const_value", "linspace", b"linspace", "parameter", b"parameter", "points", b"points", "sweep", b"sweep"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["const_value", b"const_value", "linspace", b"linspace", "parameter", b"parameter", "parameter_key", b"parameter_key", "points", b"points", "sweep", b"sweep"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["const_value", b"const_value", "linspace", b"linspace", "metadata", b"metadata", "parameter", b"parameter", "points", b"points", "sweep", b"sweep"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["const_value", b"const_value", "linspace", b"linspace", "metadata", b"metadata", "parameter", b"parameter", "parameter_key", b"parameter_key", "points", b"points", "sweep", b"sweep"]) -> None: ...
     def WhichOneof(self, oneof_group: typing.Literal["sweep", b"sweep"]) -> typing.Literal["points", "linspace", "const_value"] | None: ...
 
 global___SingleSweep = SingleSweep
@@ -439,16 +506,21 @@ class Points(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     POINTS_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
     @property
     def points(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[builtins.float]:
         """The values."""
 
+    @property
+    def unit(self) -> tunits.proto.tunits_pb2.Value: ...
     def __init__(
         self,
         *,
         points: collections.abc.Iterable[builtins.float] | None = ...,
+        unit: tunits.proto.tunits_pb2.Value | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["points", b"points"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["unit", b"unit"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["points", b"points", "unit", b"unit"]) -> None: ...
 
 global___Points = Points
 
@@ -466,6 +538,7 @@ class Linspace(google.protobuf.message.Message):
     FIRST_POINT_FIELD_NUMBER: builtins.int
     LAST_POINT_FIELD_NUMBER: builtins.int
     NUM_POINTS_FIELD_NUMBER: builtins.int
+    UNIT_FIELD_NUMBER: builtins.int
     first_point: builtins.float
     """The start of the range."""
     last_point: builtins.float
@@ -475,14 +548,18 @@ class Linspace(google.protobuf.message.Message):
     greater than zero. If it is 1, the first_point and last_point must be
     the same.
     """
+    @property
+    def unit(self) -> tunits.proto.tunits_pb2.Value: ...
     def __init__(
         self,
         *,
         first_point: builtins.float = ...,
         last_point: builtins.float = ...,
         num_points: builtins.int = ...,
+        unit: tunits.proto.tunits_pb2.Value | None = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["first_point", b"first_point", "last_point", b"last_point", "num_points", b"num_points"]) -> None: ...
+    def HasField(self, field_name: typing.Literal["unit", b"unit"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["first_point", b"first_point", "last_point", b"last_point", "num_points", b"num_points", "unit", b"unit"]) -> None: ...
 
 global___Linspace = Linspace
 
@@ -496,11 +573,16 @@ class ConstValue(google.protobuf.message.Message):
     FLOAT_VALUE_FIELD_NUMBER: builtins.int
     INT_VALUE_FIELD_NUMBER: builtins.int
     STRING_VALUE_FIELD_NUMBER: builtins.int
+    WITH_UNIT_VALUE_FIELD_NUMBER: builtins.int
     is_none: builtins.bool
-    """This value should always be true if set, which represent the python None object."""
+    """This value should always be true if set, which represents the python None
+    object.
+    """
     float_value: builtins.float
     int_value: builtins.int
     string_value: builtins.str
+    @property
+    def with_unit_value(self) -> tunits.proto.tunits_pb2.Value: ...
     def __init__(
         self,
         *,
@@ -508,9 +590,10 @@ class ConstValue(google.protobuf.message.Message):
         float_value: builtins.float = ...,
         int_value: builtins.int = ...,
         string_value: builtins.str = ...,
+        with_unit_value: tunits.proto.tunits_pb2.Value | None = ...,
     ) -> None: ...
-    def HasField(self, field_name: typing.Literal["float_value", b"float_value", "int_value", b"int_value", "is_none", b"is_none", "string_value", b"string_value", "value", b"value"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["float_value", b"float_value", "int_value", b"int_value", "is_none", b"is_none", "string_value", b"string_value", "value", b"value"]) -> None: ...
-    def WhichOneof(self, oneof_group: typing.Literal["value", b"value"]) -> typing.Literal["is_none", "float_value", "int_value", "string_value"] | None: ...
+    def HasField(self, field_name: typing.Literal["float_value", b"float_value", "int_value", b"int_value", "is_none", b"is_none", "string_value", b"string_value", "value", b"value", "with_unit_value", b"with_unit_value"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["float_value", b"float_value", "int_value", b"int_value", "is_none", b"is_none", "string_value", b"string_value", "value", b"value", "with_unit_value", b"with_unit_value"]) -> None: ...
+    def WhichOneof(self, oneof_group: typing.Literal["value", b"value"]) -> typing.Literal["is_none", "float_value", "int_value", "string_value", "with_unit_value"] | None: ...
 
 global___ConstValue = ConstValue

@@ -1,3 +1,5 @@
+# Dependabot config file for the Cirq project.
+
 # Copyright 2024 The Cirq Developers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,48 +14,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Summary: Dependabot config file, to adjust things for the Cirq project.
-#
-# By default, Dependabot labels all pull requests with label 'dependencies'.
-# We prefer `area/dependencies`, so have to configure Dependabot appropriately.
-# ─────────────────────────────────────────────────────────────────────────────
-
-name: Dependabot for Cirq
-
 version: 2
 updates:
   - package-ecosystem: "docker"
+    # The "docker" ecosystem directive makes Dependabot look for a Dockerfile
+    # in the specified directory.
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     labels:
       - "area/dependencies"
       - "area/docker"
       - "kind/health"
 
   - package-ecosystem: "github-actions"
+    # The "github-actions" code explicitly looks in /.github/workflows if the
+    # value "/" is given for the directory attribute. Yes, that's confusing.
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     labels:
       - "area/dependencies"
       - "area/github"
       - "kind/health"
 
   - package-ecosystem: "npm"
-    directory: "/"
+    # The "npm" ecosystem directive makes Dependabot look for package.json in
+    # the specified directory.
+    directory: "/cirq-web/cirq_ts/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    versioning-strategy: "widen"
+    ignore:
+      - dependency-name: "chai"
+        versions: [">= 5.0.0"]
+      - dependency-name: "pixelmatch"
+        versions: ["> 5.3.0"]
+    groups:
+      # Group non-security version minor & patch updates into one PR.
+      # Security and major update versions will be done as individual PRs.
+      non-security:
+        applies-to: "version-updates"
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "area/dependencies"
       - "area/javascript"
       - "kind/health"
 
   - package-ecosystem: "pip"
-    directory: "/"
+    directory: "/dev_tools/requirements/deps"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+    versioning-strategy: "increase-if-necessary"
     labels:
       - "area/dependencies"
       - "area/python"

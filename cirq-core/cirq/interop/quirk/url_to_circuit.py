@@ -11,32 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from __future__ import annotations
+
 import json
 import urllib.parse
 from typing import (
     Any,
-    List,
+    cast,
     Dict,
+    Iterable,
+    List,
+    Mapping,
     Optional,
     Sequence,
-    cast,
-    TYPE_CHECKING,
-    Iterable,
-    Union,
-    Mapping,
     Tuple,
+    TYPE_CHECKING,
+    Union,
 )
 
 import numpy as np
 
-from cirq import devices, circuits, ops, protocols
+from cirq import circuits, devices, ops, protocols
 from cirq.interop.quirk.cells import (
     Cell,
     CellMaker,
     CellMakerArgs,
     CompositeCell,
-    generate_all_quirk_cell_makers,
     ExplicitOperationsCell,
+    generate_all_quirk_cell_makers,
 )
 from cirq.interop.quirk.cells.parse import parse_matrix
 
@@ -47,12 +50,12 @@ if TYPE_CHECKING:
 def quirk_url_to_circuit(
     quirk_url: str,
     *,
-    qubits: Optional[Sequence['cirq.Qid']] = None,
+    qubits: Optional[Sequence[cirq.Qid]] = None,
     extra_cell_makers: Union[
-        Dict[str, 'cirq.Gate'], Iterable['cirq.interop.quirk.cells.CellMaker']
+        Dict[str, cirq.Gate], Iterable[cirq.interop.quirk.cells.CellMaker]
     ] = (),
     max_operation_count: int = 10**6,
-) -> 'cirq.Circuit':
+) -> cirq.Circuit:
     """Parses a Cirq circuit out of a Quirk URL.
 
     Args:
@@ -150,13 +153,13 @@ def quirk_url_to_circuit(
 def quirk_json_to_circuit(
     data: dict,
     *,
-    qubits: Optional[Sequence['cirq.Qid']] = None,
+    qubits: Optional[Sequence[cirq.Qid]] = None,
     extra_cell_makers: Union[
-        Dict[str, 'cirq.Gate'], Iterable['cirq.interop.quirk.cells.CellMaker']
+        Dict[str, cirq.Gate], Iterable[cirq.interop.quirk.cells.CellMaker]
     ] = (),
     quirk_url: Optional[str] = None,
     max_operation_count: int = 10**6,
-) -> 'cirq.Circuit':
+) -> cirq.Circuit:
     """Constructs a Cirq circuit from Quirk's JSON format.
 
     Args:
@@ -239,7 +242,7 @@ def quirk_json_to_circuit(
     if qubits is not None:
         qs = qubits
 
-        def map_qubit(qubit: 'cirq.Qid') -> 'cirq.Qid':
+        def map_qubit(qubit: cirq.Qid) -> cirq.Qid:
             q = cast(devices.LineQubit, qubit)
             if q.x >= len(qs):
                 raise IndexError(
@@ -343,7 +346,7 @@ def _register_custom_gate(gate_json: Any, registry: Dict[str, CellMaker]):
         )
 
 
-def _init_ops(data: Dict[str, Any]) -> 'cirq.OP_TREE':
+def _init_ops(data: Dict[str, Any]) -> cirq.OP_TREE:
     if 'init' not in data:
         return []
     init = data['init']

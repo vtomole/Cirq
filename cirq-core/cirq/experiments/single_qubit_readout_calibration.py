@@ -11,18 +11,23 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Single qubit readout experiments using parallel or isolated statistics."""
+
+from __future__ import annotations
+
 import dataclasses
 import time
-from typing import cast, Any, Dict, Iterable, List, Optional, TYPE_CHECKING
+from typing import Any, cast, Dict, Iterable, List, Optional, TYPE_CHECKING
 
-import sympy
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import sympy
+
 import cirq.vis.heatmap as cirq_heatmap
 import cirq.vis.histogram as cirq_histogram
-from cirq.devices import grid_qubit
 from cirq import circuits, ops, study
+from cirq.devices import grid_qubit
 
 if TYPE_CHECKING:
     import cirq
@@ -42,8 +47,8 @@ class SingleQubitReadoutCalibrationResult:
         timestamp: The time the data was taken, in seconds since the epoch.
     """
 
-    zero_state_errors: Dict['cirq.Qid', float]
-    one_state_errors: Dict['cirq.Qid', float]
+    zero_state_errors: Dict[cirq.Qid, float]
+    one_state_errors: Dict[cirq.Qid, float]
     repetitions: int
     timestamp: float
 
@@ -196,7 +201,7 @@ class SingleQubitReadoutCalibrationResult:
 
 
 def estimate_single_qubit_readout_errors(
-    sampler: 'cirq.Sampler', *, qubits: Iterable['cirq.Qid'], repetitions: int = 1000
+    sampler: cirq.Sampler, *, qubits: Iterable[cirq.Qid], repetitions: int = 1000
 ) -> SingleQubitReadoutCalibrationResult:
     """Estimate single-qubit readout error.
 
@@ -228,9 +233,9 @@ def estimate_single_qubit_readout_errors(
 
 
 def estimate_parallel_single_qubit_readout_errors(
-    sampler: 'cirq.Sampler',
+    sampler: cirq.Sampler,
     *,
-    qubits: Iterable['cirq.Qid'],
+    qubits: Iterable[cirq.Qid],
     trials: int = 20,
     repetitions: int = 1000,
     trials_per_batch: Optional[int] = None,

@@ -11,7 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Defines trial results."""
+
+from __future__ import annotations
 
 import abc
 import collections
@@ -19,22 +22,22 @@ import io
 from typing import (
     Any,
     Callable,
+    cast,
     Dict,
     Iterable,
     Mapping,
     Optional,
     Sequence,
-    TYPE_CHECKING,
     Tuple,
+    TYPE_CHECKING,
     TypeVar,
     Union,
-    cast,
 )
 
 import numpy as np
 import pandas as pd
 
-from cirq import value, ops
+from cirq import ops, value
 from cirq._compat import proper_repr
 from cirq.study import resolver
 
@@ -99,7 +102,7 @@ class Result(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def params(self) -> 'cirq.ParamResolver':
+    def params(self) -> cirq.ParamResolver:
         """A ParamResolver of settings used for this result."""
 
     @property
@@ -275,7 +278,7 @@ class Result(abc.ABC):
             and self.params == other.params
         )
 
-    def __add__(self, other: 'cirq.Result') -> 'cirq.Result':
+    def __add__(self, other: cirq.Result) -> cirq.Result:
         if not isinstance(other, Result):
             return NotImplemented
         if self.params != other.params:
@@ -341,7 +344,7 @@ class ResultDict(Result):
         self._data: Optional[pd.DataFrame] = None
 
     @property
-    def params(self) -> 'cirq.ParamResolver':
+    def params(self) -> cirq.ParamResolver:
         return self._params
 
     @property

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import abc
 import numbers
 from types import NotImplementedType
@@ -31,21 +33,21 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
-from typing_extensions import Self
 
 import numpy as np
 import sympy
+from typing_extensions import Self
 
-from cirq import protocols, linalg, value
+from cirq import linalg, protocols, value
 from cirq._compat import proper_repr
-from cirq.ops import raw_types, identity, pauli_gates, global_phase_op, pauli_string
+from cirq.ops import global_phase_op, identity, pauli_gates, pauli_string, raw_types
 
 if TYPE_CHECKING:
     import cirq
 
 # Order is important! Index equals numeric value.
 PAULI_CHARS = 'IXYZ'
-PAULI_GATES: List[Union['cirq.Pauli', 'cirq.IdentityGate']] = [
+PAULI_GATES: List[Union[cirq.Pauli, cirq.IdentityGate]] = [
     identity.I,
     pauli_gates.X,
     pauli_gates.Y,
@@ -84,9 +86,9 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
 
     def __init__(
         self,
-        pauli_mask: Union[Iterable['cirq.PAULI_GATE_LIKE'], np.ndarray],
+        pauli_mask: Union[Iterable[cirq.PAULI_GATE_LIKE], np.ndarray],
         *,
-        coefficient: 'cirq.TParamValComplex' = 1,
+        coefficient: cirq.TParamValComplex = 1,
     ):
         """Initializes a new dense pauli string.
 
@@ -116,7 +118,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
         return self._pauli_mask
 
     @property
-    def coefficient(self) -> Union[sympy.Expr, complex]:
+    def coefficient(self) -> cirq.TParamValComplex:
         """A complex coefficient or symbol."""
         return self._coefficient
 
@@ -129,7 +131,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
         return self.coefficient, tuple(PAULI_CHARS[p] for p in self.pauli_mask)
 
     @classmethod
-    def one_hot(cls, *, index: int, length: int, pauli: 'cirq.PAULI_GATE_LIKE') -> Self:
+    def one_hot(cls, *, index: int, length: int, pauli: cirq.PAULI_GATE_LIKE) -> Self:
         """Creates a dense pauli string with only one non-identity Pauli.
 
         Args:
@@ -179,9 +181,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
         decomposed_ops = cast(Iterable['cirq.OP_TREE'], self._decompose_(qubits))
         return protocols.apply_unitaries(decomposed_ops, qubits, args)
 
-    def _decompose_(
-        self, qubits: Sequence['cirq.Qid']
-    ) -> Union[NotImplementedType, 'cirq.OP_TREE']:
+    def _decompose_(self, qubits: Sequence[cirq.Qid]) -> Union[NotImplementedType, cirq.OP_TREE]:
         if not self._has_unitary_():
             return NotImplemented
         result = [PAULI_GATES[p].on(q) for p, q in zip(self.pauli_mask, qubits) if p]
@@ -195,7 +195,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
     def _parameter_names_(self) -> AbstractSet[str]:
         return protocols.parameter_names(self.coefficient)
 
-    def _resolve_parameters_(self, resolver: 'cirq.ParamResolver', recursive: bool) -> Self:
+    def _resolve_parameters_(self, resolver: cirq.ParamResolver, recursive: bool) -> Self:
         return self.copy(
             coefficient=protocols.resolve_parameters(self.coefficient, resolver, recursive)
         )
@@ -203,7 +203,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
     def __pos__(self):
         return self
 
-    def __pow__(self, power: Union[int, float]) -> Union[NotImplementedType, Self]:
+    def __pow__(self, power: float) -> Union[NotImplementedType, Self]:
         concrete_class = type(self)
         if isinstance(power, int):
             i_group = [1, +1j, -1, -1j]
@@ -218,7 +218,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
         return NotImplemented
 
     @overload
-    def __getitem__(self, item: int) -> Union['cirq.Pauli', 'cirq.IdentityGate']:
+    def __getitem__(self, item: int) -> Union[cirq.Pauli, cirq.IdentityGate]:
         pass
 
     @overload
@@ -234,7 +234,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
 
         raise TypeError(f'indices must be integers or slices, not {type(item)}')
 
-    def __iter__(self) -> Iterator[Union['cirq.Pauli', 'cirq.IdentityGate']]:
+    def __iter__(self) -> Iterator[Union[cirq.Pauli, cirq.IdentityGate]]:
         for i in range(len(self)):
             yield self[i]
 
@@ -301,7 +301,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
 
         return NotImplemented
 
-    def tensor_product(self, other: 'BaseDensePauliString') -> Self:
+    def tensor_product(self, other: BaseDensePauliString) -> Self:
         """Concatenates dense pauli strings and multiplies their coefficients.
 
         Args:
@@ -323,10 +323,10 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
             pauli_mask=self.pauli_mask,
         )
 
-    def on(self, *qubits: 'cirq.Qid') -> 'cirq.PauliString':
+    def on(self, *qubits: cirq.Qid) -> cirq.PauliString:
         return self.sparse(qubits)
 
-    def sparse(self, qubits: Optional[Sequence['cirq.Qid']] = None) -> 'cirq.PauliString':
+    def sparse(self, qubits: Optional[Sequence[cirq.Qid]] = None) -> cirq.PauliString:
         """A `cirq.PauliString` version of this dense pauli string.
 
         Args:
@@ -359,7 +359,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
             coef = '+'
         elif self.coefficient == -1:
             coef = '-'
-        elif isinstance(self.coefficient, (complex, sympy.Symbol)):
+        elif isinstance(self.coefficient, (numbers.Complex, sympy.Symbol)):
             coef = f'{self.coefficient}*'
         else:
             coef = f'({self.coefficient})*'
@@ -390,11 +390,11 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
 
         return NotImplemented
 
-    def frozen(self) -> 'DensePauliString':
+    def frozen(self) -> DensePauliString:
         """A `cirq.DensePauliString` with the same contents."""
         return DensePauliString(coefficient=self.coefficient, pauli_mask=self.pauli_mask)
 
-    def mutable_copy(self) -> 'MutableDensePauliString':
+    def mutable_copy(self) -> MutableDensePauliString:
         """A `cirq.MutableDensePauliString` with the same contents."""
         return MutableDensePauliString(
             coefficient=self.coefficient, pauli_mask=np.copy(self.pauli_mask)
@@ -403,7 +403,7 @@ class BaseDensePauliString(raw_types.Gate, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def copy(
         self,
-        coefficient: Optional[Union[sympy.Expr, int, float, complex]] = None,
+        coefficient: Optional[cirq.TParamValComplex] = None,
         pauli_mask: Union[None, str, Iterable[int], np.ndarray] = None,
     ) -> Self:
         """Returns a copy with possibly modified contents.
@@ -454,14 +454,14 @@ class DensePauliString(BaseDensePauliString):
     dense pauli strings, see `cirq.MutableDensePauliString`.
     """
 
-    def frozen(self) -> 'DensePauliString':
+    def frozen(self) -> DensePauliString:
         return self
 
     def copy(
         self,
-        coefficient: Optional[Union[sympy.Expr, int, float, complex]] = None,
+        coefficient: Optional[cirq.TParamValComplex] = None,
         pauli_mask: Union[None, str, Iterable[int], np.ndarray] = None,
-    ) -> 'DensePauliString':
+    ) -> DensePauliString:
         if pauli_mask is None and (coefficient is None or coefficient == self.coefficient):
             return self
         return DensePauliString(
@@ -489,14 +489,14 @@ class MutableDensePauliString(BaseDensePauliString):
     """
 
     @overload
-    def __setitem__(self, key: int, value: 'cirq.PAULI_GATE_LIKE') -> Self:
+    def __setitem__(self, key: int, value: cirq.PAULI_GATE_LIKE) -> Self:
         pass
 
     @overload
     def __setitem__(
         self,
         key: slice,
-        value: Union[Iterable['cirq.PAULI_GATE_LIKE'], np.ndarray, BaseDensePauliString],
+        value: Union[Iterable[cirq.PAULI_GATE_LIKE], np.ndarray, BaseDensePauliString],
     ) -> Self:
         pass
 
@@ -559,9 +559,9 @@ class MutableDensePauliString(BaseDensePauliString):
 
     def copy(
         self,
-        coefficient: Optional[Union[sympy.Expr, int, float, complex]] = None,
+        coefficient: Optional[cirq.TParamValComplex] = None,
         pauli_mask: Union[None, str, Iterable[int], np.ndarray] = None,
-    ) -> 'MutableDensePauliString':
+    ) -> MutableDensePauliString:
         return MutableDensePauliString(
             coefficient=self.coefficient if coefficient is None else coefficient,
             pauli_mask=np.copy(self.pauli_mask) if pauli_mask is None else pauli_mask,
@@ -574,7 +574,7 @@ class MutableDensePauliString(BaseDensePauliString):
         return self.coefficient, tuple(PAULI_CHARS[p] for p in self.pauli_mask)
 
     @classmethod
-    def inline_gaussian_elimination(cls, rows: 'List[MutableDensePauliString]') -> None:
+    def inline_gaussian_elimination(cls, rows: List[MutableDensePauliString]) -> None:
         if not rows:
             return
 
@@ -605,7 +605,7 @@ class MutableDensePauliString(BaseDensePauliString):
                 next_row += 1
 
 
-def _pauli_index(val: 'cirq.PAULI_GATE_LIKE') -> int:
+def _pauli_index(val: cirq.PAULI_GATE_LIKE) -> int:
     m = pauli_string.PAULI_GATE_LIKE_TO_INDEX_MAP
     if val not in m:
         raise TypeError(
@@ -616,18 +616,18 @@ def _pauli_index(val: 'cirq.PAULI_GATE_LIKE') -> int:
     return m[val]
 
 
-def _as_pauli_mask(val: Union[Iterable['cirq.PAULI_GATE_LIKE'], np.ndarray]) -> np.ndarray:
+def _as_pauli_mask(val: Union[Iterable[cirq.PAULI_GATE_LIKE], np.ndarray]) -> np.ndarray:
     if isinstance(val, np.ndarray):
         return np.asarray(val, dtype=np.uint8)
     return np.array([_pauli_index(v) for v in val], dtype=np.uint8)
 
 
-def _attempt_value_to_pauli_index(v: 'cirq.Operation') -> Optional[Tuple[int, int]]:
+def _attempt_value_to_pauli_index(v: cirq.Operation) -> Optional[Tuple[int, int]]:
     if not isinstance(v, raw_types.Operation):
         return None
 
     if not isinstance(v.gate, pauli_gates.Pauli):
-        return None
+        return None  # pragma: no cover
 
     q = v.qubits[0]
     from cirq import devices

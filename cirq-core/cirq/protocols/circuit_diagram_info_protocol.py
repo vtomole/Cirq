@@ -12,19 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import re
 from fractions import Fraction
 from typing import (
     Any,
-    TYPE_CHECKING,
-    Optional,
-    Union,
-    TypeVar,
     Dict,
-    overload,
     Iterable,
     List,
+    Optional,
+    overload,
     Sequence,
+    TYPE_CHECKING,
+    TypeVar,
+    Union,
 )
 
 import numpy as np
@@ -104,7 +106,7 @@ class CircuitDiagramInfo:
         )
 
     def _wire_symbols_including_formatted_exponent(
-        self, args: 'cirq.CircuitDiagramInfoArgs', *, preferred_exponent_index: Optional[int] = None
+        self, args: cirq.CircuitDiagramInfoArgs, *, preferred_exponent_index: Optional[int] = None
     ) -> List[str]:
         result = list(self.wire_symbols)
         exponent = self._formatted_exponent(args)
@@ -122,7 +124,7 @@ class CircuitDiagramInfo:
                 result[k] += f"^{exponent}"
         return result
 
-    def _formatted_exponent(self, args: 'cirq.CircuitDiagramInfoArgs') -> Optional[str]:
+    def _formatted_exponent(self, args: cirq.CircuitDiagramInfoArgs) -> Optional[str]:
         if protocols.is_parameterized(self.exponent):
             name = str(self.exponent)
             return f'({name})' if _is_exposed_formula(name) else name
@@ -195,15 +197,15 @@ class CircuitDiagramInfoArgs:
             right (transpose is False), or from top to bottom.
     """
 
-    UNINFORMED_DEFAULT: 'CircuitDiagramInfoArgs'
+    UNINFORMED_DEFAULT: CircuitDiagramInfoArgs
 
     def __init__(
         self,
-        known_qubits: Optional[Iterable['cirq.Qid']],
+        known_qubits: Optional[Iterable[cirq.Qid]],
         known_qubit_count: Optional[int],
         use_unicode_characters: bool,
         precision: Optional[int],
-        label_map: Optional[Dict['cirq.LabelEntity', int]],
+        label_map: Optional[Dict[cirq.LabelEntity, int]],
         include_tags: bool = True,
         transpose: bool = False,
     ) -> None:
@@ -251,7 +253,7 @@ class CircuitDiagramInfoArgs:
             return str(val)
         return f'{float(val):.{self.precision}}'
 
-    def format_complex(self, val: Union[sympy.Basic, int, float, 'cirq.TParamValComplex']) -> str:
+    def format_complex(self, val: Union[sympy.Basic, int, float, cirq.TParamValComplex]) -> str:
         if isinstance(val, sympy.Basic):
             return str(val)
         c = complex(val)
@@ -336,13 +338,13 @@ RaiseTypeErrorIfNotProvided = CircuitDiagramInfo(())
 
 
 def _op_info_with_fallback(
-    op: 'cirq.Operation', args: 'cirq.CircuitDiagramInfoArgs'
-) -> 'cirq.CircuitDiagramInfo':
+    op: cirq.Operation, args: cirq.CircuitDiagramInfoArgs
+) -> cirq.CircuitDiagramInfo:
     info = protocols.circuit_diagram_info(op, args, None)
     rows: List[LabelEntity] = list(op.qubits)
     if args.label_map is not None:
         rows += protocols.measurement_keys_touched(op) & args.label_map.keys()
-    if info is not None:
+    if info is not None and info.wire_symbols:
         if max(1, len(rows)) != len(info.wire_symbols):
             raise ValueError(f'Wanted diagram info from {op!r} for {rows!r}) but got {info!r}')
         return info

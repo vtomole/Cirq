@@ -13,9 +13,10 @@
 # limitations under the License.
 import dataclasses
 
-import cirq
 import numpy as np
-from cirq import ops, qis, protocols
+
+import cirq
+from cirq import ops, protocols, qis
 
 
 def _matrix_for_phasing_state(num_qubits, phase_state, phase):
@@ -29,7 +30,7 @@ def _matrix_for_phasing_state(num_qubits, phase_state, phase):
 
 @dataclasses.dataclass(frozen=True)
 class PhaseUsingCleanAncilla(ops.Gate):
-    r"""Phases the state $|phase_state>$ by $\exp(1j * \pi * \theta)$ using one clean ancilla."""
+    r"""Phases the state $|phase\_state>$ by $\exp(1j * \pi * \theta)$ using one clean ancilla."""
 
     theta: float
     phase_state: int = 1
@@ -56,7 +57,7 @@ class PhaseUsingCleanAncilla(ops.Gate):
 
 @dataclasses.dataclass(frozen=True)
 class PhaseUsingDirtyAncilla(ops.Gate):
-    r"""Phases the state $|phase_state>$ by -1 using one dirty ancilla."""
+    r"""Phases the state $|phase\_state>$ by -1 using one dirty ancilla."""
 
     phase_state: int = 1
     target_bitsize: int = 1

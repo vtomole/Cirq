@@ -11,13 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from __future__ import annotations
+
 import functools
 import weakref
 from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from cirq import protocols
 from cirq.ops import raw_types
-
 
 if TYPE_CHECKING:
     import cirq
@@ -94,7 +96,7 @@ class _BaseNamedQid(raw_types.Qid):
     def dimension(self) -> int:
         return self._dimension
 
-    def with_dimension(self, dimension: int) -> 'NamedQid':
+    def with_dimension(self, dimension: int) -> NamedQid:
         return NamedQid(self._name, dimension=dimension)
 
 
@@ -112,7 +114,7 @@ class NamedQid(_BaseNamedQid):
     # Holds weak references so instances can still be garbage collected.
     _cache = weakref.WeakValueDictionary[Tuple[str, int], 'cirq.NamedQid']()
 
-    def __new__(cls, name: str, dimension: int) -> 'cirq.NamedQid':
+    def __new__(cls, name: str, dimension: int) -> cirq.NamedQid:
         """Initializes a `NamedQid` with a given name and dimension.
 
         Args:
@@ -145,7 +147,7 @@ class NamedQid(_BaseNamedQid):
         return f'{self._name} (d={self._dimension})'
 
     @staticmethod
-    def range(*args, prefix: str, dimension: int) -> List['NamedQid']:
+    def range(*args, prefix: str, dimension: int) -> List[NamedQid]:
         """Returns a range of ``NamedQid``\\s.
 
         The range returned starts with the prefix, and followed by a qid for
@@ -187,7 +189,7 @@ class NamedQubit(_BaseNamedQid):
     # Holds weak references so instances can still be garbage collected.
     _cache = weakref.WeakValueDictionary[str, 'cirq.NamedQubit']()
 
-    def __new__(cls, name: str) -> 'cirq.NamedQubit':
+    def __new__(cls, name: str) -> cirq.NamedQubit:
         """Initializes a `NamedQid` with a given name and dimension.
 
         Args:
@@ -217,7 +219,7 @@ class NamedQubit(_BaseNamedQid):
         return f'cirq.NamedQubit({self._name!r})'
 
     @staticmethod
-    def range(*args, prefix: str) -> List['NamedQubit']:
+    def range(*args, prefix: str) -> List[NamedQubit]:
         r"""Returns a range of `cirq.NamedQubit`s.
 
         The range returned starts with the prefix, and followed by a qubit for

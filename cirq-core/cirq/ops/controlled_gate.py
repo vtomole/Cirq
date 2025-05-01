@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 from types import NotImplementedType
 from typing import (
     AbstractSet,
@@ -22,19 +24,20 @@ from typing import (
     Optional,
     Sequence,
     Tuple,
-    Union,
     TYPE_CHECKING,
+    Union,
 )
 
 import numpy as np
 
-from cirq import protocols, value, _import
+from cirq import _import, protocols, value
 from cirq.ops import (
-    raw_types,
-    controlled_operation as cop,
-    op_tree,
-    matrix_gates,
     control_values as cv,
+    controlled_operation as cop,
+    diagonal_gate as dg,
+    global_phase_op as gp,
+    op_tree,
+    raw_types,
 )
 
 if TYPE_CHECKING:
@@ -56,7 +59,7 @@ class ControlledGate(raw_types.Gate):
 
     def __init__(
         self,
-        sub_gate: 'cirq.Gate',
+        sub_gate: cirq.Gate,
         num_controls: Optional[int] = None,
         control_values: Optional[
             Union[cv.AbstractControlValues, Sequence[Union[int, Collection[int]]]]
@@ -140,7 +143,7 @@ class ControlledGate(raw_types.Gate):
         return self._control_values
 
     @property
-    def sub_gate(self) -> 'cirq.Gate':
+    def sub_gate(self) -> cirq.Gate:
         return self._sub_gate
 
     def num_controls(self) -> int:
@@ -150,21 +153,21 @@ class ControlledGate(raw_types.Gate):
         return self.control_qid_shape + protocols.qid_shape(self.sub_gate)
 
     def _decompose_(
-        self, qubits: Tuple['cirq.Qid', ...]
-    ) -> Union[None, NotImplementedType, 'cirq.OP_TREE']:
+        self, qubits: Tuple[cirq.Qid, ...]
+    ) -> Union[None, NotImplementedType, cirq.OP_TREE]:
         return self._decompose_with_context_(qubits)
 
     def _decompose_with_context_(
-        self, qubits: Tuple['cirq.Qid', ...], context: Optional['cirq.DecompositionContext'] = None
-    ) -> Union[None, NotImplementedType, 'cirq.OP_TREE']:
+        self, qubits: Tuple[cirq.Qid, ...], context: Optional[cirq.DecompositionContext] = None
+    ) -> Union[None, NotImplementedType, cirq.OP_TREE]:
+        control_qubits = list(qubits[: self.num_controls()])
         if (
             protocols.has_unitary(self.sub_gate)
             and protocols.num_qubits(self.sub_gate) == 1
             and self._qid_shape_() == (2,) * len(self._qid_shape_())
             and isinstance(self.control_values, cv.ProductOfSums)
         ):
-            control_qubits = list(qubits[: self.num_controls()])
-            invert_ops: List['cirq.Operation'] = []
+            invert_ops: List[cirq.Operation] = []
             for cvals, cqbit in zip(self.control_values, qubits[: self.num_controls()]):
                 if set(cvals) == {0}:
                     invert_ops.append(common_gates.X(cqbit))
@@ -174,11 +177,20 @@ class ControlledGate(raw_types.Gate):
                 protocols.unitary(self.sub_gate), control_qubits, qubits[-1]
             )
             return invert_ops + decomposed_ops + invert_ops
-
+        if isinstance(self.sub_gate, gp.GlobalPhaseGate):
+            # A controlled global phase is a diagonal gate, where each active control value index
+            # is set equal to the phase angle.
+            shape = self.control_qid_shape
+            if protocols.is_parameterized(self.sub_gate) or set(shape) != {2}:
+                # Could work in theory, but DiagonalGate decompose does not support them.
+                return NotImplemented
+            angle = np.angle(complex(self.sub_gate.coefficient))
+            rads = np.zeros(shape=shape)
+            for hot in self.control_values.expand():
+                rads[hot] = angle
+            return dg.DiagonalGate(diag_angles_radians=[*rads.flatten()]).on(*qubits)
         if isinstance(self.sub_gate, common_gates.CZPowGate):
-            z_sub_gate = common_gates.ZPowGate(
-                exponent=self.sub_gate.exponent, global_shift=self.sub_gate.global_shift
-            )
+            z_sub_gate = common_gates.ZPowGate(exponent=self.sub_gate.exponent)
             num_controls = self.num_controls() + 1
             control_values = self.control_values & cv.ProductOfSums(((1,),))
             control_qid_shape = self.control_qid_shape + (2,)
@@ -197,15 +209,18 @@ class ControlledGate(raw_types.Gate):
                 )
             )
             if self != controlled_z:
-                return protocols.decompose_once_with_qubits(
-                    controlled_z, qubits, NotImplemented, context=context
-                )
-
-        if isinstance(self.sub_gate, matrix_gates.MatrixGate):
-            # Default decompositions of 2/3 qubit `cirq.MatrixGate` ignores global phase, which is
-            # local phase in the controlled variant and hence cannot be ignored.
-            return NotImplemented
-
+                result = controlled_z.on(*qubits)
+                if self.sub_gate.global_shift == 0:
+                    return result
+                # Reconstruct the controlled global shift of the subgate.
+                total_shift = self.sub_gate.exponent * self.sub_gate.global_shift
+                phase_gate = gp.GlobalPhaseGate(1j ** (2 * total_shift))
+                controlled_phase_op = phase_gate.controlled(
+                    num_controls=self.num_controls(),
+                    control_values=self.control_values,
+                    control_qid_shape=self.control_qid_shape,
+                ).on(*control_qubits)
+                return [result, controlled_phase_op]
         result = protocols.decompose_once_with_qubits(
             self.sub_gate,
             qubits[self.num_controls() :],
@@ -223,7 +238,7 @@ class ControlledGate(raw_types.Gate):
             ),
         )
 
-    def on(self, *qubits: 'cirq.Qid') -> cop.ControlledOperation:
+    def on(self, *qubits: cirq.Qid) -> cop.ControlledOperation:
         if len(qubits) == 0:
             raise ValueError(f"Applied a gate to an empty set of qubits. Gate: {self!r}")
         self.validate_args(qubits)
@@ -236,7 +251,7 @@ class ControlledGate(raw_types.Gate):
     def _value_equality_values_(self):
         return (self.sub_gate, self.num_controls(), self.control_values, self.control_qid_shape)
 
-    def _apply_unitary_(self, args: 'protocols.ApplyUnitaryArgs') -> np.ndarray:
+    def _apply_unitary_(self, args: protocols.ApplyUnitaryArgs) -> np.ndarray:
         qubits = line_qubit.LineQid.for_gate(self)
         op = self.sub_gate.on(*qubits[self.num_controls() :])
         c_op = cop.ControlledOperation(qubits[: self.num_controls()], op, self.control_values)
@@ -261,7 +276,7 @@ class ControlledGate(raw_types.Gate):
         c_op = cop.ControlledOperation(qubits[: self.num_controls()], op, self.control_values)
         return protocols.mixture(c_op, default=NotImplemented)
 
-    def __pow__(self, exponent: Any) -> 'ControlledGate':
+    def __pow__(self, exponent: Any) -> ControlledGate:
         new_sub_gate = protocols.pow(self.sub_gate, exponent, NotImplemented)
         if new_sub_gate is NotImplemented:
             return NotImplemented
@@ -278,9 +293,7 @@ class ControlledGate(raw_types.Gate):
     def _parameter_names_(self) -> AbstractSet[str]:
         return protocols.parameter_names(self.sub_gate)
 
-    def _resolve_parameters_(
-        self, resolver: 'cirq.ParamResolver', recursive: bool
-    ) -> 'ControlledGate':
+    def _resolve_parameters_(self, resolver: cirq.ParamResolver, recursive: bool) -> ControlledGate:
         new_sub_gate = protocols.resolve_parameters(self.sub_gate, resolver, recursive)
         return ControlledGate(
             new_sub_gate,
@@ -294,13 +307,11 @@ class ControlledGate(raw_types.Gate):
             return None
         u = protocols.unitary(self.sub_gate, default=None)
         if u is None:
-            return NotImplemented
+            return NotImplemented  # pragma: no cover
         angle_list = np.append(np.angle(np.linalg.eigvals(u)), 0)
         return protocols.trace_distance_from_angle_list(angle_list)
 
-    def _circuit_diagram_info_(
-        self, args: 'cirq.CircuitDiagramInfoArgs'
-    ) -> 'cirq.CircuitDiagramInfo':
+    def _circuit_diagram_info_(self, args: cirq.CircuitDiagramInfoArgs) -> cirq.CircuitDiagramInfo:
         sub_args = protocols.CircuitDiagramInfoArgs(
             known_qubit_count=(
                 args.known_qubit_count - self.num_controls()
@@ -328,7 +339,7 @@ class ControlledGate(raw_types.Gate):
         return str(self.control_values) + str(self.sub_gate)
 
     def __repr__(self) -> str:
-        if self.num_controls() == 1 and self.control_values.is_trivial:
+        if self.control_qid_shape == (2,) and self.control_values.is_trivial:
             return f'cirq.ControlledGate(sub_gate={self.sub_gate!r})'
 
         if self.control_values.is_trivial and set(self.control_qid_shape) == {2}:
@@ -350,7 +361,7 @@ class ControlledGate(raw_types.Gate):
         }
 
 
-def _validate_sub_object(sub_object: Union['cirq.Gate', 'cirq.Operation']):
+def _validate_sub_object(sub_object: Union[cirq.Gate, cirq.Operation]):
     if protocols.is_measurement(sub_object):
         raise ValueError(f'Cannot control measurement {sub_object}')
     if not protocols.has_mixture(sub_object) and not protocols.is_parameterized(sub_object):

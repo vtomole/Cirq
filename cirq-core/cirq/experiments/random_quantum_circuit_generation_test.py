@@ -11,8 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from __future__ import annotations
+
 import itertools
-from typing import Callable, Dict, Iterable, List, Optional, Sequence, Set, Tuple, cast
+from typing import Callable, cast, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 import networkx as nx
 import numpy as np
@@ -24,12 +27,12 @@ from cirq.experiments import (
     random_rotations_between_grid_interaction_layers_circuit,
 )
 from cirq.experiments.random_quantum_circuit_generation import (
-    random_rotations_between_two_qubit_circuit,
     generate_library_of_2q_circuits,
-    get_random_combinations_for_device,
-    get_random_combinations_for_pairs,
-    get_random_combinations_for_layer_circuit,
     get_grid_interaction_layer_circuit,
+    get_random_combinations_for_device,
+    get_random_combinations_for_layer_circuit,
+    get_random_combinations_for_pairs,
+    random_rotations_between_two_qubit_circuit,
 )
 
 SINGLE_QUBIT_LAYER = Dict[cirq.GridQubit, Optional[cirq.Gate]]
@@ -366,7 +369,7 @@ def test_random_rotations_between_grid_interaction_layers(
     pattern: Sequence[GridInteractionLayer],
     single_qubit_gates: Sequence[cirq.Gate],
     add_final_single_qubit_layer: bool,
-    seed: 'cirq.RANDOM_STATE_OR_SEED_LIKE',
+    seed: cirq.RANDOM_STATE_OR_SEED_LIKE,
     expected_circuit_length: int,
     single_qubit_layers_slice: slice,
     two_qubit_layers_slice: slice,
@@ -444,12 +447,12 @@ def _validate_two_qubit_layers(
 
 
 def _coupled_qubit_pairs(
-    qubits: Set['cirq.GridQubit'],
-) -> List[Tuple['cirq.GridQubit', 'cirq.GridQubit']]:
+    qubits: Set[cirq.GridQubit],
+) -> List[Tuple[cirq.GridQubit, cirq.GridQubit]]:
     pairs = []
     for qubit in qubits:
 
-        def add_pair(neighbor: 'cirq.GridQubit'):
+        def add_pair(neighbor: cirq.GridQubit):
             if neighbor in qubits:
                 pairs.append((qubit, neighbor))
 
@@ -457,3 +460,20 @@ def _coupled_qubit_pairs(
         add_pair(cirq.GridQubit(qubit.row + 1, qubit.col))
 
     return pairs
+
+
+def test_generate_library_of_2q_circuits_with_tags():
+    circuits = generate_library_of_2q_circuits(
+        n_library_circuits=5,
+        two_qubit_gate=cirq.FSimGate(3, 4),
+        max_cycle_depth=13,
+        random_state=9,
+        tags=('test_tag',),
+    )
+    assert len(circuits) == 5
+    for circuit in circuits:
+        for op in circuit.all_operations():
+            if cirq.num_qubits(op) == 1:
+                continue
+            assert op.tags == ('test_tag',)
+            assert op.gate == cirq.FSimGate(3, 4)

@@ -12,14 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Wraps Parallel Two Qubit XEB into a few convenience methods."""
-from typing import Optional, Sequence, Dict
-import itertools
 import io
+import itertools
+from typing import Dict, Optional, Sequence
 
 import matplotlib.pyplot as plt
-
-import numpy as np
 import networkx as nx
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -27,7 +26,7 @@ import cirq
 from cirq.experiments.qubit_characterizations import ParallelRandomizedBenchmarkingResult
 
 
-def _manhattan_distance(qubit1: 'cirq.GridQubit', qubit2: 'cirq.GridQubit') -> int:
+def _manhattan_distance(qubit1: cirq.GridQubit, qubit2: cirq.GridQubit) -> int:
     return abs(qubit1.row - qubit2.row) + abs(qubit1.col - qubit2.col)
 
 

@@ -13,35 +13,42 @@
 # limitations under the License.
 
 """Provides a method to do z-phase calibration for excitation-preserving gates."""
-from typing import Union, Optional, Sequence, Tuple, Dict, TYPE_CHECKING
+
+from __future__ import annotations
+
 import multiprocessing
 import multiprocessing.pool
+from typing import Any, Dict, List, Optional, Sequence, Tuple, TYPE_CHECKING, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+from cirq import circuits, ops, protocols
 from cirq.experiments import xeb_fitting
 from cirq.experiments.two_qubit_xeb import parallel_xeb_workflow
-from cirq import ops
+from cirq.transformers import transformer_api
 
 if TYPE_CHECKING:
-    import cirq
     import pandas as pd
+
+    import cirq
 
 
 def z_phase_calibration_workflow(
-    sampler: 'cirq.Sampler',
-    qubits: Optional[Sequence['cirq.GridQubit']] = None,
-    two_qubit_gate: 'cirq.Gate' = ops.CZ,
+    sampler: cirq.Sampler,
+    qubits: Optional[Sequence[cirq.GridQubit]] = None,
+    two_qubit_gate: cirq.Gate = ops.CZ,
     options: Optional[xeb_fitting.XEBPhasedFSimCharacterizationOptions] = None,
     n_repetitions: int = 10**4,
     n_combinations: int = 10,
     n_circuits: int = 20,
     cycle_depths: Sequence[int] = tuple(np.arange(3, 100, 20)),
-    random_state: 'cirq.RANDOM_STATE_OR_SEED_LIKE' = None,
+    random_state: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
     atol: float = 1e-3,
-    num_workers_or_pool: Union[int, 'multiprocessing.pool.Pool'] = -1,
-) -> Tuple[xeb_fitting.XEBCharacterizationResult, 'pd.DataFrame']:
+    num_workers_or_pool: Union[int, multiprocessing.pool.Pool] = -1,
+    pairs: Optional[Sequence[Tuple[cirq.GridQubit, cirq.GridQubit]]] = None,
+    tags: Sequence[Any] = (),
+) -> Tuple[xeb_fitting.XEBCharacterizationResult, pd.DataFrame]:
     """Perform z-phase calibration for excitation-preserving gates.
 
     For a given excitation-preserving two-qubit gate we assume an error model that can be described
@@ -77,12 +84,14 @@ def z_phase_calibration_workflow(
             A zero value means no multiprocessing.
             A positive integer value will create a pool with the given number of workers.
             A negative value will create pool with maximum number of workers.
+        pairs: Pairs to use. If not specified, use all pairs between adjacent qubits.
+        tags: Tags to add to two qubit operations.
     Returns:
         - An `XEBCharacterizationResult` object that contains the calibration result.
         - A `pd.DataFrame` comparing the before and after fidelities.
     """
 
-    pool: Optional['multiprocessing.pool.Pool'] = None
+    pool: Optional[multiprocessing.pool.Pool] = None
     local_pool = False
     if isinstance(num_workers_or_pool, multiprocessing.pool.Pool):
         pool = num_workers_or_pool  # pragma: no cover
@@ -100,6 +109,8 @@ def z_phase_calibration_workflow(
         n_combinations=n_combinations,
         random_state=random_state,
         pool=pool,
+        tags=tags,
+        pairs=pairs,
     )
 
     if options is None:
@@ -137,18 +148,20 @@ def z_phase_calibration_workflow(
 
 
 def calibrate_z_phases(
-    sampler: 'cirq.Sampler',
-    qubits: Optional[Sequence['cirq.GridQubit']] = None,
-    two_qubit_gate: 'cirq.Gate' = ops.CZ,
+    sampler: cirq.Sampler,
+    qubits: Optional[Sequence[cirq.GridQubit]] = None,
+    two_qubit_gate: cirq.Gate = ops.CZ,
     options: Optional[xeb_fitting.XEBPhasedFSimCharacterizationOptions] = None,
     n_repetitions: int = 10**4,
     n_combinations: int = 10,
     n_circuits: int = 20,
     cycle_depths: Sequence[int] = tuple(np.arange(3, 100, 20)),
-    random_state: 'cirq.RANDOM_STATE_OR_SEED_LIKE' = None,
+    random_state: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
     atol: float = 1e-3,
-    num_workers_or_pool: Union[int, 'multiprocessing.pool.Pool'] = -1,
-) -> Dict[Tuple['cirq.Qid', 'cirq.Qid'], 'cirq.PhasedFSimGate']:
+    num_workers_or_pool: Union[int, multiprocessing.pool.Pool] = -1,
+    pairs: Optional[Sequence[Tuple[cirq.GridQubit, cirq.GridQubit]]] = None,
+    tags: Sequence[Any] = (),
+) -> Dict[Tuple[cirq.Qid, cirq.Qid], cirq.PhasedFSimGate]:
     """Perform z-phase calibration for excitation-preserving gates.
 
     For a given excitation-preserving two-qubit gate we assume an error model that can be described
@@ -184,6 +197,8 @@ def calibrate_z_phases(
             A zero value means no multiprocessing.
             A positive integer value will create a pool with the given number of workers.
             A negative value will create pool with maximum number of workers.
+        pairs: Pairs to use. If not specified, use all pairs between adjacent qubits.
+        tags: Tags to add to two qubit operations.
 
     Returns:
         - A dictionary mapping qubit pairs to the calibrated PhasedFSimGates.
@@ -210,6 +225,8 @@ def calibrate_z_phases(
         random_state=random_state,
         atol=atol,
         num_workers_or_pool=num_workers_or_pool,
+        tags=tags,
+        pairs=pairs,
     )
 
     gates = {}
@@ -224,12 +241,12 @@ def calibrate_z_phases(
 
 
 def plot_z_phase_calibration_result(
-    before_after_df: 'pd.DataFrame',
-    axes: Optional[np.ndarray[Sequence[Sequence['plt.Axes']], np.dtype[np.object_]]] = None,
-    pairs: Optional[Sequence[Tuple['cirq.Qid', 'cirq.Qid']]] = None,
+    before_after_df: pd.DataFrame,
+    axes: Optional[np.ndarray[Sequence[Sequence[plt.Axes]], np.dtype[np.object_]]] = None,
+    pairs: Optional[Sequence[Tuple[cirq.Qid, cirq.Qid]]] = None,
     *,
     with_error_bars: bool = False,
-) -> np.ndarray[Sequence[Sequence['plt.Axes']], np.dtype[np.object_]]:
+) -> np.ndarray[Sequence[Sequence[plt.Axes]], np.dtype[np.object_]]:
     """A helper method to plot the result of running z-phase calibration.
 
     Note that the plotted fidelity is a statistical estimate of the true fidelity and as a result
@@ -271,3 +288,84 @@ def plot_z_phase_calibration_result(
         ax.set_title('-'.join(str(q) for q in pair))
         ax.legend()
     return axes
+
+
+def _z_angles(old: ops.PhasedFSimGate, new: ops.PhasedFSimGate) -> Tuple[float, float, float]:
+    """Computes a set of possible 3 z-phases that result in the change in gamma, zeta, and chi."""
+    # This procedure is the inverse of PhasedFSimGate.from_fsim_rz
+    delta_gamma = new.gamma - old.gamma
+    delta_zeta = new.zeta - old.zeta
+    delta_chi = new.chi - old.chi
+    return (-delta_gamma + delta_chi, -delta_gamma - delta_zeta, delta_zeta - delta_chi)
+
+
+@transformer_api.transformer
+class CalibrationTransformer:
+
+    def __init__(
+        self,
+        target: cirq.Gate,
+        calibration_map: Dict[Tuple[cirq.Qid, cirq.Qid], cirq.PhasedFSimGate],
+    ):
+        """Create a CalibrationTransformer.
+
+        The transformer adds 3 ZPowGates around each calibrated gate to cancel the
+        effect of z-phases.
+
+        Args:
+            target: The target gate. Any gate matching this
+                will be replaced based on the content of `calibration_map`.
+            calibration_map:
+                A map mapping qubit pairs to calibrated gates. This is the output of
+                calling `calibrate_z_phases`.
+        """
+        self.target = target
+        if isinstance(target, ops.PhasedFSimGate):
+            self.target_as_fsim = target
+        elif (gate := ops.PhasedFSimGate.from_matrix(protocols.unitary(target))) is not None:
+            self.target_as_fsim = gate
+        else:
+            raise ValueError(f"{target} is not equivalent to a PhasedFSimGate")
+        self.calibration_map = calibration_map
+
+    def __call__(
+        self,
+        circuit: cirq.AbstractCircuit,
+        *,
+        context: Optional[transformer_api.TransformerContext] = None,
+    ) -> cirq.Circuit:
+        """Adds 3 ZPowGates around each calibrated gate to cancel the effect of Z phases.
+
+        Args:
+            circuit: Circuit to transform.
+            context: Optional transformer context (not used).
+
+        Returns:
+            New circuit with the extra ZPowGates.
+        """
+        new_moments: List[Union[List[cirq.Operation], cirq.Moment]] = []
+        for moment in circuit:
+            before = []
+            after = []
+            for op in moment:
+                if op.gate != self.target:
+                    # not a target.
+                    continue
+                assert len(op.qubits) == 2
+                gate = self.calibration_map.get(op.qubits, None) or self.calibration_map.get(
+                    op.qubits[::-1], None
+                )
+                if gate is None:
+                    # no calibration available.
+                    continue
+                angles = np.array(_z_angles(self.target_as_fsim, gate)) / np.pi
+                angles = -angles  # Take the negative to cancel the effect.
+                before.append(ops.Z(op.qubits[0]) ** angles[0])
+                before.append(ops.Z(op.qubits[1]) ** angles[1])
+                after.append(ops.Z(op.qubits[0]) ** angles[2])
+            if before:
+                new_moments.append(before)
+            new_moments.append(moment)
+            if after:
+                new_moments.append(after)
+        return circuits.Circuit.from_moments(*new_moments)

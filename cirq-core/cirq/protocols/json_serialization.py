@@ -34,6 +34,7 @@ from typing import (
     Union,
 )
 
+import attrs
 import numpy as np
 import pandas as pd
 import sympy
@@ -182,6 +183,12 @@ def dataclass_json_dict(obj: Any) -> Dict[str, Any]:
     return obj_to_dict_helper(obj, attribute_names)
 
 
+def attrs_json_dict(obj: Any) -> Dict[str, Any]:
+    """Return a dictionary suitable for `_json_dict_` from an attrs dataclass."""
+    attribute_names = [f.name for f in attrs.fields(type(obj))]
+    return obj_to_dict_helper(obj, attribute_names)
+
+
 def _json_dict_with_cirq_type(obj: Any):
     base_dict = obj._json_dict_()
     if 'cirq_type' in base_dict:
@@ -255,6 +262,12 @@ class CirqEncoder(json.JSONEncoder):
                 sympy.StrictLessThan,
                 sympy.Equality,
                 sympy.Unequality,
+                sympy.And,
+                sympy.Or,
+                sympy.Not,
+                sympy.Xor,
+                sympy.Indexed,
+                sympy.IndexedBase,
             ),
         ):
             return {'cirq_type': f'sympy.{o.__class__.__name__}', 'args': o.args}

@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
+
 import string
 from types import NotImplementedType
-from typing import TYPE_CHECKING, Union, Any, Tuple, TypeVar, Optional, Dict, Iterable
+from typing import Any, Dict, Iterable, Optional, Tuple, TYPE_CHECKING, TypeVar, Union
 
 from typing_extensions import Protocol
 
@@ -36,8 +38,9 @@ class QasmArgs(string.Formatter):
         self,
         precision: int = 10,
         version: str = '2.0',
-        qubit_id_map: Optional[Dict['cirq.Qid', str]] = None,
+        qubit_id_map: Optional[Dict[cirq.Qid, str]] = None,
         meas_key_id_map: Optional[Dict[str, str]] = None,
+        meas_key_bitcount: Optional[Dict[str, int]] = None,
     ) -> None:
         """Inits QasmArgs.
 
@@ -49,11 +52,14 @@ class QasmArgs(string.Formatter):
             qubit_id_map: A dictionary mapping qubits to qreg QASM identifiers.
             meas_key_id_map: A dictionary mapping measurement keys to creg QASM
                 identifiers.
+            meas_key_bitcount: A dictionary with of bits for each measurement
+                key.
         """
         self.precision = precision
         self.version = version
         self.qubit_id_map = {} if qubit_id_map is None else qubit_id_map
         self.meas_key_id_map = {} if meas_key_id_map is None else meas_key_id_map
+        self.meas_key_bitcount = {} if meas_key_bitcount is None else meas_key_bitcount
 
     def _format_number(self, value) -> str:
         """OpenQASM 2.0 does not support '1e-5' and wants '1.0e-5'"""
@@ -120,7 +126,7 @@ class SupportsQasmWithArgsAndQubits(Protocol):
 
     @doc_private
     def _qasm_(
-        self, qubits: Tuple['cirq.Qid'], args: QasmArgs
+        self, qubits: Tuple[cirq.Qid], args: QasmArgs
     ) -> Union[None, NotImplementedType, str]:
         pass
 
@@ -130,7 +136,7 @@ def qasm(
     val: Any,
     *,
     args: Optional[QasmArgs] = None,
-    qubits: Optional[Iterable['cirq.Qid']] = None,
+    qubits: Optional[Iterable[cirq.Qid]] = None,
     default: TDefault = RaiseTypeErrorIfNotProvided,
 ) -> Union[str, TDefault]:
     """Returns QASM code for the given value, if possible.
@@ -147,7 +153,7 @@ def qasm(
             involving qubits that the operation wouldn't otherwise know about.
         qubits: A list of qubits that the value is being applied to. This is
             needed for `cirq.Gate` values, which otherwise wouldn't know what
-            qubits to talk about.
+            qubits to talk about.  It should generally not be specified otherwise.
         default: A default result to use if the value doesn't have a
             `_qasm_` method or that method returns `NotImplemented` or `None`.
             If not specified, non-decomposable values cause a `TypeError`.
@@ -168,10 +174,16 @@ def qasm(
         kwargs: Dict[str, Any] = {}
         if args is not None:
             kwargs['args'] = args
+        # pylint: disable=not-callable
         if qubits is not None:
             kwargs['qubits'] = tuple(qubits)
-        # pylint: disable=not-callable
-        result = method(**kwargs)
+        try:
+            result = method(**kwargs)
+        except TypeError as error:
+            raise TypeError(
+                "cirq.qasm does not expect qubits or args to be specified"
+                f"for the given value of type {type(val)}."
+            ) from error
         # pylint: enable=not-callable
     if result is not None and result is not NotImplemented:
         return result

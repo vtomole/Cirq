@@ -59,9 +59,12 @@ from cirq_google.ops import (
     FSimGateFamily as FSimGateFamily,
     FSimViaModelTag as FSimViaModelTag,
     InternalGate as InternalGate,
+    InternalTag as InternalTag,
     PhysicalZTag as PhysicalZTag,
     SYC as SYC,
     SycamoreGate as SycamoreGate,
+    WILLOW as WILLOW,
+    WillowGate as WillowGate,
 )
 
 from cirq_google.transformers import (

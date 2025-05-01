@@ -11,9 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Tests for simulator.py"""
+
+from __future__ import annotations
+
 import abc
-from typing import Generic, Dict, Any, List, Sequence, Union
+from typing import Any, Dict, Generic, List, Sequence, Union
 from unittest import mock
 
 import duet
@@ -24,13 +28,13 @@ import cirq
 from cirq import study
 from cirq.sim.simulation_state import TSimulationState
 from cirq.sim.simulator import (
-    TStepResult,
     SimulatesAmplitudes,
     SimulatesExpectationValues,
     SimulatesFinalState,
     SimulatesIntermediateState,
     SimulatesSamples,
     SimulationTrialResult,
+    TStepResult,
 )
 
 
@@ -50,7 +54,7 @@ class FakeStepResult(cirq.StepResult):
         self._final_state = final_state
 
     def _simulator_state(self):
-        return self._final_state
+        return self._final_state  # pragma: no cover
 
     def state_vector(self):
         pass
@@ -64,7 +68,7 @@ class FakeStepResult(cirq.StepResult):
 
 class SimulatesIntermediateStateImpl(
     Generic[TStepResult, TSimulationState],
-    SimulatesIntermediateState[TStepResult, 'SimulationTrialResult', TSimulationState],
+    SimulatesIntermediateState[TStepResult, SimulationTrialResult, TSimulationState],
     metaclass=abc.ABCMeta,
 ):
     """A SimulatesIntermediateState that uses the default SimulationTrialResult type."""
@@ -73,8 +77,8 @@ class SimulatesIntermediateStateImpl(
         self,
         params: study.ParamResolver,
         measurements: Dict[str, np.ndarray],
-        final_simulator_state: 'cirq.SimulationStateBase[TSimulationState]',
-    ) -> 'SimulationTrialResult':
+        final_simulator_state: cirq.SimulationStateBase[TSimulationState],
+    ) -> SimulationTrialResult:
         """This method creates a default trial result.
 
         Args:
@@ -399,6 +403,17 @@ def test_sample_repeated_measurement_keys():
     assert len(result.records['b'][0]) == 2
 
 
+def test_classical_controls_go_to_suffix_if_corresponding_measurement_does():
+    subcircuit = cirq.CircuitOperation(cirq.FrozenCircuit()).with_classical_controls('a')
+    m = cirq.measure(cirq.LineQubit(0), key='a')
+    circuit = cirq.Circuit(m, subcircuit)
+    prefix, suffix = cirq.sim.simulator.split_into_matching_protocol_then_general(
+        circuit, lambda op: op != m  # any op but m goes into prefix
+    )
+    assert not prefix
+    assert suffix == circuit
+
+
 def test_simulate_with_invert_mask():
     q0, q1, q2, q3, q4 = cirq.LineQid.for_qid_shape((2, 3, 3, 3, 4))
     c = cirq.Circuit(
@@ -444,7 +459,7 @@ def test_iter_definitions():
 
         def compute_amplitudes_sweep(
             self,
-            program: 'cirq.AbstractCircuit',
+            program: cirq.AbstractCircuit,
             bitstrings: Sequence[int],
             params: study.Sweepable,
             qubit_order: cirq.QubitOrderOrList = cirq.QubitOrder.DEFAULT,
@@ -453,9 +468,9 @@ def test_iter_definitions():
 
         def simulate_expectation_values_sweep(
             self,
-            program: 'cirq.AbstractCircuit',
-            observables: Union['cirq.PauliSumLike', List['cirq.PauliSumLike']],
-            params: 'study.Sweepable',
+            program: cirq.AbstractCircuit,
+            observables: Union[cirq.PauliSumLike, List[cirq.PauliSumLike]],
+            params: study.Sweepable,
             qubit_order: cirq.QubitOrderOrList = cirq.QubitOrder.DEFAULT,
             initial_state: Any = None,
             permit_terminal_measurements: bool = False,
@@ -464,7 +479,7 @@ def test_iter_definitions():
 
         def simulate_sweep(
             self,
-            program: 'cirq.AbstractCircuit',
+            program: cirq.AbstractCircuit,
             params: study.Sweepable,
             qubit_order: cirq.QubitOrderOrList = cirq.QubitOrder.DEFAULT,
             initial_state: Any = None,

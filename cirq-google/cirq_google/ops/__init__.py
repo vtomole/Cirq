@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Qubit Gates, Operations, and Tags useful for Google devices. """
+"""Qubit Gates, Operations, and Tags useful for Google devices."""
 
 from cirq_google.ops.calibration_tag import CalibrationTag as CalibrationTag
 
@@ -28,6 +28,10 @@ from cirq_google.ops.sycamore_gate import SycamoreGate as SycamoreGate, SYC as S
 
 from cirq_google.ops.internal_gate import InternalGate as InternalGate
 
+from cirq_google.ops.internal_tag import InternalTag as InternalTag
+
 from cirq_google.ops.dynamical_decoupling_tag import (
     DynamicalDecouplingTag as DynamicalDecouplingTag,
 )
+
+from cirq_google.ops.willow_gate import WillowGate as WillowGate, WILLOW as WILLOW
